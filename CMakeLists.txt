@@ -3,4 +3,4 @@ project(huawei)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_subdirectory(排序)
+add_subdirectory(sort)
