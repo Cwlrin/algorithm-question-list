@@ -60,7 +60,7 @@ int main() {
   cin >> input1 >> input2;
 
   // 计算 input2 中的不同字母的数量
-  set unique_chars2(input2.begin(), input2.end());
+  set<char> unique_chars2(input2.begin(), input2.end());
   int target_count = unique_chars2.size();
 
   // 使用正则表达式分割字符串，提取仅含有字母的有效子串
@@ -83,7 +83,7 @@ int main() {
   // 遍历有效子串
   for (const string& substring : vaild_substrings) {
     // 计算当前子串中不同字母的数量
-    set unique_chars(substring.begin(), substring.end());
+    set<char> unique_chars(substring.begin(), substring.end());
     int current_count = unique_chars.size();
 
     // 判断是否满足条件

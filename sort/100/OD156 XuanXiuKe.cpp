@@ -69,7 +69,8 @@ int main() {
   // 找出同时选修了两门选修课的学生
   for (const auto& entry : scores1) {
     const string& id = entry.first;
-    if (scores2.contains(id)) {
+    // if (scores2.contains(id)) {
+    if (scores2.find(id) != scores2.end()) {
       // 学号存在于第二门课
       common_students.push_back({id, entry.second, scores2[id],
                                  entry.second + scores2[id]});

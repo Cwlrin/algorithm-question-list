@@ -163,7 +163,8 @@ int main() {
     for (int i = 0; i < daily_count[day]; ++i) {
       int id;
       cin >> id;
-      if (!stats.contains(id)) {
+      // if (!stats.contains(id)) {
+      if (stats.find(id) == stats.end()) {
         // 初始化员工数据
         stats[id] = {id, 0, day};
       }
