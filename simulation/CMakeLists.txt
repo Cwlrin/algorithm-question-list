@@ -3,7 +3,7 @@ file(GLOB_RECURSE SOURCES "*.cpp")
 
 # 定义一个函数来清理文件名，使其适合作为目标名称
 function(clean_filename_for_target input output)
-    string(REGEX REPLACE "[^A-Za-z0-9_]" "_" _cleaned_name "${input}")
+    string(REGEX REPLACE "[^A-Za-z0-9_]" "" _cleaned_name "${input}")
     set(${output} "${_cleaned_name}" PARENT_SCOPE)
 endfunction()
 

@@ -48,7 +48,7 @@ int main() {
 
   // 处理边界情况
   if (result[0] == '0') {
-    cout << "0" << endl;  // 如果最高位是 0，则结果是 0
+    cout << "0" << endl; // 如果最高位是 0，则结果是 0
   } else {
     cout << result << endl;
   }
