@@ -43,7 +43,6 @@ using namespace std;
 int main() {
   string input;
   getline(cin, input);
-
   // 去除输入字符串中的空格，并按逗号分割成数组
   stringstream ss(input);
   string token;
@@ -51,7 +50,6 @@ int main() {
   while (getline(ss, token, ',')) {
     arr.push_back(stoi(token));
   }
-
   // 创建一个哈希表来存储每个元素的出现次数和第一次出现的位置
   unordered_map<int, pair<int, int> > count_map;
   for (int i = 0; i < arr.size(); ++i) {
@@ -61,7 +59,6 @@ int main() {
     }
     count_map[arr[i]].first++;
   }
-
   // 将哈希表转换为向量
   vector<pair<int, pair<int, int> > > sorted_arr;
   // for (const auto& entry : count_map) {
@@ -70,7 +67,6 @@ int main() {
   for (const auto& [fst, snd] : count_map) {
     sorted_arr.emplace_back(fst, snd);
   }
-
   // 排序
   // sort(sort_arr.begin(), sort_arr.end());
   ranges::sort(sorted_arr, [](const auto& a, const auto& b) {
@@ -79,7 +75,6 @@ int main() {
     }
     return a.second.first > b.second.first;
   });
-
   for (int i = 0; i < sorted_arr.size(); ++i) {
     if (i > 0) {
       cout << ",";
@@ -156,16 +151,13 @@ using namespace std;
 int main() {
   string input;
   cin >> input;
-
   // 创建一个哈希表来存储每个字符的出现次数
   unordered_map<char, int> count_map;
   for (char c : input) {
     count_map[c]++;
   }
-
   // 将哈希表转换为向量
   vector<pair<char, int> > sorted_chars(count_map.begin(), count_map.end());
-
   // 排序
   ranges::sort(sorted_chars, [](const auto& a, const auto& b) {
     if (a.second == b.second) {
@@ -179,7 +171,6 @@ int main() {
     }
     return a.second > b.second; // 按出现次数降序排列
   });
-
   // 输出结果
   for (int i = 0; i < sorted_chars.size(); ++i) {
     if (i > 0) {
@@ -1800,9 +1791,95 @@ int main() {
 时刻 2 启动（0,4）（其中 0 被 1,7 关联启动，4 被 3,5 关联启动）；
 至此所有发动机都被启动，最后被启动的有 2 个，分别是 0 和 4。
 
-难度：中等
+难度：困难
 
-标签：数组
+标签：数组、图、广度优先搜索、模拟
+
+
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  int n, e;
+  cin >> n >> e;
+
+  // 发动机状态数组：是否启动、启动时间
+  vector started(n, false);
+  vector start_time(n, -1);
+
+  // 记录手动启动事件
+  map<int, set<int> > manual_start_events;
+
+  // 读取手动启动事件
+  for (int i = 0; i < e; ++i) {
+    int t, p;
+    cin >> t >> p;
+    manual_start_events[t].insert(p);
+  }
+
+  // 记录每个时刻的启动事件
+  int max_start_time = 0;
+
+  // 处理所有时刻的启动事件
+  for (int t = 0; t <= n * 2; ++t) {
+    // 手动启动事件
+    // if (manual_start_events.contains(t)) {
+    if (manual_start_events.contains(t)) {
+      for (int p : manual_start_events[t]) {
+        if (!started[p]) {
+          started[p] = true;
+          start_time[p] = t;
+          max_start_time = max(max_start_time, t);
+        }
+      }
+    }
+
+    // 关联启动
+    vector<int> to_start;
+    for (int i = 0; i < n; ++i) {
+      if (!started[i]) {
+        // 检查左右相邻发动机
+        int left = (i - 1 + n) % n;
+        int right = (i + 1) % n;
+
+        // 左右任一已启动，则准备启动
+        if (started[left] || started[right]) {
+          to_start.push_back(i);
+        }
+      }
+    }
+
+    // 执行关联启动
+    for (int p : to_start) {
+      started[p] = true;
+      start_time[p] = t + 1;
+      max_start_time = max(max_start_time, t + 1);
+    }
+  }
+
+  // 找出最后被启动的发动机
+  vector<int> last_started;
+  for (int i = 0; i < n; ++i) {
+    if (start_time[i] == max_start_time) {
+      last_started.push_back(i);
+    }
+  }
+
+  cout << last_started.size() << endl;
+  ranges::sort(last_started);
+  for (int engine : last_started) {
+    cout << engine << " ";
+  }
+  cout << endl;
+
+  return 0;
+}
+```
+
+
 
 #### 敏感字段加密
 
@@ -1837,7 +1914,6 @@ password__a12345678_timeout_100
 
 ```
 password_******_timeout_100
-
 ```
 
 
@@ -1858,6 +1934,79 @@ aaa_password_******_timeout_100_""
 ```
 
 
+
+难度：中等
+
+标签：字符串、模拟
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  int k;
+  string s;
+  cin >> k >> s;
+  vector<string> commands;
+  string current;
+  bool in_quotes = false;
+
+  for (char c : s) {
+    if (c == '"') {
+      // 只有在非引号状态，开始新的引导命令字
+      if (!in_quotes) {
+        // 如果当前有命令字，先加入
+        if (!current.empty()) {
+          commands.push_back(current);
+          current.clear();
+        }
+        current += c;
+      }
+      // 已经在引号内，关闭引号
+      else {
+        current += c;
+        commands.push_back(current);
+        current.clear();
+      }
+      // 切换引号状态
+      in_quotes = !in_quotes;
+    }
+    // 不在引号内处理下划线
+    else if (!in_quotes && c == '_') {
+      // 只有当前命令字非空时才加入
+      if (!current.empty()) {
+        commands.push_back(current);
+        current.clear();
+      }
+    } else {
+      current += c;
+    }
+  }
+  // 处理最后一个命令字
+  if (!current.empty()) {
+    commands.push_back(current);
+  }
+  // 检查索引是否有效
+  if (k < 0 || k >= commands.size()) {
+    cout << "ERROR" << endl;
+    return 0;
+  }
+
+  // 替换指定索引的命令字
+  commands[k] = "******";
+  // 重新构建字符串
+  string result;
+  for (int i = 0; i < commands.size(); ++i) {
+    if (i > 0) {
+      result += '_';
+    }
+    result += commands[i];
+  }
+  cout << result << endl;
+  return 0;
+}
+```
 
 
 
@@ -1914,6 +2063,66 @@ TLV 编码是按 [Tag Length Value] 格式进行编码的，一段码流中的�
 第四个信元的 Tag 是 31，其长度为 2（02 00），
 
 所以返回长度后面的两个字节即可，即 32 33。
+
+难度：中等
+
+标签：数组、字符串、位运算
+
+(14/15)
+
+
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  string target_tag, tlv_stream, token;
+  vector<unsigned char> bytes;
+  // 读取目标 tag
+  getline(cin, target_tag);
+  // 读取 TLV 码流并转换为字节数组
+  getline(cin, tlv_stream);
+  stringstream ss(tlv_stream);
+  // 将 16 进制字符串转换为字节数组
+  while (ss >> token) {
+    bytes.push_back(stoi(token, nullptr, 16));
+  }
+  // 将目标 tag 转换为数值
+  unsigned char tag = stoi(target_tag, nullptr, 16);
+
+  // 遍历码流
+  for (size_t i = 0; i < bytes.size();) {
+    // 当前信元的 tag
+    unsigned char current_tag = bytes[i];
+    // 检查是否匹配目标 tag
+    if (current_tag == tag) {
+      // 小端序读取长度（两个字节）
+      unsigned short length = bytes[i + 2] * 256 + bytes[i + 1];
+      // 输出对应的 value
+      for (size_t j = i + 3; j < i + 3 + length; ++j) {
+        cout << uppercase << hex << setw(2) << setfill('0') << static_cast<int>(
+          bytes[j]);
+        // 最后一个字节不加空格
+        if (j < i + 2 + length) {
+          cout << " ";
+        }
+      }
+      cout << endl;
+      // 成功找到并输出后直接退出
+      return 0;
+    }
+    // 小端序读取长度
+    unsigned short length = bytes[i + 2] * 256 + bytes[i + 1];
+    // 移动到下一个信元
+    i += 3 + length;
+  }
+  return 0;
+}
+```
+
+
 
 #### 手机 App 防沉迷系统
 
@@ -2040,6 +2249,101 @@ App2 2 09:10 09:30
 ```
 NA
 ```
+
+
+
+难度：中等
+
+标签：数组、设计
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// 将时间转换为分钟
+int TimeToMinutes(const string& time) {
+  int hours = stoi(time.substr(0, 2));
+  int minutes = stoi(time.substr(3, 2));
+  return hours * 60 + minutes;
+}
+
+int main() {
+  int n;
+  cin >> n;
+  // 存储 App 信息的结构：{名称，优先级，开始时间，结束时间}
+  vector<vector<string> > apps;
+  // 注册 App
+  for (int i = 0; i < n; ++i) {
+    string name, start_time, end_time;
+    int priority;
+    cin >> name >> priority >> start_time >> end_time;
+    // 检查是否可以注册
+    bool can_register = true;
+    for (auto it = apps.begin(); it != apps.end();) {
+      // 时间是否冲突
+      int start1 = TimeToMinutes(start_time);
+      int end1 = TimeToMinutes(end_time);
+      int start2 = TimeToMinutes((*it)[2]);
+      int end2 = TimeToMinutes((*it)[3]);
+
+      bool time_conflict = !(end1 <= start2 || end2 <= start1);
+
+      if (time_conflict) {
+        // 比较优先级
+        int new_priority = priority;
+        int exist_priority = stoi((*it)[1]);
+
+        if (new_priority > exist_priority) {
+          // 新 app 优先级高，移除已存在的 app
+          it = apps.erase(it);
+        } else if (new_priority < exist_priority) {
+          // 新 app 优先级低，不能注册
+          can_register = false;
+          break;
+        } else {
+          // 优先级相同，后注册的不能注册
+          can_register = false;
+          break;
+        }
+      } else {
+        ++it;
+      }
+    }
+
+    // 注册 app
+    if (can_register) {
+      apps.push_back({name, to_string(priority), start_time, end_time});
+    }
+  }
+  // 查询时间点
+  string query_time;
+  cin >> query_time;
+  int query_minutes = TimeToMinutes(query_time);
+  // 查找可用 app
+  string result = "NA";
+  int max_priority = -1;
+
+  for (const auto& app: apps) {
+    int start_minutes = TimeToMinutes(app[2]);
+    int end_minutes = TimeToMinutes(app[3]);
+    // 检查时间是否在 app 的时间段内（不包括结束时间）
+    if (query_minutes >= start_minutes && query_minutes < end_minutes) {
+      int current_priority = stoi(app[1]);
+      if (current_priority > max_priority) {
+        max_priority = current_priority;
+        result = app[0];
+      }
+    }
+  }
+  cout << result << endl;
+  return 0;
+}
+```
+
+
+
+
 
 #### 字符串分割
 
