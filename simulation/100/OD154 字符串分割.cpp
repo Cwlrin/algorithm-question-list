@@ -12,9 +12,9 @@ void convert(string& s) {
   }
 
   if (lower_count > upper_count) {
-    ranges::transform(s, s.begin(), ::tolower);
+    transform(s.begin(), s.end(), s.begin(), ::tolower);
   } else if (lower_count < upper_count) {
-    ranges::transform(s, s.begin(), ::toupper);
+    transform(s.begin(), s.end(), s.begin(), ::toupper);
   }
 }
 

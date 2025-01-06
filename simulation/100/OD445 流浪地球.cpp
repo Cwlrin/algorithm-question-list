@@ -7,8 +7,8 @@ int main() {
   cin >> n >> e;
 
   // 发动机状态数组：是否启动、启动时间
-  vector started(n, false);
-  vector start_time(n, -1);
+  vector<bool> started(n, false);
+  vector<int> start_time(n, -1);
 
   // 记录手动启动事件
   map<int, set<int> > manual_start_events;
@@ -27,7 +27,7 @@ int main() {
   for (int t = 0; t <= n * 2; ++t) {
     // 手动启动事件
     // if (manual_start_events.contains(t)) {
-    if (manual_start_events.contains(t)) {
+    if (manual_start_events.find(t) != manual_start_events.end()) {
       for (int p : manual_start_events[t]) {
         if (!started[p]) {
           started[p] = true;
@@ -69,7 +69,7 @@ int main() {
   }
 
   cout << last_started.size() << endl;
-  ranges::sort(last_started);
+  sort(last_started.begin(), last_started.end());
   for (int engine : last_started) {
     cout << engine << " ";
   }

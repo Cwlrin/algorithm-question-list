@@ -49,7 +49,7 @@ int main() {
   }
 
   // 自定义排序，首先按总分降序，然后按各分数计数降序
-  ranges::sort(results, [](const auto& a, const auto& b) {
+  sort(results.begin(), results.end(), [](const auto& a, const auto& b) {
     if (get<0>(a) != get<0>(b))
       return get<0>(a) > get<0>(b);
 

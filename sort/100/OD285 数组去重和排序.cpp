@@ -1,18 +1,3 @@
-// OD285. 数组去重和排序
-// 题目描述：
-// 给定一个乱序的数组，删除所有的重复元素，使得每个元素只出现一次，并且按照出现的次数从高到低进行排序，相同出现次数按照第一次出现顺序进行先后排序
-// 输入描述：
-// 一个数组
-// 输出描述：
-// 去重排序后的数组
-// 用例 1：
-// 输入：
-// 1,3,3,3,2,4,4,4,5
-// 输出：
-// 3,4,1,2,5
-// 难度：中等
-// 标签：数组、哈希、排序
-
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -32,8 +17,7 @@ int main() {
   // 创建一个哈希表来存储每个元素的出现次数和第一次出现的位置
   unordered_map<int, pair<int, int> > count_map;
   for (int i = 0; i < arr.size(); ++i) {
-    // if (countMap.find(arr[i]) == countMap.end())
-    if (!count_map.contains(arr[i])) {
+    if (count_map.find(arr[i]) == count_map.end()) {
       count_map[arr[i]] = {0, i};
     }
     count_map[arr[i]].first++;
@@ -50,7 +34,7 @@ int main() {
 
   // 排序
   // sort(sort_arr.begin(), sort_arr.end());
-  ranges::sort(sorted_arr, [](const auto& a, const auto& b) {
+  sort(sorted_arr.begin(), sorted_arr.end(), [](const auto& a, const auto& b) {
     if (a.second.first == b.second.first) {
       return a.second.second < b.second.second;
     }
