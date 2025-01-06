@@ -43,6 +43,7 @@ using namespace std;
 int main() {
   string input;
   getline(cin, input);
+
   // 去除输入字符串中的空格，并按逗号分割成数组
   stringstream ss(input);
   string token;
@@ -50,15 +51,16 @@ int main() {
   while (getline(ss, token, ',')) {
     arr.push_back(stoi(token));
   }
+
   // 创建一个哈希表来存储每个元素的出现次数和第一次出现的位置
   unordered_map<int, pair<int, int> > count_map;
   for (int i = 0; i < arr.size(); ++i) {
-    // if (countMap.find(arr[i]) == countMap.end())
-    if (!count_map.contains(arr[i])) {
+    if (count_map.find(arr[i]) == count_map.end()) {
       count_map[arr[i]] = {0, i};
     }
     count_map[arr[i]].first++;
   }
+
   // 将哈希表转换为向量
   vector<pair<int, pair<int, int> > > sorted_arr;
   // for (const auto& entry : count_map) {
@@ -67,14 +69,16 @@ int main() {
   for (const auto& [fst, snd] : count_map) {
     sorted_arr.emplace_back(fst, snd);
   }
+
   // 排序
   // sort(sort_arr.begin(), sort_arr.end());
-  ranges::sort(sorted_arr, [](const auto& a, const auto& b) {
+  sort(sorted_arr.begin(), sorted_arr.end(), [](const auto& a, const auto& b) {
     if (a.second.first == b.second.first) {
       return a.second.second < b.second.second;
     }
     return a.second.first > b.second.first;
   });
+
   for (int i = 0; i < sorted_arr.size(); ++i) {
     if (i > 0) {
       cout << ",";
@@ -151,26 +155,31 @@ using namespace std;
 int main() {
   string input;
   cin >> input;
+
   // 创建一个哈希表来存储每个字符的出现次数
   unordered_map<char, int> count_map;
   for (char c : input) {
     count_map[c]++;
   }
+
   // 将哈希表转换为向量
   vector<pair<char, int> > sorted_chars(count_map.begin(), count_map.end());
+
   // 排序
-  ranges::sort(sorted_chars, [](const auto& a, const auto& b) {
-    if (a.second == b.second) {
-      if (islower(a.first) && !islower(b.first)) {
-        return true; // 小写字母优先
-      }
-      if (!islower(a.first) && islower(b.first)) {
-        return false; // 大写字母不优先
-      }
-      return a.first < b.first; // 自然顺序排序，小写字母在大写字母之前
-    }
-    return a.second > b.second; // 按出现次数降序排列
-  });
+  sort(sorted_chars.begin(), sorted_chars.end(),
+       [](const auto& a, const auto& b) {
+         if (a.second == b.second) {
+           if (islower(a.first) && !islower(b.first)) {
+             return true; // 小写字母优先
+           }
+           if (!islower(a.first) && islower(b.first)) {
+             return false; // 大写字母不优先
+           }
+           return a.first < b.first; // 自然顺序排序，小写字母在大写字母之前
+         }
+         return a.second > b.second; // 按出现次数降序排列
+       });
+
   // 输出结果
   for (int i = 0; i < sorted_chars.size(); ++i) {
     if (i > 0) {
@@ -306,7 +315,8 @@ int main() {
   // 找出同时选修了两门选修课的学生
   for (const auto& entry : scores1) {
     const string& id = entry.first;
-    if (scores2.contains(id)) {
+    // if (scores2.contains(id)) {
+    if (scores2.find(id) != scores2.end()) {
       // 学号存在于第二门课
       common_students.push_back({id, entry.second, scores2[id],
                                  entry.second + scores2[id]});
@@ -333,11 +343,12 @@ int main() {
     vector<Student>& students = entry.second;
 
     // 排序
-    ranges::sort(students, [](const Student& a, const Student& b) {
-      if (a.total_score != b.total_score)
-        return a.total_score > b.total_score; // 总成绩降序
-      return a.id < b.id;                     // 学号升序
-    });
+    sort(students.begin(), students.end(),
+         [](const Student& a, const Student& b) {
+           if (a.total_score != b.total_score)
+             return a.total_score > b.total_score; // 总成绩降序
+           return a.id < b.id;                     // 学号升序
+         });
 
     // 输出班级编号
     cout << class_id << endl;
@@ -459,7 +470,7 @@ int main() {
       vector<pair<string, int> > url_list(url_count.begin(), url_count.end());
 
       // 对 url 进行排序
-      ranges::sort(url_list, [](const auto& a, const auto& b) {
+      sort(url_list.begin(), url_list.end(), [](const auto& a, const auto& b) {
         if (a.second != b.second) {
           return a.second > b.second; // 按照访问次数排序
         }
@@ -576,16 +587,16 @@ using namespace std;
 long long parase_capacity(const string& s) {
   long long total = 0;
   int num = 0;
-  for (size_t i = 0; i < s.size(); i++) {
-    if (isdigit(s[i])) {
-      num = num * 10 + (s[i] - '0'); // 累计数字
+  for (char i : s) {
+    if (isdigit(i)) {
+      num = num * 10 + (i - '0'); // 累计数字
     } else {
       // 根据单位累加总容量
-      if (s[i] == 'M') {
+      if (i == 'M') {
         total += num;
-      } else if (s[i] == 'G') {
+      } else if (i == 'G') {
         total += num * 1024LL;
-      } else if (s[i] == 'T') {
+      } else if (i == 'T') {
         total += num * 1024LL * 1024LL;
       }
       num = 0; // 重置数字部分
@@ -609,7 +620,7 @@ int main() {
   }
 
   // 按照容量排序，使用稳定排序保持输入排序
-  ranges::stable_sort(disks, [](const auto& a, const auto& b) {
+  stable_sort(disks.begin(), disks.end(), [](const auto& a, const auto& b) {
     return a.second < b.second; // 按容量升序
   });
 
@@ -822,7 +833,8 @@ int main() {
     for (int i = 0; i < daily_count[day]; ++i) {
       int id;
       cin >> id;
-      if (!stats.contains(id)) {
+      // if (!stats.contains(id)) {
+      if (stats.find(id) == stats.end()) {
         // 初始化员工数据
         stats[id] = {id, 0, day};
       }
@@ -837,7 +849,7 @@ int main() {
     employees.push_back(entry.second);
   }
 
-  ranges::sort(employees, [](const auto& a, const auto& b) {
+  sort(employees.begin(), employees.end(), [](const auto& a, const auto& b) {
     if (a.count != b.count) return a.count > b.count;
     if (a.first_day != b.first_day) return a.first_day < b.first_day;
     return a.id < b.id;
@@ -912,6 +924,8 @@ int main() {
 
 
 ```cpp
+#include <bits/stdc++.h>
+
 using namespace std;
 
 int main() {
@@ -925,7 +939,7 @@ int main() {
     numbers.push_back(number);
   }
 
-  ranges::sort(numbers, [](const auto& a, const auto& b) {
+  sort(numbers.begin(), numbers.end(), [](const auto& a, const auto& b) {
     return stoi(a) < stoi(b);
   });
 
@@ -933,7 +947,7 @@ int main() {
     numbers.resize(3);
   }
 
-  ranges::sort(numbers, [](const auto& a, const auto& b) {
+  sort(numbers.begin(), numbers.end(), [](const auto& a, const auto& b) {
     return a + b <= b + a;
   });
 
@@ -1042,7 +1056,7 @@ int main() {
     cin >> logs[i];
   }
 
-  ranges::stable_sort(logs, [](const auto& a, const auto& b) {
+  stable_sort(logs.begin(), logs.end(), [](const auto& a, const auto& b) {
     int h1, h2, m1, m2, s1, s2, n1, n2;
     sscanf(a.c_str(), "%d:%d:%d.%d", &h1, &m1, &s1, &n1);
     sscanf(b.c_str(), "%d:%d:%d.%d", &h2, &m2, &s2, &n2);
@@ -1132,8 +1146,8 @@ struct Student {
   vector<int> scores;
 
   int get_score(const string& subject, const vector<string>& subjects) const {
-    if (const auto it = ranges::find(subjects, subject);
-      it != subjects.end()) {
+    const auto it = find(subjects.begin(), subjects.end(), subject);
+    if (it != subjects.end()) {
       return scores[it - subjects.begin()]; // 返回相应科目的成绩
     }
     return accumulate(scores.begin(), scores.end(), 0); // 返回总分
@@ -1163,13 +1177,14 @@ int main() {
   cin >> ranking_subject;
 
   // 排序学生
-  ranges::sort(students, [&](const Student& a, const Student& b) {
-    int score_a = a.get_score(ranking_subject, subjects);
-    int score_b = b.get_score(ranking_subject, subjects);
+  sort(students.begin(), students.end(),
+       [&](const Student& a, const Student& b) {
+         int score_a = a.get_score(ranking_subject, subjects);
+         int score_b = b.get_score(ranking_subject, subjects);
 
-    if (score_a != score_b) return score_a > score_b; // 成绩排序
-    return a.name < b.name; // 姓名排序
-  });
+         if (score_a != score_b) return score_a > score_b; // 成绩排序
+         return a.name < b.name;                           // 姓名排序
+       });
 
   // 输出结果
   for (const auto& student : students) {
@@ -1597,7 +1612,7 @@ int main() {
   cin >> input1 >> input2;
 
   // 计算 input2 中的不同字母的数量
-  set unique_chars2(input2.begin(), input2.end());
+  set<char> unique_chars2(input2.begin(), input2.end());
   int target_count = unique_chars2.size();
 
   // 使用正则表达式分割字符串，提取仅含有字母的有效子串
@@ -1609,7 +1624,8 @@ int main() {
   vector<string> vaild_substrings;
   for (; it != end; ++it) {
     // 移除空串
-    if (string substring = it->str(); !substring.empty()) {
+    string substring = it->str();
+    if (!substring.empty()) {
       vaild_substrings.push_back(substring);
     }
   }
@@ -1620,7 +1636,7 @@ int main() {
   // 遍历有效子串
   for (const string& substring : vaild_substrings) {
     // 计算当前子串中不同字母的数量
-    set unique_chars(substring.begin(), substring.end());
+    set<char> unique_chars(substring.begin(), substring.end());
     int current_count = unique_chars.size();
 
     // 判断是否满足条件
@@ -1702,7 +1718,7 @@ int main() {
     nums.push_back(num);
   }
 
-  ranges::sort(nums, [](const string& a, const string& b) {
+  sort(nums.begin(), nums.end(), [](const string& a, const string& b) {
     return a + b > b + a;
   });
 
@@ -1713,7 +1729,7 @@ int main() {
 
   // 处理边界情况
   if (result[0] == '0') {
-    cout << "0" << endl;  // 如果最高位是 0，则结果是 0
+    cout << "0" << endl; // 如果最高位是 0，则结果是 0
   } else {
     cout << result << endl;
   }
@@ -1807,8 +1823,8 @@ int main() {
   cin >> n >> e;
 
   // 发动机状态数组：是否启动、启动时间
-  vector started(n, false);
-  vector start_time(n, -1);
+  vector<bool> started(n, false);
+  vector<int> start_time(n, -1);
 
   // 记录手动启动事件
   map<int, set<int> > manual_start_events;
@@ -1827,7 +1843,7 @@ int main() {
   for (int t = 0; t <= n * 2; ++t) {
     // 手动启动事件
     // if (manual_start_events.contains(t)) {
-    if (manual_start_events.contains(t)) {
+    if (manual_start_events.find(t) != manual_start_events.end()) {
       for (int p : manual_start_events[t]) {
         if (!started[p]) {
           started[p] = true;
@@ -1869,7 +1885,7 @@ int main() {
   }
 
   cout << last_started.size() << endl;
-  ranges::sort(last_started);
+  sort(last_started.begin(), last_started.end());
   for (int engine : last_started) {
     cout << engine << " ";
   }
@@ -2438,9 +2454,9 @@ void convert(string& s) {
   }
 
   if (lower_count > upper_count) {
-    ranges::transform(s, s.begin(), ::tolower);
+    transform(s.begin(), s.end(), s.begin(), ::tolower);
   } else if (lower_count < upper_count) {
-    ranges::transform(s, s.begin(), ::toupper);
+    transform(s.begin(), s.end(), s.begin(), ::toupper);
   }
 }
 
@@ -2497,7 +2513,7 @@ int main() {
 注意：
 
 1. 英文单词联想时，区分大小写
-2. 缩略形式如”don’t”，判定为两个单词，”don”和”t "
+2. 缩略形式如 "don't"，判定为两个单词，"don"和"t "
 3. 输出的单词序列，不能有重复单词，且只能是英文单词，不能有标点符号
 
 **输入描述**：
@@ -2535,7 +2551,7 @@ He
 
 说明：
 
-从用户已输入英文语句”I love you”中提炼出“I”、“love”、“you”三个单词，接下来用户输入“He”，
+从用户已输入英文语句"I love you"中提炼出 "I"、"love"、"you"三个单词，接下来用户输入 "He"，
 
 从已输入信息中无法联想到任何符合要求的单词，因此输出用户输入的单词前缀。
 
@@ -2557,6 +2573,85 @@ front furthest
 ```
 
 
+
+难度：中等
+
+标签：字符串
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  string sentence, prefix;
+  getline(cin, sentence);
+  cin >> prefix;
+  // 使用 set 自动去重  
+  set<string> unique_words;
+  string current_word;
+  // 分割句子为单词，特别处理带撇号的单词  
+  for (char c : sentence) {
+    if (isalpha(c) || c == '\'') {
+      current_word += c;
+    } else {
+      if (!current_word.empty()) {
+        // 特殊处理带撇号的单词  
+        if (current_word.find('\'') != string::npos) {
+          size_t pos = current_word.find('\'');
+          string first = current_word.substr(0, pos);
+          string second = current_word.substr(pos + 1);
+          // 确保非空的单词被添加  
+          if (!first.empty()) unique_words.insert(first);
+          if (!second.empty()) unique_words.insert(second);
+        } else {
+          unique_words.insert(current_word);
+        }
+        current_word.clear();
+      }
+    }
+  }
+  // 添加最后一个单词  
+  if (!current_word.empty()) {
+    if (current_word.find('\'') != string::npos) {
+      size_t pos = current_word.find('\'');
+      string first = current_word.substr(0, pos);
+      string second = current_word.substr(pos + 1);
+      if (!first.empty()) unique_words.insert(first);
+      if (!second.empty()) unique_words.insert(second);
+    } else {
+      unique_words.insert(current_word);
+    }
+  }
+  // 查找匹配前缀的单词  
+  vector<string> matched_words;
+  // 查找以前缀开头的单词  
+  for (const auto& w : unique_words) {
+    // 单词开头匹配  
+    // 添加长度检查，避免substr越界  
+    if (w.length() >= prefix.length() && w.substr(0, prefix.length()) ==
+        prefix) {
+      matched_words.push_back(w);
+    }
+  }
+  // 去重  
+  sort(matched_words.begin(), matched_words.end());
+  matched_words.erase(unique(matched_words.begin(), matched_words.end()),
+                     matched_words.end());
+  // 只在没有找到任何匹配时，输出前缀  
+  if (matched_words.empty()) {
+    cout << prefix << endl;
+  } else {
+    // 输出结果  
+    for (size_t i = 0; i < matched_words.size(); ++i) {
+      cout << matched_words[i];
+      if (i < matched_words.size() - 1) cout << " ";
+    }
+    cout << endl;
+  }
+  return 0;
+}  
+```
 
 
 
@@ -2696,7 +2791,7 @@ ABC
 
 **输出描述**：
 
-根据考勤数据字符串，如果能得到考勤奖，输出”true”；否则输出”false”。
+根据考勤数据字符串，如果能得到考勤奖，输出"true"；否则输出"false"。
 
 **用例 1**：
 
@@ -3243,7 +3338,7 @@ bcbcbc
 1. 不等式系数为 double 类型，是一个二维数组
 2. 不等式的变量为 int 类型，是一维数组;
 3. 不等式的目标值为 double 类型，是一维数组
-4. 不等式约束为字符串数组，只能是:“>”,“>=”,“<”,“<=”,“=”，
+4. 不等式约束为字符串数组，只能是:">",">=","<","<=","="，
 
 例如，不等式组:
 
@@ -3386,11 +3481,11 @@ false 758
 
 有一种简易压缩算法：针对全部由小写英文字母组成的字符串，将其中连续超过两个相同字母的部分压缩为连续个数加该字母，其他部分保持原样不变。
 
-例如：字符串“aaabbccccd”经过压缩成为字符串“3abb4cd”。
+例如：字符串"aaabbccccd"经过压缩成为字符串"3abb4cd"。
 
 请您编写解压函数，根据输入的字符串，判断其是否为合法压缩过的字符串，
 
-若输入合法则输出解压缩后的字符串，否则输出字符串“! error”来报告错误。
+若输入合法则输出解压缩后的字符串，否则输出字符串"! error"来报告错误。
 
 **输入描述**：
 
@@ -3400,7 +3495,7 @@ false 758
 
 若判断输入为合法的经过压缩后的字符串，则输出压缩前的字符串；
 
-若输入不合法，则输出字符串 “**! error**”。
+若输入不合法，则输出字符串 "**! error**"。
 
 **用例 1**：
 
@@ -3678,14 +3773,14 @@ remove
 
 小王设计了一个简单的猜字谜游戏，游戏的谜面是一个错误的单词，比如 nesw，玩家需要猜出谜底库中正确的单词。猜中的要求如下： 对于某个谜面和谜底单词，满足下面任一条件都表示猜中：
 
-1. 变换顺序以后一样的，比如通过变换 w 和 e 的顺序，“nwes”跟“news”是可以完全对应的；
-2. 字母去重以后是一样的，比如“woood”和“wood”是一样的，它们去重后都是“wod”
+1. 变换顺序以后一样的，比如通过变换 w 和 e 的顺序，"nwes"跟"news"是可以完全对应的；
+2. 字母去重以后是一样的，比如"woood"和"wood"是一样的，它们去重后都是"wod"
 
-请你写一个程序帮忙在谜底库中找到正确的谜底。谜面是多个单词，都需要找到对应的谜底，如果找不到的话，返回”not found”
+请你写一个程序帮忙在谜底库中找到正确的谜底。谜面是多个单词，都需要找到对应的谜底，如果找不到的话，返回"not found"
 
 **输入描述**：
 
-1. 谜面单词列表，以“,”分隔
+1. 谜面单词列表，以","分隔
 2. 谜底库单词列表，以 "," 分隔
 
 **输出描述**：
@@ -5218,7 +5313,7 @@ seat -> 5, 员工最后坐在 5 号座位上
 
 **输入描述**：
 
-输入的第一行为矩阵的行数和列数，接下来的 n 行为矩阵元素，元素间用”,”分隔。
+输入的第一行为矩阵的行数和列数，接下来的 n 行为矩阵元素，元素间用","分隔。
 
 **输出描述**：
 
