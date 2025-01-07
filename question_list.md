@@ -2764,6 +2764,63 @@ ABC
 
 三个子串长度均为 1，所以此时 k = 1，k = 2，k = 3 这三种情况均输出 1。特此说明，避免歧义。
 
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  // 读取输入字符串和 k 值
+  string s;
+  int k;
+  cin >> s >> k;
+  // 特殊情况处理：字符串长度小于等于1
+  if (s.length() <= 1) {
+    cout << 1 << endl;
+    return 0;
+  }
+  if (k >= 26 || k <= 0) {
+    cout << "-1" << endl;
+    return 0;
+  }
+  // 存储每个字母最大出现次数
+  unordered_map<char, int> max_lengths;
+  // 遍历字符串，统计每个字母的最大连续长度
+  for (int i = 0; i < s.length();) {
+    char current_char = s[i];
+    int count = 0;
+    // 统计当前字母的连续出现次数
+    while (i < s.length() && s[i] == current_char) {
+      count++;
+      i++;
+    }
+    // 更新对应字母的最大长度
+    if (max_lengths.find(current_char) == max_lengths.end()) {
+      max_lengths[current_char] = count;
+    } else {
+      max_lengths[current_char] = max(max_lengths[current_char], count);
+    }
+  }
+  // 存储所有不同的最长长度
+  vector<int> lengths;
+  for (auto& entry : max_lengths) {
+    lengths.push_back(entry.second);
+  }
+  // 对长度进行排序，降序
+  sort(lengths.begin(), lengths.end(), greater<int>());
+  // 处理 k 大于有效长度数量的情况
+  if (k > lengths.size()) {
+    cout << -1 << endl;
+    return 0;
+  }
+  // 选择第 k 大的长度并输出
+  cout << lengths[k - 1] << endl;
+  return 0;
+}
+```
+
+
+
 #### 考勤信息
 
 **题目描述**：
@@ -2825,6 +2882,87 @@ present absent present present leaveearly present absent
 
 ```
 true false
+```
+
+
+
+难度：中等
+
+标签：数组、字符串、滑动窗口
+
+
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+// 检查是否为异常考勤
+bool IsAbnormalAttendance(const string& status) {
+  return status == "absent" || status == "late" || status == "leaveearly";
+}
+// 检查单次考勤是否符合奖励条件
+bool CheckAttendance(const vector<string>& records) {
+  int absent_count = 0;          // 缺勤计数
+  int seven_days_bad_count = 0;  // 7天内的异常计数
+  int consecutive_bad_count = 0; // 连续迟到或早退的计数
+  // 检查连续迟到早退和 7 天内的异常情况
+  for (size_t i = 0; i < records.size(); ++i) {
+    // 缺勤计数
+    if (records[i] == "absent") {
+      absent_count++;
+    }
+    // 检查缺勤次数是否超过 1
+    if (absent_count > 1) {
+      return false;
+    }
+    // 检查 7 天内的异常状态
+    if (IsAbnormalAttendance(records[i])) {
+      seven_days_bad_count++;
+    }
+    // 处理连续的迟到或者早退
+    if (records[i] == "late" || records[i] == "leaveearly") {
+      consecutive_bad_count++;
+      // 如果发现连续
+      if (consecutive_bad_count > 1) {
+        return false;
+      }
+    } else {
+      consecutive_bad_count = 0;
+    }
+    // 检查 7 天窗口的异常计数
+    if (i >= 7) {
+      // 如果超出窗口的考勤是异常的，降低异常计数
+      if (IsAbnormalAttendance(records[i - 7])) {
+        seven_days_bad_count--;
+      }
+    }
+    // 如果 7 天内异常达到三次，则不合法
+    if (seven_days_bad_count > 3) {
+      return false;
+    }
+  }
+  return true;
+}
+int main() {
+  int n;
+  cin >> n;
+  cin.ignore();
+
+  for (int i = 0; i < n; ++i) {
+    string s;
+    getline(cin, s);
+    stringstream ss(s);
+    vector<string> records;
+    string status;
+
+    while (ss >> status) {
+      records.push_back(status);
+    }
+    cout << (CheckAttendance(records) ? "true" : "false") << " ";
+  }
+  cout << endl;
+  return 0;
+}
 ```
 
 #### 字符串变换最小字符串
