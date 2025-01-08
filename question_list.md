@@ -3754,6 +3754,80 @@ bcbcbc
 
 这个示例中，字符串 "bcbcbc" 本身就是最长的，因为'o'都出现了 0 次。
 
+难度：中等
+
+标签：字符串、滑动窗口、脑筋急转弯、前缀和、哈希表
+
+(18/23) 5 个超时
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  string s;
+  cin >> s;
+  // 处理空字符串
+  if (s.empty()) {
+    cout << 0 << endl;
+    return 0;
+  }
+  // 扩展字符串，模拟环形
+  s += s;
+  int n = s.size() / 2;
+  int max_len = 0;
+  // 遍历所有可能的子字符串
+  for (int i = 0; i < n; ++i) {
+    int o_count = 0;
+    int current_len = 0;
+    // 从当前位置开始统计
+    for (int j = i; j < i + n; ++j) {
+      // 统计 'o' 字符数量
+      if (s[j] == 'o') {
+        o_count++;
+      }
+      current_len++;
+      // 如果 'o' 数量为偶数，更新最大长度
+      if (o_count % 2 == 0) {
+        max_len = max(max_len, current_len);
+      }
+    }
+  }
+  cout << max_len << endl;
+  return 0;
+}
+```
+
+
+
+找规律，100%
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  // 读取输入字符串  
+  string s;
+  cin >> s;
+
+  // 统计 'o' 的数量  
+  int o_count = 0;
+  for (char c : s) {
+    if (c == 'o') {
+      o_count++;
+    }
+  }
+
+  // 根据 'o' 数量的奇偶性返回结果  
+  cout << (o_count % 2 == 0 ? s.length() : s.length() - 1) << endl;
+
+  return 0;
+}
+```
+
 
 
 #### 判断一组不等式是否满足约束并输出最大差
