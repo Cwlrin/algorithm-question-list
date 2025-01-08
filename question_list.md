@@ -3126,6 +3126,54 @@ int main() {
 
 标签：堆（优先队列）、数组
 
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  int size1, size2;
+  cin >> size1;
+  vector<int> array1(size1);
+  for (int i = 0; i < size1; ++i) {
+    cin >> array1[i];
+  }
+  cin >> size2;
+  vector<int> array2(size2);
+  for (int i = 0; i < size2; ++i) {
+    cin >> array2[i];
+  }
+  int k;
+  cin >> k;
+  // 最小堆来存储元素对及其对应的和
+  priority_queue<pair<int, pair<int, int> >, vector<pair<int, pair<int, int> > >
+                 , greater<pair<int, pair<int, int> > > > min_heap;
+  // 将所有可能的初始对放入堆中
+  for (int i = 0; i < size1; ++i) {
+    // 先将每个 array1 的元素与 array2 的第一个元素配对
+    min_heap.push({array1[i] + array2[0], {i, 0}});
+  }
+  int min_sum = 0;
+  // 取出 k 对
+  for (int count = 0; count < k; ++count) {
+    auto current_pair = min_heap.top();
+    min_heap.pop();
+    min_sum += current_pair.first; // 加上当前最小和
+    int index1 = current_pair.second.first;
+    int index2 = current_pair.second.second;
+    // 如果当前对的第二个元素还有更多可能的配对，进行入堆
+    if (index2 + 1 < size2) {
+      min_heap.push({array1[index1] + array2[index2 + 1],
+                     {index1, index2 + 1}});
+    }
+  }
+  cout << min_sum << endl;
+  return 0;
+}
+```
+
+
+
 #### 计算面积
 
 **题目描述**：
@@ -3561,6 +3609,73 @@ int main() {
 ```
 
 
+
+难度：中等
+
+
+
+标签：数组、字符串、链表、队列
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  int k;
+  cin >> k;
+  int n;
+  cin >> n;
+  cin.ignore();
+  // 存储输入数组
+  vector<vector<int> > arrays(n);
+  // 读取数组
+  for (int i = 0; i < n; ++i) {
+    string line;
+    getline(cin, line);
+    stringstream ss(line);
+    string num;
+    while (getline(ss, num, ',')) {
+      // 跳过空字符串
+      if (!num.empty()) {
+        arrays[i].push_back(stoi(num));
+      }
+    }
+  }
+  // 存储结果的数组
+  vector<int> result;
+  // 记录每个数组的当前索引
+  vector<int> indices(n, 0);
+  // 标记是否仍有未处理完的数组
+  bool has_remaining = true;
+  // 循环知道所有数组处理完毕
+  while (has_remaining) {
+    has_remaining = false;
+    // 遍历每个数组
+    for (int i = 0; i < n; ++i) {
+      // 当前数组还有元素
+      if (indices[i] < arrays[i].size()) {
+        has_remaining = true;
+        // 尝试读取 k 个元素
+        int count = 0;
+        while (count < k && indices[i] < arrays[i].size()) {
+          result.push_back(arrays[i][indices[i]]);
+          indices[i]++;
+          count++;
+        }
+      }
+    }
+  }
+  for (int i = 0; i < result.size(); ++i) {
+    cout << result[i];
+    if (i < result.size() - 1) {
+      cout << ',';
+    }
+  }
+  cout << endl;
+  return 0;
+}
+```
 
 
 
