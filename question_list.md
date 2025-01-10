@@ -4498,6 +4498,65 @@ int main() {
 
 
 
+
+
+难度：中等
+
+标签：排序、数组
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  // 输入酒店数量、筛选数量和目标价位
+  int n, k, x;
+  cin >> n >> k >> x;
+
+  // 读取酒店价格数组
+  vector<int> hotels(n);
+  for (int i = 0; i < n; i++) {
+    cin >> hotels[i];
+  }
+
+  // 自定义比较函数
+  // 优先按照与目标价位的绝对差值排序
+  // 差值相同时按照价格升序排序
+  auto cmp = [x](int a, int b) {
+    int diff_a = abs(a - x);
+    int diff_b = abs(b - x);
+
+    // 差值不同时，按差值升序
+    if (diff_a != diff_b) {
+      return diff_a < diff_b;
+    }
+
+    // 差值相同时，按价格升序
+    return a < b;
+  };
+
+  // 对酒店价格数组排序
+  sort(hotels.begin(), hotels.end(), cmp);
+
+  // 选择前 k 个元素
+  vector<int> selected(hotels.begin(), hotels.begin() + k);
+
+  // 对选定元素升序排序
+  sort(selected.begin(), selected.end());
+
+  // 输出结果
+  for (int price : selected) {
+    cout << price << " ";
+  }
+  cout << endl;
+
+  return 0;
+}
+```
+
+
+
 #### 找数字
 
 
@@ -4560,6 +4619,82 @@ int main() {
 
 ```
 [[-1, 4, 2, 3, 3], [1, 1, -1, -1, 4], [1, 1, 2, 3, 2]]
+```
+
+
+
+
+
+难度：困难
+
+标签：数组、矩阵
+
+```cpp
+#include <climits>
+#include <cmath>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+  // 读取矩阵行数和列数
+  int rows, cols;
+  cin >> rows >> cols;
+
+  // 创建二维数组存储输入
+  vector<vector<int>> nums(rows, vector<int>(cols));
+
+  // 读取矩阵元素
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      cin >> nums[i][j];
+    }
+  }
+
+  // 创建结果矩阵
+  vector<vector<int>> result(rows, vector<int>(cols));
+
+  // 遍历每个元素
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      int min_dist = INT_MAX;
+
+      // 在整个矩阵中查找值相同的元素
+      for (int x = 0; x < rows; x++) {
+        for (int y = 0; y < cols; y++) {
+          // 跳过自身
+          if (i == x && j == y) continue;
+
+          // 找到值相同的元素
+          if (nums[i][j] == nums[x][y]) {
+            // 计算曼哈顿距离
+            int dist = abs(i - x) + abs(j - y);
+            // 更新最小距离
+            min_dist = min(min_dist, dist);
+          }
+        }
+      }
+
+      // 更新结果矩阵
+      result[i][j] = (min_dist == INT_MAX) ? -1 : min_dist;
+    }
+  }
+
+  cout << "[";
+  for (int i = 0; i < rows; i++) {
+    cout << "[";
+    for (int j = 0; j < cols; j++) {
+      cout << result[i][j];
+      if (j < cols - 1) cout << ", ";
+    }
+    cout << "]";
+    if (i < rows - 1) cout << ", ";
+  }
+  cout << "]" << endl;
+
+  return 0;
+}
 ```
 
 
