@@ -5069,6 +5069,166 @@ int main() {
 
 说明：9 超出范围
 
+难度：中等
+
+标签：数学、位运算
+
+暴力，部分超时
+
+```cpp
+#include <cmath>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+  // 读取输入的位数和序号
+  int digit_count, sequence_index;
+  cin >> digit_count >> sequence_index;
+
+  // 输入合法性检查
+  if (digit_count < 3 || digit_count > 7) {
+    cout << -1 << endl;
+    return 0;
+  }
+
+  // 初始化存储水仙花数的容器
+  vector<int> narcissistic_numbers;
+
+  // 计算 n 位数的起始和结束范围
+  int start = pow(10, digit_count - 1);
+  int end = pow(10, digit_count) - 1;
+
+  // 遍历范围查找水仙花数
+  for (int number = start; number <= end; number++) {
+    // 水仙花数判断的局部变量
+    int temp_number = number;
+    int sum = 0;
+
+    // 逐位计算 n 次方和
+    while (temp_number > 0) {
+      int digit = temp_number % 10;
+      sum += pow(digit, digit_count);
+      temp_number /= 10;
+    }
+
+    // 判断是否为水仙花数并记录
+    if (sum == number) {
+      narcissistic_numbers.push_back(number);
+    }
+  }
+
+  // 处理查找结果
+  if (narcissistic_numbers.empty()) {
+    // 没有找到水仙花数
+    cout << -1 << endl;
+  } else if (sequence_index < narcissistic_numbers.size()) {
+    // 正常返回第 m 个水仙花数
+    cout << narcissistic_numbers[sequence_index] << endl;
+  } else {
+    // m 超过水仙花数个数，返回最后一个水仙花数和 m 的乘积
+    cout << narcissistic_numbers.back() * sequence_index << endl;
+  }
+
+  return 0;
+}
+```
+
+
+
+剪枝+快速幂
+
+
+
+```cpp
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+  // 读取输入的位数和序号
+  int digit_count, sequence_index;
+  cin >> digit_count >> sequence_index;
+
+  // 输入合法性检查
+  if (digit_count < 3 || digit_count> 7) {
+    cout << -1 << endl;
+    return 0;
+  }
+
+  // 序号合法性检查
+  if (sequence_index < 0) {
+    cout << -1 << endl;
+    return 0;
+  }
+
+  // 预计算最大可能值
+  int upper_bound = pow(9, digit_count) * digit_count;
+
+  // 存储水仙花数的容器
+  vector<long long> narcissistic_numbers;
+
+  // 计算 n 位数的起始和结束范围
+  long long start = pow(10, digit_count - 1);
+  long long end = min(static_cast<long long>(pow(10, digit_count) - 1),
+                      static_cast<long long>(upper_bound));
+
+  // 快速幂预处理
+  vector<int> power_cache(10);
+  for (int i = 0; i < 10; ++i) {
+    power_cache[i] = pow(i, digit_count);
+  }
+
+  // 遍历范围查找水仙花数
+  for (long long number = start; number <= end; number++) {
+    // 快速剪枝：数字各位数字最大和限制
+    long long temp = number;
+    long long sum = 0;
+    bool valid = true;
+
+    while (temp> 0) {
+      int digit = temp % 10;
+      sum += power_cache[digit];
+
+      // 提前剪枝：和已经超过原数
+      if (sum> number) {
+        valid = false;
+        break;
+      }
+
+      temp /= 10;
+    }
+
+    // 判断是否为水仙花数并记录
+    if (valid && sum == number) {
+      narcissistic_numbers.push_back(number);
+    }
+  }
+
+  // 处理查找结果
+  if (narcissistic_numbers.empty()) {
+    cout << -1 << endl;
+  } else if (sequence_index < narcissistic_numbers.size()) {
+    cout <<narcissistic_numbers[sequence_index] << endl;
+  } else {
+    // 处理大索引情况
+    long long last_narcissistic = narcissistic_numbers.back();
+    // 使用 long long 避免溢出
+    long long result =
+        last_narcissistic * static_cast<long long>(sequence_index);
+    cout << result << endl;
+  }
+
+  return 0;
+}
+```
+
+
+
 #### VLAN 资源池
 
 
@@ -5155,6 +5315,83 @@ VLAN 是一种对局域网设备进行逻辑划分的技术，为了标识不同
 
 
 说明：原 VLAN 资源池中有 VLAN 1、2、3，5，申请的 VLAN 10 不在原资源池中，将原资源池按照题目描述格式并按升序排序后输出的结果为 1-3,5。
+
+难度：中等
+
+标签：字符串、排序
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  // 读取 VLAN 资源池字符串和申请的 VLAN
+  string vlan_pool_str;
+  int requested_vlan;
+  getline(cin, vlan_pool_str);
+  cin >> requested_vlan;
+
+  // 存储所有 VLAN 的集合
+  vector<int> vlan_set;
+
+  // 解析 VLAN 资源池字符串
+  stringstream ss(vlan_pool_str);
+  string segment;
+  while (getline(ss, segment, ',')) {
+    // 检查是否为范围
+    size_t dash_pos = segment.find('-');
+    if (dash_pos != string::npos) {
+      // 解析范围
+      int start = stoi(segment.substr(0, dash_pos));
+      int end = stoi(segment.substr(dash_pos + 1));
+
+      // 添加范围内的所有 VLAN
+      for (int i = start; i <= end; ++i) {
+        vlan_set.push_back(i);
+      }
+    } else {
+      // 添加单个 VLAN
+      vlan_set.push_back(stoi(segment));
+    }
+  }
+
+  // 排序并去重
+  sort(vlan_set.begin(), vlan_set.end());
+  vlan_set.erase(unique(vlan_set.begin(), vlan_set.end()), vlan_set.end());
+
+  // 移除申请的 VLAN（如果存在）
+  auto it = find(vlan_set.begin(), vlan_set.end(), requested_vlan);
+  if (it != vlan_set.end()) {
+    vlan_set.erase(it);
+  }
+
+  // 重新格式化输出
+  string result;
+  for (size_t i = 0; i < vlan_set.size(); ++i) {
+    // 寻找连续范围的起始和结束
+    int start = vlan_set[i], end = vlan_set[i];
+    while (i + 1 < vlan_set.size() && vlan_set[i + 1] == end + 1) {
+      end = vlan_set[++i];
+    }
+
+    // 构造输出片段
+    if (!result.empty()) result += ",";
+    if (start == end) {
+      result += to_string(start);
+    } else {
+      result += to_string(start) + "-" + to_string(end);
+    }
+  }
+
+  // 输出结果
+  cout << result << endl;
+
+  return 0;
+}
+```
+
+
 
 #### 货币单位换算
 
