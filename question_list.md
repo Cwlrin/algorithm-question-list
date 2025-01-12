@@ -5944,6 +5944,66 @@ bb12-34aa
 
 说明：1+2+(-34) = 31
 
+难度：中等
+
+标签：字符串、贪心
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  string s;
+  cin >> s;
+
+  long long sum = 0;  // 使用long long避免溢出
+  int len = s.length();
+  int i = 0;
+
+  while (i < len) {
+    // 跳过非数字且非负号的字符
+    if (!isdigit(s[i]) && s[i] != '-') {
+      i++;
+      continue;
+    }
+
+    // 处理负数
+    if (s[i] == '-') {
+      i++;  // 移到负号后面
+      string num;
+      // 收集负号后的所有数字
+      while (i < len && isdigit(s[i])) {
+        num += s[i];
+        i++;
+      }
+      // 如果负号后有数字
+      if (!num.empty()) {
+        // 去除前导零
+        while (num.length() > 1 && num[0] == '0') {
+          num = num.substr(1);
+        }
+        sum -= stoll(num);
+      }
+    }
+    // 处理正数
+    else if (isdigit(s[i])) {
+      // 对于正数，逐位相加
+      while (i < len && isdigit(s[i])) {
+        sum += (s[i] - '0');
+        i++;
+      }
+    }
+  }
+
+  cout << sum << endl;
+  return 0;
+}
+```
+
+
+
+
+
 #### 螺旋数字矩阵
 
 **题目描述**：
@@ -6035,6 +6095,69 @@ bb12-34aa
 
 
 说明：9 个数字写出 4 行，最少需要 3 列
+
+难度:中等
+
+标签：数组
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int n, m;
+  cin >> n >> m;
+
+  // 计算最小列数（向上取整）
+  int cols = (n + m - 1) / m;
+
+  // 创建矩阵并初始化为*
+  vector<vector<string>> matrix(m, vector<string>(cols, "*"));
+
+  // 定义四个方向：右、下、左、上
+  const int dx[] = {0, 1, 0, -1};
+  const int dy[] = {1, 0, -1, 0};
+
+  int x = 0, y = 0;  // 当前位置
+  int dir = 0;       // 当前方向
+  int num = 1;       // 当前要填入的数字
+
+  // 填充数字
+  while (num <= n) {
+    // 填入当前数字
+    matrix[x][y] = to_string(num++);
+
+    // 计算下一个位置
+    int nextX = x + dx[dir];
+    int nextY = y + dy[dir];
+
+    // 检查是否需要改变方向
+    if (nextX < 0 || nextX >= m || nextY < 0 || nextY >= cols ||
+        matrix[nextX][nextY] != "*") {
+      dir = (dir + 1) % 4;
+      nextX = x + dx[dir];
+      nextY = y + dy[dir];
+    }
+
+    x = nextX;
+    y = nextY;
+  }
+
+  // 输出矩阵
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < cols; j++) {
+      if (j > 0)
+        cout << " ";
+      cout << matrix[i][j];
+    }
+    cout << endl;
+  }
+
+  return 0;
+}
+```
+
+
 
 
 
