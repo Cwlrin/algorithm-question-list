@@ -7261,6 +7261,184 @@ int main() {
 }
 ```
 
+#### 最多提取子串数目
+
+**题目描述**：
+
+给定 [a-z]，26个英文字母小写字符串组成的字符串 A 和 B，其中 A 可能存在重复字母，B 不会存在重复字母，现从字符串 A 中按规则挑选一些字母，可以组成字符串B。
+
+挑选规则如下：
+
+1. 同一个位置的字母只能挑选一次
+
+2. 被挑选字母的相对先后顺序不能被改变
+
+求最多可以同时从 A 中挑选多少组能组成 B 的字符串。
+
+**输入描述**：
+
+输入为 2 行，第 1 行输入字符串 A，第 2 行输入字符串 B，行首行尾没有多余空格，其中：
+
+1. A、B 均由 [a-z] 26个英文小写字母组成
+
+2. 0 < A.length < 100，A 中可能包含重复字母
+
+3. 0 < B.length < 10，B 中不会出现重复字母
+
+**输出描述**：
+
+输出 1 行，包含 1 个数字，表示最多可以同时从 A 中挑选多少组能组成 B 的字符串
+
+行末没有多余空格
+
+无需验证输入格式和输入数据合法性
+**用例 1**：
+
+输入：
+
+```
+badc
+bac
+```
+
+输出：
+
+```
+1
+```
+
+说明：从字符串A（"badc"）中可以按字母相对先后顺序取出字符串B（"bac"）
+
+**用例 2**：
+
+输入：
+
+```
+badc
+abc
+```
+
+输出：
+
+```
+0
+```
+
+说明：从字符串A（"badc"）中无法按字母相对先后顺序取出字符串B（"bac"）
+
+**用例 3**：
+
+输入：
+
+```
+aabbcxd
+abcd
+```
+
+输出：
+
+```
+1
+```
+
+说明：从字符串A（"aabbcxd"）中挑选一组B（"abcd"）后，A中剩余字符串为 "abx"，无法再挑选出 "abcd"
+
+**用例 4**：
+
+输入：
+
+```
+ababcecfdc
+abc
+```
+
+输出：
+
+```
+2
+```
+
+说明：
+
+从按如下步骤（步骤不唯一），可以同时从字符串A（"ababcecfdc"）中最多取出两个B（"abc"），其中颜色标注的是每步提取的字母：
+
+![img](https://hydro.ac/d/HWOD2023/p/35/file/mZPIagqxZn6-S0bU0-3QB.png)
+
+剩余的 "efdc" 无法继续提取 "abc"，结果为2
+
+**用例 5**：
+
+输入：
+
+```
+aaa
+a
+```
+
+输出：
+
+```
+3
+```
+
+说明：从字符串A（"aaa"）中可以挑选出3个字符串B（"a"）
+
+难度：中等
+
+标签：哈希表、字符串、贪心、动态规划
+
+
+
+```cpp
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+using namespace std;
+
+int main() {
+  // 读取输入字符串
+  string source, target;
+  cin >> source >> target;
+
+  // 记录目标字符串中每个字符的所有位置
+  unordered_map<char, vector<int>> charPositions;
+  for (int i = 0; i < target.length(); ++i) {
+    charPositions[target[i]].push_back(i);
+  }
+
+  // 记录每个字符匹配的计数
+  vector<int> matchCount(target.length(), 0);
+
+  // 遍历源字符串
+  for (char currentChar : source) {
+    // 检查当前字符是否在目标字符串中
+    if (charPositions.count(currentChar)) {
+      // 遍历该字符在目标字符串中的位置
+      for (int pos : charPositions[currentChar]) {
+        // 匹配条件：
+        // 1. 首个字符直接匹配
+        // 2. 非首个字符需要前一个位置已经匹配
+        if (pos == 0 || matchCount[pos - 1] > matchCount[pos]) {
+          matchCount[pos]++;
+          break;  // 匹配成功后跳出
+        }
+      }
+    }
+  }
+
+  // 输出最终匹配数量
+  cout << matchCount.back() << endl;
+
+  return 0;
+}
+```
+
+
+
+
+
 ### 200 分
 
 #### 中文分词模拟器
