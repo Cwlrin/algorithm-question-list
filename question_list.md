@@ -9297,45 +9297,172 @@ int main() {
 }
 ```
 
+#### 攀登者 2
+
 **题目描述**：
+
+攀登者喜欢寻找各种地图，并且尝试攀登到最高的山峰。
+
+地图表示为一维数组，数组的索引代表水平位置，数组的元素代表相对海拔高度。其中数组元素 0 代表地面。
+
+例如：[0,1,2,4,3,1,0,0,1,2,3,1,2,1,0]，代表如下图所示的地图，地图中有两个山脉位置分别为 1,2,3,4,5 和 8,9,10,11,12,13，最高峰高度分别为 4,3。最高峰位置分别为 3,10。
+
+一个山脉可能有多座山峰(高度大于相邻位置的高度，或在地图边界且高度大于相邻的高度)。
+
+![image](https://hydro.ac/d/HWOD2023/p/379/file/NIgOzDXZ9F4Fs059AtwZs.png)
+
+登山时会消耗登山者的体力(整数)，
+
+- 上山时，消耗相邻高度差两倍的体力
+- 下山时，消耗相邻高度差一倍的体力
+- 平地不消耗体力
+
+登山者体力消耗到零时会有生命危险。
+
+例如，上图所示的山峰：
+
+- 从索引 0，走到索引 1，高度差为 1，需要消耗 2 \* 1 = 2 的体力，
+- 从索引 2，走到索引 3，高度差为 2，需要消耗 2 \* 2 = 4 的体力。
+- 从索引 3，走到索引 4，高度差为 1，需要消耗 1 \* 1 = 1 的体力。
+
+攀登者想要评估一张地图内有多少座山峰可以进行攀登，且可以安全返回到地面，且无生命危险。
+
+例如上图中的数组，有 3 个不同的山峰，登上位置在 3 的山可以从位置 0 或者位置 6 开始，从位置 0 登到山顶需要消耗体力 1 * 2 + 1 * 2 + 2 * 2 = 8，从山顶返回到地面 0 需要消耗体力 2 * 1 + 1 * 1 + 1 * 1 = 4 的体力，按照登山路线 0 → 3 → 0 需要消耗体力 12。攀登者至少需要 12 以上的体力（大于 12）才能安全返回。
 
 **输入描述**：
 
+第一行输入为地图一维数组
+
+第二行输入为攀登者的体力
+
 **输出描述**：
+
+确保可以安全返回地面，且无生命危险的情况下，地图中有多少山峰可以攀登。
+
+本题考试时为核心代码模式，非 ACM 模式，即无需自己解析输入数据。
 
 **用例 1**：
 
 输入：
 
 ```
-10 9
+0,1,4,3,1,0,0,1,2,3,1,2,1,0
+13
 ```
 
 输出：
 
 ```
-910
+3
 ```
 
-说明：
+说明：登山者只能登上位置10和12的山峰，7 → 10 → 7，14 → 12 → 14
 
 **用例 2**：
 
 输入：
 
 ```
-10 9
+1,4,3
+999
 ```
 
 输出：
 
 ```
-910
+0
 ```
+
+说明：没有合适的起点和终点
 
 难度：中等
 
-标签：贪心、排序、字符串、数组
+标签：双指针、贪心、动态规划
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+ public:
+  int count_climbable(vector<int>& heights, int strength) {
+    unordered_set<int> climbable_peaks;
+
+    // 正向和逆向两次遍历
+    explore_peaks(heights, strength, climbable_peaks, true);
+
+    // 逆序后再次遍历
+    reverse(heights.begin(), heights.end());
+    explore_peaks(heights, strength, climbable_peaks, false);
+
+    return climbable_peaks.size();
+  }
+
+ private:
+  void explore_peaks(vector<int>& heights, int strength,
+                     unordered_set<int>& climbable_peaks, bool is_forward) {
+    int n = heights.size();
+
+    // 找到第一个地面起点
+    int start_index = 0;
+    while (start_index < n && heights[start_index] != 0) {
+      start_index++;
+    }
+
+    int cumulative_cost = 0;
+
+    for (int i = start_index + 1; i < n; i++) {
+      // 重置起点
+      if (heights[i] == 0) {
+        cumulative_cost = 0;
+        continue;
+      }
+
+      int height_diff = heights[i] - heights[i - 1];
+
+      // 根据坡度计算体力消耗
+      if (height_diff > 0) {
+        // 上坡
+        cumulative_cost += height_diff * 3;
+
+        // 判断是否为山峰
+        if (i + 1 >= n || heights[i] > heights[i + 1]) {
+          if (cumulative_cost < strength) {
+            // 根据遍历方向映射正确的山峰索引
+            int peak_index = is_forward ? i : (n - i - 1);
+            climbable_peaks.insert(peak_index);
+          }
+        }
+      } else if (height_diff < 0) {
+        // 下坡
+        cumulative_cost -= height_diff * 3;
+        // 下坡不可能是山峰
+      }
+    }
+  }
+};
+
+int main() {
+  vector<int> heights;
+
+  string s;
+  getline(cin, s);
+
+  stringstream ss(s);
+  string token;
+
+  while (getline(ss, token, ',')) {
+    heights.emplace_back(stoi(token));
+  }
+
+  int strength;
+  cin >> strength;
+
+  cout << Solution().count_climbable(heights, strength) << endl;
+
+  return 0;
+}
+```
 
 ## 数学
 
