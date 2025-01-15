@@ -7,7 +7,7 @@ int main() {
   cin >> N;
 
   // 输入坐标
-  set<pair<int, int>> points;  // 使用集合存储所有点
+  set<pair<int, int> > points; // 使用集合存储所有点
   for (int i = 0; i < N; i++) {
     int x, y;
     cin >> x >> y;
@@ -17,7 +17,7 @@ int main() {
   int count = 0;
 
   // 遍历所有点对以求正方形
-  vector<pair<int, int>> point_list(points.begin(), points.end());
+  vector<pair<int, int> > point_list(points.begin(), points.end());
   for (int i = 0; i < point_list.size(); i++) {
     for (int j = i + 1; j < point_list.size(); j++) {
       // 找到 A 和 B 之间的坐标
@@ -29,8 +29,8 @@ int main() {
       int dx = x2 - x1;
       int dy = y2 - y1;
 
-      pair<int, int> pointC = {x1 - dy, y1 + dx};  // A 旋转 90 度得到 C
-      pair<int, int> pointD = {x2 - dy, y2 + dx};  // B 旋转 90 度得到 D
+      pair<int, int> pointC = {x1 - dy, y1 + dx}; // A 旋转 90 度得到 C
+      pair<int, int> pointD = {x2 - dy, y2 + dx}; // B 旋转 90 度得到 D
 
       // 检查 C 和 D 是否在 points 中
       if (points.count(pointC) && points.count(pointD)) {
