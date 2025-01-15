@@ -4,5 +4,6 @@ project(huawei)
 set(CMAKE_CXX_STANDARD 11)
 
 add_subdirectory(math)
+add_subdirectory(regex)
 add_subdirectory(sort)
 add_subdirectory(simulation)
