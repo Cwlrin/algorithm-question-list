@@ -10186,6 +10186,147 @@ int main() {
 
 
 
+#### 勾股数元组
+
+
+
+**题目描述**：
+
+如果3个正整数(a,b,c)满足a^2 + b^2 = c^2的关系，则称(a,b,c)为勾股数（著名的勾三股四弦五），
+
+为了探索勾股数的规律，我们定义如果勾股数(a,b,c)之间两两互质（即a与b，a与c，b与c之间均互质，没有公约数），则其为勾股数元组（例如(3,4,5)是勾股数元组，(6,8,10)则不是勾股数元组）。
+
+请求出给定范围[N,M]内，所有的勾股数元组。
+
+**输入描述**：
+
+起始范围N，1 <= N <= 10000
+
+结束范围M，N < M <= 10000
+
+**输出描述**：
+
+1. a,b,c请保证a < b < c,输出格式：a b c；
+2. 多组勾股数元组请按照a升序，b升序，最后c升序的方式排序输出；
+3. 给定范围中如果找不到勾股数元组时，输出”NA“。
+
+**用例 1**：
+
+输入：
+
+```
+1
+20
+```
+
+输出：
+
+```
+3 4 5
+5 12 13
+8 15 17
+```
+
+说明：
+
+[1,20]范围内勾股数有：(3 4 5)，(5 12 13)，(6 8 10)，(8 15 17)，(9 12 15)，(12 16 20)；
+
+其中，满足(a,b,c)之间两两互质的勾股数元组有：(3 4 5)，(5 12 13)，(8 15 17);
+
+按输出描述中顺序要求输出结果。
+
+**用例 2**：
+
+输入：
+
+```
+5
+10
+```
+
+输出：
+
+```
+NA
+```
+
+说明：
+
+[5,10]范围内勾股数有：(6 8 10)；
+
+其中，没有满足(a,b,c)之间两两互质的勾股数元组；
+
+给定范围中找不到勾股数元组，输出”NA“
+
+难度：中等
+
+标签：数学、枚举
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// 自定义函数用于计算最大公约数（GCD）  
+int gcd(int a, int b) {
+  while (b != 0) {
+    int temp = b;
+    b = a % b;
+    a = temp;
+  }
+  return a;
+}
+
+// 用于检查三个数字是否两两互质  
+bool AreCoprime(int a, int b, int c) {
+  return gcd(a, b) == 1 && gcd(a, c) == 1 && gcd(b, c) == 1;
+}
+
+int main() {
+  int n, m;
+  cin >> n >> m; // 输入范围  
+
+  vector<tuple<int, int, int> > coprime_tuples; // 用于存放满足条件的勾股数元组  
+
+  // 查找 (a, b, c) 所有可能的组合  
+  for (int c = n; c <= m; ++c) {
+    for (int a = n; a < c; ++a) {
+      int b_square = c * c - a * a;             // 计算 b 的平方  
+      int b = static_cast<int>(sqrt(b_square)); // 计算 b  
+
+      // 检查 b 是否合适  
+      if (b > a && b <= m && b * b == b_square) {
+        // b 应该大于 a，且小于等于 M  
+        // 检查是否两两互质  
+        if (AreCoprime(a, b, c)) {
+          coprime_tuples.emplace_back(a, b, c); // 记录元组  
+        }
+      }
+    }
+  }
+
+  // 如果没有找到结果，输出 NA  
+  if (coprime_tuples.empty()) {
+    cout << "NA" << endl;
+    return 0;
+  }
+
+  // 排序元组  
+  sort(coprime_tuples.begin(), coprime_tuples.end());
+
+  // 输出结果  
+  for (const auto& t : coprime_tuples) {
+    int a, b, c;
+    tie(a, b, c) = t;
+    cout << a << " " << b << " " << c << endl;
+  }
+
+  return 0;
+}
+```
+
+
+
 ## 正则匹配
 
 **题目描述**：
