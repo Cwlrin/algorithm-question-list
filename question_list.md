@@ -10645,29 +10645,194 @@ int main() {
 
 ## 分治递归
 
+### 100 分
+
+#### 分披萨
 
 
 **题目描述**：
 
+"吃货"和"馋嘴"两人到披萨店点了一份铁盘（圆形）披萨，并嘱咐店员将披萨按放射状切成大小相同的偶数个小块。但是粗心的服务员将披萨切成了每块大小都完全不同奇数块，且肉眼能分辨出大小。
+
+由于两人都想吃到最多的披萨，他们商量了一个他们认为公平的分法：从"吃货"开始，轮流取披萨。除了第一块披萨可以任意选取外，其他都必须从缺口开始选。
+
+他俩选披萨的思路不同。"馋嘴"每次都会选最大块的披萨，而且"吃货"知道"馋嘴"的想法。
+
+已知披萨小块的数量以及每块的大小，求"吃货"能分得的最大的披萨大小的总和。
+
 **输入描述**：
 
+第 1 行为一个正整数奇数 N，表示披萨小块数量。
+
+3 ≤ N < 500
+接下来的第 2 行到第 N + 1 行（共 N 行），每行为一个正整数，表示第 i 块披萨的大小
+
+1 ≤ i ≤ N
+披萨小块从某一块开始，按照一个方向次序顺序编号为 1 ~ N
+
+每块披萨的大小范围为 [1, 2147483647]
+
 **输出描述**：
+
+"吃货"能分得到的最大的披萨大小的总和。
 
 **用例 1**：
 
 输入：
 
 ```
-10 9
+5
+8
+2
+10
+5
+7
 ```
 
 输出：
 
 ```
-910
+19
 ```
 
 说明：
+
+此例子中，有 5 块披萨。每块大小依次为 8、2、10、5、7。
+
+按照如下顺序拿披萨，可以使"吃货"拿到最多披萨：
+
+"吃货" 拿大小为 10 的披萨
+
+"馋嘴" 拿大小为 5 的披萨
+
+"吃货" 拿大小为 7 的披萨
+
+"馋嘴" 拿大小为 8 的披萨
+
+"吃货" 拿大小为 2 的披萨
+
+至此，披萨瓜分完毕，"吃货"拿到的披萨总大小为 10 + 7 + 2 = 19
+
+可能存在多种拿法，以上只是其中一种。
+
+
+难度：困难
+
+标签：动态规划、递归、记忆化搜索、博弈论
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAXN = 510;
+int n;
+int pizza[MAXN];
+
+// 记忆化数组，存储每个状态的最优解
+vector<vector<long long> > memo;
+
+// 环形数组边界处理
+inline int bound(int x) {
+  return (x + n) % n;
+}
+
+// 递归求解最大披萨分配
+long long solve(int start, int remain, bool is_gamer) {
+  // 如果只剩最后一块，吃货必定获得
+  if (remain == 1) {
+    return is_gamer ? pizza[start] : 0;
+  }
+
+  // 检查是否已缓存
+  if (memo[start][remain] != -1) {
+    return memo[start][remain];
+  }
+
+  long long result;
+  if (!is_gamer) {
+    // 馋嘴回合，选择最大块
+    const int left_idx = bound(start);
+    const int right_idx = bound(start + remain - 1);
+
+    result = pizza[left_idx] > pizza[right_idx]
+               ? solve(bound(start + 1), remain - 1, true)
+               : solve(start, remain - 1, true);
+  } else {
+    // 吃货回合，选择最优解
+    const long long take_left = solve(bound(start + 1), remain - 1, false) +
+                                pizza[start];
+    const long long take_right = solve(start, remain - 1, false) + pizza[bound(
+                                     start + remain - 1)];
+    result = max(take_left, take_right);
+  }
+
+  // 缓存结果
+  memo[start][remain] = result;
+  return result;
+}
+
+int main() {
+  // 输入披萨数量
+  cin >> n;
+
+  // 输入披萨大小
+  for (int i = 0; i < n; i++) {
+    cin >> pizza[i];
+  }
+
+  // 初始化记忆化数组
+  memo = vector<vector<long long> >(n, vector<long long>(n + 1, -1));
+
+  long long max_pizza = 0;
+
+  // 尝试从不同起点开始
+  for (int i = 0; i < n; i++) {
+    // 重置记忆化数组
+    for (auto& row : memo) {
+      fill(row.begin(), row.end(), -1);
+    }
+
+    // 计算从该起点开始的最大披萨值
+    max_pizza = max(max_pizza, solve(i, n, true));
+  }
+
+  // 输出最终结果
+  cout << max_pizza << endl;
+
+  return 0;
+}
+```
+
+## 回溯算法
+
+
+**题目描述**：
+
+
+
+**输入描述**：
+
+
+
+**输出描述**：
+
+
+
+**用例 1**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+
 
 **用例 2**：
 
@@ -10684,6 +10849,3 @@ int main() {
 ```
 
 说明：
-
-
-## 回溯算法
