@@ -10494,6 +10494,155 @@ int main() {
 
 
 
+### 200 分
+
+#### 文本统计分析
+
+**题目描述**：
+
+有一个文件，包含以一定规则写作的文本，请统计文件中包含的文本数量。
+
+规则如下：
+
+1. 文本以 ";" 分隔，最后一条可以没有 ";" ，但空文本不能算语句，比如
+
+   > COMMAND A; ;
+
+   只能算一条语句。 注意，无字符/空白字符/制表符都算作"空"文本；
+
+2. 文本可以跨行，比如下面，是一条文本，而不是三条
+
+   > COMMAND A
+   >
+   > AND
+   >
+   > COMMAND B;
+
+3. 文本支持字符串，字符串为成对的单引号(')或者成对的双引号(")，字符串可能出现用转义字符(\)处理的单双引号("your input is\"")和转义字符本身，比如
+
+   > COMMAND A "Say \"hello\"";
+
+4. 支持注释，可以出现在字符串之外的任意位置注释以”--“开头，到换行结束，比如
+
+   > COMMAND A; -- this is comment
+   >
+   > COMMAND -- comment
+   >
+   > A AND COMMAND B;
+
+   注意字符串内的”--“，不是注释。
+
+**输入描述**：
+
+文本文件
+
+**输出描述**：
+
+包含的文本数量
+
+**用例 1**：
+
+输入：
+
+```
+COMMAND TABLE IF EXISTS "UNITED STATE";
+COMMAND A GREAT (
+    ID ADSAB,
+    download_length INTE-GER,  -- test
+    file_name TEXT,
+    guid TEXT,
+    mime_type TEXT,
+    notifica-tionid INTEGER,
+    original_file_name TEXT,
+    pause_reason_type INTEGER,
+    resumable_flag INTEGER,
+    start_time INTEGER,
+    state INTEGER,
+    folder TEXT,
+    path TEXT,
+    total_length INTE-GER,
+    url TEXT
+);
+```
+
+输出：
+
+```
+2
+```
+
+难度：中等
+算法：字符串、模拟
+
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int main() {
+  string line;
+  string text;
+  bool is_single_open = false;
+  bool is_double_open = false;
+
+  // 读取所有行
+  while (getline(cin, line)) {
+    for (size_t i = 0; i < line.size(); ++i) {
+      // 处理单引号
+      if (line[i] == '\'' && (i == 0 || line[i-1] != '\\')) {
+        is_single_open = !is_single_open;
+      }
+
+      // 处理双引号
+      if (line[i] == '"' && (i == 0 || line[i-1] != '\\')) {
+        is_double_open = !is_double_open;
+      }
+
+      // 处于字符串内部，忽略字符串内容
+      if (is_single_open || is_double_open) continue;
+
+      // 处理注释
+      if (line[i] == '-' && i + 1 < line.size() && line[i+1] == '-') {
+        break; // 遇到注释，停止处理当前行后续字符
+      }
+
+      // 跳过空白字符
+      if (line[i] == ' ' || line[i] == '\t') continue;
+
+      // 记录有效文本
+      text += line[i];
+    }
+  }
+
+  // 如果最后一条没有分号，追加分号
+  if (!text.empty() && text.back() != ';') {
+    text += ';';
+  }
+
+  // 统计有效文本数量
+  int count = 0;
+  bool in_text = false;
+  for (char c : text) {
+    if (c == ';') {
+      if (in_text) {
+        count++;
+      }
+      in_text = false;
+    } else if (c != ' ' && c != '\t') {
+      in_text = true;
+    }
+  }
+
+  // 输出结果
+  cout << count << endl;
+
+  return 0;
+}
+```
+
+
 ## 分治递归
 
 
@@ -10535,3 +10684,6 @@ int main() {
 ```
 
 说明：
+
+
+## 回溯算法
