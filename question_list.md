@@ -10010,6 +10010,182 @@ int main() {
 
 所以只有 0 是有效类型，类型为 0 的有 2 个数据，故输出 2。
 
+难度：中等
+
+标签：位运算、哈希表、数组
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int c, b;
+  cin >> c >> b;
+
+  vector<int> data(10);
+  unordered_map<int, int> type_count; // 记录每种有效类型的数据计数
+
+  // 输入其余10个数据
+  for (int i = 0; i < 10; i++) {
+    cin >> data[i];
+    // 拆分数据为4个字节
+    int byte1 = (data[i] >> 24) & 0xFF;
+    int byte2 = (data[i] >> 16) & 0xFF;
+    int byte3 = (data[i] >> 8) & 0xFF;
+    int byte4 = data[i] & 0xFF;
+
+    // 字节求和并取模
+    int sum = byte1 + byte2 + byte3 + byte4;
+    int result = sum % b;
+
+    // 判断有效性
+    if (result < c) {
+      type_count[result]++; // 增加该类型计数
+    }
+  }
+
+  // 找到计数最多的有效类型
+  int max_count = 0;
+  for (const auto& entry : type_count) {
+    max_count = max(max_count, entry.second);
+  }
+
+  cout << max_count << endl; // 输出最多数据的有效类型数量
+  return 0;
+}
+```
+
+
+
+
+
+#### 整数编码
+
+
+
+**题目描述**：
+
+实现一种整数编码方法，使得待编码的数字越小，编码后所占用的字节数越小。
+
+编码规则如下:
+
+1. 编码时 7 位一组，每个字节的低 7 位用于存储待编码数字的补码
+2. 字节的最高位表示后续是否还有字节，置 1 表示后面还有更多的字节，置 0 表示当前字节为最后一个字节。
+3. 采用小端序编码，低位和低字节放在低地址上。
+4. 编码结果按 16 进制数的字符格式输出，小写字母需转换为大写字母
+
+**输入描述**：
+
+输入的为一个字符串表示的非负整数
+
+**输出描述**：
+
+输出一个字符串，表示整数编码的 16 进制码流
+
+待编码的数字取值范围为 [0，1 << 64 - 1]
+
+**用例 1**：
+
+输入：
+
+```
+0
+```
+
+输出：
+
+```
+00
+```
+
+
+
+说明：输出的 16 进制字符，不足两位的前面补 0，如 00、01、02。
+
+**用例 2**：
+
+输入：
+
+```
+100
+```
+
+输出：
+
+```
+64
+```
+
+说明：100 的二进制表示为 0110 0100，只需要一个字节进行编码;
+
+字节的最高位置 0，剩余 7 位存储数字 100 的低 7 位 (110 0100) ，所以编码后的输出为 64。
+
+**用例 3**：
+
+输入：
+
+```
+1000
+```
+
+输出：
+
+```
+E807
+```
+
+1000 的二进制表示为 0011 1110 1000，至少需要两个字节进行编码;
+
+第一个字节最高位置 1，剩余的 7 位存储数字 1000 的第一个低 7 位 (1101000)，所以第一个字节的二进制为 1110 1000，即 E8;
+
+第二个字节最高位置 0，剩余的 7 位存储数字 1000 的第二个低 7 位 (0000111)，所以第一个字节的二进制为 0000 0111，即 07;
+
+采用小端序编码，所以低字节 E8 输出在前，高字节 07 输出在后。
+
+难度：中等
+
+标签：位运算、字符串
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;  
+
+int main() {  
+  string input;  
+  cin >> input; // 读取输入  
+  uint64_t number = stoull(input); // 将输入转换为无符号64位整数  
+
+  vector<uint8_t> encoded_bytes;  
+
+  // 编码过程
+  do {  
+    uint8_t byte = number & 0x7F; // 取低7位  
+    number >>= 7; // 右移7位  
+    // 如果还有更多的字节，设置最高位为1  
+    if (number != 0) {  
+      byte |= 0x80; // 设置最高位为1  
+    }  
+    encoded_bytes.push_back(byte);  
+  } while (number != 0);  
+    
+  // 使用小端序，把字节反转  
+  stringstream result;  
+  for (unsigned char encoded_byte : encoded_bytes) {
+    // 输出为16进制格式，确保每个字节占2位，不足补0，转为大写  
+    result << uppercase << setfill('0') << setw(2) << hex << static_cast<int>(encoded_byte);
+  }  
+    
+  cout << result.str() << endl; // 输出编码结果  
+
+  return 0;  
+}
+```
+
+
+
+
+
 ## 正则匹配
 
 **题目描述**：
