@@ -7,8 +7,11 @@ void convert(string& s) {
   int upper_count = 0;
 
   for (const auto& c : s) {
-    if (islower(c)) lower_count++;
-    else if (isupper(c)) upper_count++;
+    if (islower(c))
+      lower_count++;
+    else
+      if (isupper(c))
+        upper_count++;
   }
 
   if (lower_count > upper_count) {

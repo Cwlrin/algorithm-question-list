@@ -29,10 +29,10 @@ int main() {
   }
 
   // 寻找满足条件的连续空闲内存
-  int best_start = -1;      // 最佳起始位置
-  int best_diff = INT_MAX;  // 最小差值
-  int curr_start = -1;      // 当前连续空闲内存起始位置
-  int curr_size = 0;        // 当前连续空闲内存大小
+  int best_start = -1;     // 最佳起始位置
+  int best_diff = INT_MAX; // 最小差值
+  int curr_start = -1;     // 当前连续空闲内存起始位置
+  int curr_size = 0;       // 当前连续空闲内存大小
 
   for (int i = 0; i < 100; i++) {
     if (memory[i] == 0) {

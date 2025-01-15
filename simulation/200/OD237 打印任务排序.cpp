@@ -3,8 +3,8 @@
 using namespace std;
 
 struct Task {
-  int priority;  // 任务优先级
-  int index;     // 原始索引
+  int priority; // 任务优先级
+  int index;    // 原始索引
 };
 
 int main() {

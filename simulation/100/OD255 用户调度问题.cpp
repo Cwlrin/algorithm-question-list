@@ -5,7 +5,7 @@ int main() {
   int n;
   cin >> n;
 
-  vector<vector<int>> resources(n, vector<int>(3));
+  vector<vector<int> > resources(n, vector<int>(3));
   for (int i = 0; i < n; i++) {
     cin >> resources[i][0] >> resources[i][1] >> resources[i][2];
   }

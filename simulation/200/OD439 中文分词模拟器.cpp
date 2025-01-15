@@ -10,8 +10,7 @@ int main() {
   // ---------- 2. 构建可用词典 ----------
   // 这里用 multiset 或者 map 记录词频更灵活，方便控制每个词可使用几次
   // 如果只想用一次，用 set 也行，一旦匹配后就直接 erase
-  multiset<string> dictionary;
-  {
+  multiset<string> dictionary; {
     stringstream ss(dict_str);
     string w;
     while (getline(ss, w, ',')) {
@@ -52,7 +51,7 @@ int main() {
 
     // 如果没有匹配到，就把当前字符当作单字输出
     if (!matched) {
-      result.push_back(string(1, text[start]));
+      result.emplace_back(1, text[start]);
       start++;
     }
   }

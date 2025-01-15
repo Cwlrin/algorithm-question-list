@@ -67,10 +67,14 @@ int main() {
     bool satisfied = false;
     double difference = left_side - target_values[i]; // 计算差异  
 
-    if (constraints[i] == "<=") satisfied = left_side <= target_values[i];
-    else if (constraints[i] == "<") satisfied = left_side < target_values[i];
-    else if (constraints[i] == ">=") satisfied = left_side >= target_values[i];
-    else if (constraints[i] == ">") satisfied = left_side > target_values[i];
+    if (constraints[i] == "<=")
+      satisfied = left_side <= target_values[i];
+    else if (constraints[i] == "<")
+      satisfied = left_side < target_values[i];
+    else if (constraints[i] == ">=")
+      satisfied = left_side >= target_values[i];
+    else if (constraints[i] == ">")
+      satisfied = left_side > target_values[i];
     else if (constraints[i] == "=")
       satisfied = abs(left_side - target_values[i]) < 1e-9;
 

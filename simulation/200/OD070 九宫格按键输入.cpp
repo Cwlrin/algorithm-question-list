@@ -3,7 +3,7 @@
 using namespace std;
 
 int main() {
-  vector<string> dic = {" ",   ",.",  "abc",  "def", "ghi",
+  vector<string> dic = {" ", ",.", "abc", "def", "ghi",
                         "jkl", "mno", "pqrs", "tuv", "wxyz"};
 
   string input_string;

@@ -8,7 +8,7 @@ int main() {
   cin >> rows >> cols;
 
   // 创建二维数组存储输入
-  vector<vector<int>> nums(rows, vector<int>(cols));
+  vector<vector<int> > nums(rows, vector<int>(cols));
 
   // 读取矩阵元素
   for (int i = 0; i < rows; i++) {
@@ -18,7 +18,7 @@ int main() {
   }
 
   // 创建结果矩阵
-  vector<vector<int>> result(rows, vector<int>(cols));
+  vector<vector<int> > result(rows, vector<int>(cols));
 
   // 遍历每个元素
   for (int i = 0; i < rows; i++) {
@@ -29,7 +29,8 @@ int main() {
       for (int x = 0; x < rows; x++) {
         for (int y = 0; y < cols; y++) {
           // 跳过自身
-          if (i == x && j == y) continue;
+          if (i == x && j == y)
+            continue;
 
           // 找到值相同的元素
           if (nums[i][j] == nums[x][y]) {
@@ -51,10 +52,12 @@ int main() {
     cout << "[";
     for (int j = 0; j < cols; j++) {
       cout << result[i][j];
-      if (j < cols - 1) cout << ", ";
+      if (j < cols - 1)
+        cout << ", ";
     }
     cout << "]";
-    if (i < rows - 1) cout << ", ";
+    if (i < rows - 1)
+      cout << ", ";
   }
   cout << "]" << endl;
 

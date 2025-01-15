@@ -14,42 +14,42 @@ int main() {
     // 使用临时变量保存旋转前的状态
     int tmp;
     switch (move) {
-      case 'L':  // 左翻转
+      case 'L': // 左翻转
         tmp = right;
         right = bottom;
         bottom = left;
         left = top;
         top = tmp;
         break;
-      case 'R':  // 右翻转
+      case 'R': // 右翻转
         tmp = left;
         left = bottom;
         bottom = right;
         right = top;
         top = tmp;
         break;
-      case 'F':  // 前翻转
+      case 'F': // 前翻转
         tmp = front;
         front = top;
         top = back;
         back = bottom;
         bottom = tmp;
         break;
-      case 'B':  // 后翻转
+      case 'B': // 后翻转
         tmp = top;
         top = front;
         front = bottom;
         bottom = back;
         back = tmp;
         break;
-      case 'A':  // 逆时针旋转
+      case 'A': // 逆时针旋转
         tmp = right;
         right = front;
         front = left;
         left = back;
         back = tmp;
         break;
-      case 'C':  // 顺时针旋转
+      case 'C': // 顺时针旋转
         tmp = front;
         front = right;
         right = back;

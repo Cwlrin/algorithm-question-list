@@ -53,7 +53,8 @@ int main() {
     }
 
     // 构造输出片段
-    if (!result.empty()) result += ",";
+    if (!result.empty())
+      result += ",";
     if (start == end) {
       result += to_string(start);
     } else {

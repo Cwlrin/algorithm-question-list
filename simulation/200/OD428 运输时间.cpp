@@ -2,18 +2,18 @@
 using namespace std;
 
 int main() {
-  int M, N;
-  cin >> M >> N;
+  int m, n;
+  cin >> m >> n;
 
-  vector<double> arrive_times(M);
+  vector<double> arrive_times(m);
 
   // 读取每辆车的速度
-  for (int i = 0; i < M; i++) {
+  for (int i = 0; i < m; i++) {
     double speed;
     cin >> speed;
 
     // 正常情况下的到达时间
-    double normal_arrive_time = (double)N / speed + i;
+    double normal_arrive_time = (double)n / speed + i;
 
     // 如果不是第一辆车，需要比较是否被前车阻碍
     if (i > 0) {
@@ -28,7 +28,7 @@ int main() {
     }
   }
   // 输出最后一辆车的行驶时间（到达时刻 - 出发时刻）
-  cout << fixed << setprecision(1) << arrive_times[M - 1] - (M - 1) << endl;
+  cout << fixed << setprecision(1) << arrive_times[m - 1] - (m - 1) << endl;
 
   return 0;
 }

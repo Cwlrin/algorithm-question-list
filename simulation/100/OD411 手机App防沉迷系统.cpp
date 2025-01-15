@@ -65,7 +65,7 @@ int main() {
   string result = "NA";
   int max_priority = -1;
 
-  for (const auto& app: apps) {
+  for (const auto& app : apps) {
     int start_minutes = TimeToMinutes(app[2]);
     int end_minutes = TimeToMinutes(app[3]);
     // 检查时间是否在 app 的时间段内（不包括结束时间）

@@ -5,7 +5,7 @@ int main() {
   string s;
   cin >> s;
 
-  long long sum = 0;  // 使用long long避免溢出
+  long long sum = 0; // 使用long long避免溢出
   int len = s.length();
   int i = 0;
 
@@ -18,7 +18,7 @@ int main() {
 
     // 处理负数
     if (s[i] == '-') {
-      i++;  // 移到负号后面
+      i++; // 移到负号后面
       string num;
       // 收集负号后的所有数字
       while (i < len && isdigit(s[i])) {

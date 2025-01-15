@@ -5,7 +5,7 @@ int main() {
   // 读取座位总数
   int seat_num;
   cin >> seat_num;
-  cin.ignore();  // 忽略换行符
+  cin.ignore(); // 忽略换行符
 
   // 读取进出顺序
   string line;
@@ -74,9 +74,9 @@ int main() {
       // 遍历已占座位之间的间隔
       auto it = occupied_seats.begin();
       int prev_seat = *it;
-      it++;
+      ++it;
 
-      for (; it != occupied_seats.end(); it++) {
+      for (; it != occupied_seats.end(); ++it) {
         int curr_seat = *it;
         int distance = (curr_seat - prev_seat) / 2;
 

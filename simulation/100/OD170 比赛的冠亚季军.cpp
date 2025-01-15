@@ -20,7 +20,7 @@ int main() {
   }
 
   // 比赛分组队列
-  deque<vector<int>> match_groups;
+  deque<vector<int> > match_groups;
   match_groups.push_front(sports);
 
   // 进行淘汰赛
@@ -34,8 +34,8 @@ int main() {
 
     // 两两比赛
     for (int i = 1; i < current_group.size(); i += 2) {
-      int id1 = current_group[i - 1];  // 序号小的选手
-      int id2 = current_group[i];      // 序号大的选手
+      int id1 = current_group[i - 1]; // 序号小的选手
+      int id2 = current_group[i];     // 序号大的选手
 
       // 比较规则：实力不同按实力，相同按id
       if (strengths[id1] > strengths[id2]) {
@@ -70,8 +70,9 @@ int main() {
   // 确定季军（排序处理）
   sort(match_groups[2].begin(), match_groups[2].end(),
        [&strengths](int a, int b) {
-         return strengths[a] != strengths[b] ? strengths[a] > strengths[b]
-                                             : a < b;
+         return strengths[a] != strengths[b]
+                  ? strengths[a] > strengths[b]
+                  : a < b;
        });
   int third = match_groups[2][0];
 

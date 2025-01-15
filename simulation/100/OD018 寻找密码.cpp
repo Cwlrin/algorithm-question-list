@@ -34,7 +34,7 @@ int main() {
          if (a.length() != b.length()) {
            return a.length() > b.length();
          }
-         return a > b;  // 长度相同时按字典序降序
+         return a > b; // 长度相同时按字典序降序
        });
 
   // 寻找符合条件的最长密码

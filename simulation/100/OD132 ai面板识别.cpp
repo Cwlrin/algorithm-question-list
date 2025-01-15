@@ -7,29 +7,29 @@ using namespace std;
 
 // 定义灯的结构体
 struct Light {
-  int id;             // 编号
-  int x1, y1;         // 左上角坐标
-  int x2, y2;         // 右下角坐标
-  int centerX;        // 中心x坐标
-  int centerY;        // 中心y坐标
-  int height;         // 灯的高度
-  bool used = false;  // 是否已经被使用
+  int id;            // 编号
+  int x1, y1;        // 左上角坐标
+  int x2, y2;        // 右下角坐标
+  int center_x;      // 中心x坐标
+  int center_y;      // 中心y坐标
+  int height;        // 灯的高度
+  bool used = false; // 是否已经被使用
 };
 
 int main() {
-  int N;
-  cin >> N;
+  int n;
+  cin >> n;
 
-  vector<Light> lights(N);
+  vector<Light> lights(n);
 
   // 读取输入
-  for (int i = 0; i < N; i++) {
+  for (int i = 0; i < n; i++) {
     cin >> lights[i].id >> lights[i].x1 >> lights[i].y1 >> lights[i].x2 >>
         lights[i].y2;
 
     // 计算中心坐标
-    lights[i].centerX = (lights[i].x1 + lights[i].x2) / 2;
-    lights[i].centerY = (lights[i].y1 + lights[i].y2) / 2;
+    lights[i].center_x = (lights[i].x1 + lights[i].x2) / 2;
+    lights[i].center_y = (lights[i].y1 + lights[i].y2) / 2;
 
     // 计算高度
     lights[i].height = lights[i].y2 - lights[i].y1;
@@ -38,13 +38,13 @@ int main() {
   // 存储最终排序结果
   vector<int> result;
 
-  while (result.size() < N) {
+  while (result.size() < n) {
     // 找出未使用的最高的灯（y坐标最小的）
     int highest_index = -1;
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < n; i++) {
       if (!lights[i].used) {
         if (highest_index == -1 ||
-            lights[i].centerY < lights[highest_index].centerY) {
+            lights[i].center_y < lights[highest_index].center_y) {
           highest_index = i;
         }
       }
@@ -56,11 +56,11 @@ int main() {
     lights[highest_index].used = true;
 
     // 找出和最高灯坐标相差小于等于灯半径的灯
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < n; i++) {
       if (!lights[i].used) {
         bool same_row = true;
         for (auto* row_light : current_row) {
-          if (abs(lights[i].centerY - row_light->centerY) >
+          if (abs(lights[i].center_y - row_light->center_y) >
               row_light->height / 2) {
             same_row = false;
             break;
@@ -77,7 +77,9 @@ int main() {
     // 对同一行的灯按x坐标排序
     sort(
         current_row.begin(), current_row.end(),
-        [](const Light* a, const Light* b) { return a->centerX < b->centerX; });
+        [](const Light* a, const Light* b) {
+          return a->center_x < b->center_x;
+        });
 
     // 将同一行的灯id加入结果
     for (auto* light : current_row) {
@@ -86,9 +88,9 @@ int main() {
   }
 
   // 输出排序后的编号
-  for (int i = 0; i < N; i++) {
+  for (int i = 0; i < n; i++) {
     cout << result[i];
-    if (i < N - 1)
+    if (i < n - 1)
       cout << " ";
   }
   cout << endl;

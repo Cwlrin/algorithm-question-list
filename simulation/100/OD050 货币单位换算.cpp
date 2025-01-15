@@ -9,18 +9,18 @@ int main() {
 
   // 创建汇率映射表
   unordered_map<string, double> exchange_rates;
-  exchange_rates["CNY"] = 100.0;               // 1 CNY = 100 fen
-  exchange_rates["JPY"] = 100.0 / 1825 * 100;  // JPY 换算到 fen
-  exchange_rates["HKD"] = 100.0 / 123 * 100;   // HKD 换算到 fen
-  exchange_rates["EUR"] = 100.0 / 14 * 100;    // EUR 换算到 fen
-  exchange_rates["GBP"] = 100.0 / 12 * 100;    // GBP 换算到 fen
+  exchange_rates["CNY"] = 100.0;              // 1 CNY = 100 fen
+  exchange_rates["JPY"] = 100.0 / 1825 * 100; // JPY 换算到 fen
+  exchange_rates["HKD"] = 100.0 / 123 * 100;  // HKD 换算到 fen
+  exchange_rates["EUR"] = 100.0 / 14 * 100;   // EUR 换算到 fen
+  exchange_rates["GBP"] = 100.0 / 12 * 100;   // GBP 换算到 fen
 
   // 最小单位
   exchange_rates["fen"] = 1.0;
-  exchange_rates["cents"] = 100.0 / 123;     // HKD cents
-  exchange_rates["sen"] = 100.0 / 1825;      // JPY sen
-  exchange_rates["eurocents"] = 100.0 / 14;  // EUR cents
-  exchange_rates["pence"] = 100.0 / 12;      // GBP pence
+  exchange_rates["cents"] = 100.0 / 123;    // HKD cents
+  exchange_rates["sen"] = 100.0 / 1825;     // JPY sen
+  exchange_rates["eurocents"] = 100.0 / 14; // EUR cents
+  exchange_rates["pence"] = 100.0 / 12;     // GBP pence
 
   // 存储最终结果
   double total_amount = 0;
@@ -52,7 +52,7 @@ int main() {
       total_amount += currency_amount * exchange_rates[currency_unit];
 
       // 移动到下一个匹配
-      currency_iterator++;
+      ++currency_iterator;
     }
   }
 

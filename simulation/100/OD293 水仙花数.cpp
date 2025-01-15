@@ -8,7 +8,7 @@ int main() {
   cin >> digit_count >> sequence_index;
 
   // 输入合法性检查
-  if (digit_count < 3 || digit_count> 7) {
+  if (digit_count < 3 || digit_count > 7) {
     cout << -1 << endl;
     return 0;
   }
@@ -43,12 +43,12 @@ int main() {
     long long sum = 0;
     bool valid = true;
 
-    while (temp> 0) {
+    while (temp > 0) {
       int digit = temp % 10;
       sum += power_cache[digit];
 
       // 提前剪枝：和已经超过原数
-      if (sum> number) {
+      if (sum > number) {
         valid = false;
         break;
       }
@@ -66,7 +66,7 @@ int main() {
   if (narcissistic_numbers.empty()) {
     cout << -1 << endl;
   } else if (sequence_index < narcissistic_numbers.size()) {
-    cout <<narcissistic_numbers[sequence_index] << endl;
+    cout << narcissistic_numbers[sequence_index] << endl;
   } else {
     // 处理大索引情况
     long long last_narcissistic = narcissistic_numbers.back();

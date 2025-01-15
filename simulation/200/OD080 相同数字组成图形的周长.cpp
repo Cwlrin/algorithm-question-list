@@ -11,7 +11,7 @@ int main() {
   cin.ignore();
 
   // 存储输入行的二维vector
-  vector<vector<int>> lines;
+  vector<vector<int> > lines;
 
   // 读取输入
   for (int i = 0; i < n; i++) {
@@ -32,7 +32,7 @@ int main() {
   }
 
   // 定义64*64的矩阵，初始化为0
-  vector<vector<int>> matrix(64, vector<int>(64, 0));
+  vector<vector<int> > matrix(64, vector<int>(64, 0));
 
   // 向矩阵中填充数字
   for (const auto& line : lines) {
@@ -62,12 +62,12 @@ int main() {
 
       // 检查四个方向
       for (const auto& offset : offsets) {
-        int newX = x + offset[0];
-        int newY = y + offset[1];
+        const int new_x = x + offset[0];
+        const int new_y = y + offset[1];
 
         // 如果越界或不是同一图形，周长+1
-        if (newX < 0 || newX >= 64 || newY < 0 || newY >= 64 ||
-            matrix[newX][newY] != num) {
+        if (new_x < 0 || new_x >= 64 || new_y < 0 || new_y >= 64 ||
+            matrix[new_x][new_y] != num) {
           perimeter++;
         }
       }

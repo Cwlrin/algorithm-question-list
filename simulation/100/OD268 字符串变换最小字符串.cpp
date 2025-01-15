@@ -4,7 +4,7 @@ using namespace std;
 
 int main() {
   string input;
-  cin >> input; // 读取输入字符串
+  cin >> input;          // 读取输入字符串
   string result = input; // 初始化结果为原字符串
   // 遍历字符串的每一个字符
   for (int i = 0; i < input.length(); ++i) {

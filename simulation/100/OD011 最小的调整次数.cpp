@@ -34,7 +34,8 @@ int main() {
         count++;          // 需要调整，增加计数
         is_sorted = true; // 调整后重置有序性
       }
-      if (size > 0) size--; // 移除元素时，队列大小减少
+      if (size > 0)
+        size--; // 移除元素时，队列大小减少
     }
   }
 

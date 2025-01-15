@@ -21,8 +21,10 @@ int main() {
           string first = current_word.substr(0, pos);
           string second = current_word.substr(pos + 1);
           // 确保非空的单词被添加  
-          if (!first.empty()) unique_words.insert(first);
-          if (!second.empty()) unique_words.insert(second);
+          if (!first.empty())
+            unique_words.insert(first);
+          if (!second.empty())
+            unique_words.insert(second);
         } else {
           unique_words.insert(current_word);
         }
@@ -36,8 +38,10 @@ int main() {
       size_t pos = current_word.find('\'');
       string first = current_word.substr(0, pos);
       string second = current_word.substr(pos + 1);
-      if (!first.empty()) unique_words.insert(first);
-      if (!second.empty()) unique_words.insert(second);
+      if (!first.empty())
+        unique_words.insert(first);
+      if (!second.empty())
+        unique_words.insert(second);
     } else {
       unique_words.insert(current_word);
     }
@@ -56,7 +60,7 @@ int main() {
   // 去重  
   sort(matched_words.begin(), matched_words.end());
   matched_words.erase(unique(matched_words.begin(), matched_words.end()),
-                     matched_words.end());
+                      matched_words.end());
   // 只在没有找到任何匹配时，输出前缀  
   if (matched_words.empty()) {
     cout << prefix << endl;
@@ -64,7 +68,8 @@ int main() {
     // 输出结果  
     for (size_t i = 0; i < matched_words.size(); ++i) {
       cout << matched_words[i];
-      if (i < matched_words.size() - 1) cout << " ";
+      if (i < matched_words.size() - 1)
+        cout << " ";
     }
     cout << endl;
   }

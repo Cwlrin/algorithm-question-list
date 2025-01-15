@@ -6,8 +6,8 @@ int main() {
   getline(cin, input);
 
   // 用于存储学生信息的向量
-  vector<int> nums;    // 存储学生编号
-  vector<char> flags;  // 存储Y/N标记
+  vector<int> nums;   // 存储学生编号
+  vector<char> flags; // 存储Y/N标记
 
   // 解析输入
   stringstream ss(input);
@@ -66,7 +66,8 @@ int main() {
         }
         class2.insert(curr_num);
       }
-    } else {  // flags[i] == 'N'
+    } else {
+      // flags[i] == 'N'
       // 如果前一个人在class1，当前人应该在class2
       if (class1.count(prev_num)) {
         if (class1.count(curr_num)) {

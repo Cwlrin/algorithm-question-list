@@ -22,7 +22,7 @@ int main() {
   }
 
   // 2. 存储摘要信息的数组
-  vector<pair<char, int>> summary;
+  vector<pair<char, int> > summary;
 
   // 3. 遍历字符串，处理连续和非连续字符
   for (int i = 0; i < cleaned.length();) {
@@ -39,10 +39,10 @@ int main() {
     // 处理连续字符和非连续字符
     if (consecutive_count > 1) {
       // 连续字符
-      summary.push_back({current, consecutive_count});
+      summary.emplace_back(current, consecutive_count);
     } else if (consecutive_count == 1) {
       // 非连续字符，统计后续出现次数
-      summary.push_back({current, count[current]});
+      summary.emplace_back(current, count[current]);
     }
   }
 

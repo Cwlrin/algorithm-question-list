@@ -21,7 +21,8 @@ int main() {
         count = count * 10 + (input[i] - '0');
         i++;
       }
-      if ((count > 0 && count < 3) || i >= input.size() || !islower(input[i]) || has_leading_zero) {
+      if ((count > 0 && count < 3) || i >= input.size() || !islower(input[i]) ||
+          has_leading_zero) {
         cout << "!error" << endl;
         return 0;
       }

@@ -9,15 +9,15 @@ int main() {
   int cols = (n + m - 1) / m;
 
   // 创建矩阵并初始化为*
-  vector<vector<string>> matrix(m, vector<string>(cols, "*"));
+  vector<vector<string> > matrix(m, vector<string>(cols, "*"));
 
   // 定义四个方向：右、下、左、上
   const int dx[] = {0, 1, 0, -1};
   const int dy[] = {1, 0, -1, 0};
 
-  int x = 0, y = 0;  // 当前位置
-  int dir = 0;       // 当前方向
-  int num = 1;       // 当前要填入的数字
+  int x = 0, y = 0; // 当前位置
+  int dir = 0;      // 当前方向
+  int num = 1;      // 当前要填入的数字
 
   // 填充数字
   while (num <= n) {

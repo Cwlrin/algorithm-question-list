@@ -7,8 +7,8 @@ using namespace std;
 
 int main() {
   // 读取缓存一个报告的金币数
-  int M;
-  cin >> M;
+  int m;
+  cin >> m;
 
   // 文件标识序列
   vector<int> files;
@@ -53,7 +53,7 @@ int main() {
     // 1. 每次都重新扫描的成本
     // 2. 扫描一次 + 缓存的成本
     int scan_all_cost = file_count * file_sizes[file_id];
-    int cache_cost = file_sizes[file_id] + M;
+    int cache_cost = file_sizes[file_id] + m;
 
     // 选择成本较低的方案
     total_cost += min(scan_all_cost, cache_cost);

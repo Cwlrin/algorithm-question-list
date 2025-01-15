@@ -6,7 +6,7 @@ int main() {
   cin >> n >> k;
   cin.ignore();
 
-  vector<vector<int>> lists;
+  vector<vector<int> > lists;
   string line;
 
   // 读取列表

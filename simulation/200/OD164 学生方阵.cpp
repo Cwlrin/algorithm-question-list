@@ -10,11 +10,11 @@ int main() {
   int cols = stoi(size_str.substr(pos + 1));
 
   // 定义方向数组
-  const int dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
-  const int dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
+  constexpr int dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
+  constexpr int dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
 
   // 读取矩阵
-  vector<vector<char>> matrix(rows, vector<char>(cols));
+  vector<vector<char> > matrix(rows, vector<char>(cols));
   for (int i = 0; i < rows; i++) {
     string row_str;
     getline(cin, row_str);

@@ -10,8 +10,8 @@ int main() {
   getline(cin, input);
 
   // 解析输入
-  int taskA, taskB, num;
-  sscanf(input.c_str(), "%d,%d,%d", &taskA, &taskB, &num);
+  int task_a, task_b, num;
+  sscanf(input.c_str(), "%d,%d,%d", &task_a, &task_b, &num);
 
   // 特殊处理：如果任务数为0，直接输出空数组
   if (num == 0) {
@@ -23,20 +23,20 @@ int main() {
   set<int> results;
 
   // 遍历可能的执行组合
-  for (int countA = 0; countA <= num; ++countA) {
-    int countB = num - countA;
-    int totalTime = countA * taskA + countB * taskB;
-    results.insert(totalTime);
+  for (int count_a = 0; count_a <= num; ++count_a) {
+    int count_b = num - count_a;
+    int total_time = count_a * task_a + count_b * task_b;
+    results.insert(total_time);
   }
 
   // 转换为有序vector并输出
-  vector<int> finalResults(results.begin(), results.end());
+  const vector<int> final_results(results.begin(), results.end());
 
   // 输出结果
   cout << "[";
-  for (int i = 0; i < finalResults.size(); ++i) {
-    cout << finalResults[i];
-    if (i < finalResults.size() - 1)
+  for (int i = 0; i < final_results.size(); ++i) {
+    cout << final_results[i];
+    if (i < final_results.size() - 1)
       cout << ", ";
   }
   cout << "]" << endl;

@@ -2,24 +2,24 @@
 using namespace std;
 
 // 提取时间的秒数部分（不含毫秒）
-string getSecond(const string& time) {
-  return time.substr(0, time.length() - 4);  // 去掉.fff部分
+string GetSecond(const string& time) {
+  return time.substr(0, time.length() - 4); // 去掉.fff部分
 }
 
 int main() {
   int n;
   cin >> n;
-  cin.ignore();  // 处理换行符
+  cin.ignore(); // 处理换行符
 
   // 用于存储按秒分组的订单
-  map<string, vector<string>> orders_by_second;
+  map<string, vector<string> > orders_by_second;
 
   // 读取所有订单
   for (int i = 0; i < n; i++) {
     string time;
     getline(cin, time);
     // 按秒分组存储完整时间
-    orders_by_second[getSecond(time)].push_back(time);
+    orders_by_second[GetSecond(time)].push_back(time);
   }
 
   int free_orders = 0;
