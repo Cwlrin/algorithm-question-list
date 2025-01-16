@@ -11288,18 +11288,18 @@ int main() {
 
 > X1 X2 X3 ... Xm
 
-表示共有 M 个需求，每个需求的工作量分别为X1天，X2天，...，Xm天。其中：
+表示共有 M 个需求，每个需求的工作量分别为 X1 天，X2 天，...，Xm 天。其中：
 
 - 0 < M < 30
 - 0 < Xm < 200
 
-第二行输入为项目组人员数量N
+第二行输入为项目组人员数量 N
 
 例如：
 
 > 5
 
-表示共有5名员工，其中 0 < N < 10
+表示共有 5 名员工，其中 0 < N < 10
 
 **输出描述**：
 
@@ -11309,7 +11309,7 @@ int main() {
 
 > 25
 
-表示最短需要25天完成所有工作
+表示最短需要 25 天完成所有工作
 
 **用例 1**：
 
@@ -11328,7 +11328,7 @@ int main() {
 
 
 
-说明：共有两位员工，其中一位分配需求 6 2 7 7 3 2 1 共需要28天完成，另一位分配需求 9 3 11 4 共需要27天完成，故完成所有工作至少需要28天。
+说明：共有两位员工，其中一位分配需求 6 2 7 7 3 2 1 共需要 28 天完成，另一位分配需求 9 3 11 4 共需要 27 天完成，故完成所有工作至少需要 28 天。
 
 难度：困难
 
@@ -11414,6 +11414,134 @@ int main() {
   return 0;
 }
 ```
+
+#### 字符串拼接
+
+**题目描述**：
+
+给定 M（0 < M ≤ 30）个字符（a-z），从中取出任意字符（每个字符只能用一次）拼接成长度为 N（0 < N ≤ 5）的字符串，
+
+要求相同的字符不能相邻，计算出给定的字符列表能拼接出多少种满足条件的字符串，
+
+输入非法或者无法拼接出满足条件的字符串则返回 0。
+
+**输入描述**：
+
+给定的字符列表和结果字符串长度，中间使用空格(" ")拼接
+
+**输出描述**：
+满足条件的字符串个数
+
+**用例 1**：
+
+输入：
+
+```
+abc 1
+```
+
+输出：
+
+```
+3
+```
+
+
+
+说明：给定的字符为 a, b, c，结果字符串长度为 1，可以拼接成 a, b, c，共 3 种
+
+**用例 2**：
+
+输入：
+
+```
+dde 2
+```
+
+输出：
+
+```
+2
+```
+
+
+
+说明：给定的字符为 dde，结果字符串长度为 2，可以拼接成 de, ed，共 2 种
+
+难度：中等
+
+标签：字符串、回溯
+
+(32/33)
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <string>
+
+using namespace std;
+
+// 计算满足条件的字符串数量
+void backtrack(string& current, const int n, unordered_map<char, int>& char_count, int& result) {
+  // 当生成的字符串达到目标长度时，增加计数
+  if (current.length() == n) {
+    result++;
+    return;
+  }
+
+  // 遍历所有字符
+  for (auto& entry : char_count) {
+    char c = entry.first;
+    if (entry.second > 0) {
+      // 边界条件：不允许相同字符相邻
+      if (current.empty() || current.back() != c) {
+        // 选择当前字符
+        current.push_back(c);
+        char_count[c]--; // 使用一个字符
+
+        backtrack(current, n, char_count, result); // 递归调用
+
+        // 回溯
+        current.pop_back();
+        char_count[c]++; // 恢复字符数量
+      }
+    }
+  }
+}
+
+int main() {
+  string input;
+  getline(cin, input); // 读取输入
+
+  // 从输入中提取字符和字符串长度
+  string characters = input.substr(0, input.size() - 2);
+  const int n = input.back() - '0'; // 读取末尾的数字
+
+  // 统计字符频率
+  unordered_map<char, int> char_count;
+  for (char c : characters) {
+    char_count[c]++;
+  }
+
+  // 输入非法、无法拼接字符串或者所需长度大于可用字符总数
+  if (n > characters.size() || n <= 0 || characters.empty()) {
+    cout << 0 << endl;
+    return 0;
+  }
+
+  // 计算结果
+  int result = 0;
+  string current;
+  backtrack(current, n, char_count, result);
+
+  // 输出结果
+  cout << result << endl;
+
+  return 0;
+}
+```
+
 
 
 
