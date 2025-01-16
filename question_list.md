@@ -11548,6 +11548,144 @@ int main() {
 
 
 
+#### 字母组合
+
+**题目描述**：
+
+每个数字关联多个字母，关联关系如下：
+
+- 0 关联 “a”,”b”,”c”
+- 1 关联 “d”,”e”,”f”
+- 2 关联 “g”,”h”,”i”
+- 3 关联 “j”,”k”,”l”
+- 4 关联 “m”,”n”,”o”
+- 5 关联 “p”,”q”,”r”
+- 6 关联 “s”,”t”
+- 7 关联 “u”,”v”
+- 8 关联 “w”,”x”
+- 9 关联 “y”,”z”
+
+输入一串数字后，通过数字和字母的对应关系可以得到多个字母字符串（要求按照数字的顺序组合字母字符串）；
+
+屏蔽字符串：屏蔽字符串中的所有字母不能同时在输出的字符串出现，如屏蔽字符串是abc，则要求字符串中不能同时出现a,b,c，但是允许同时出现a,b或a,c或b,c等；
+
+给定一个数字字符串和一个屏蔽字符串，输出所有可能的字符组合；
+
+例如输入数字字符串78和屏蔽字符串ux，输出结果为uw，vw，vx；数字字符串78，可以得到如下字符串uw，ux，vw，vx；由于ux是屏蔽字符串，因此排除ux，最终的输出是uw，vw，vx;
+
+**输入描述**：
+
+第一行输入为一串数字字符串，数字字符串中的数字不允许重复，数字字符串的长度大于0，小于等于5；
+
+第二行输入是屏蔽字符串，屏蔽字符串的长度一定小于数字字符串的长度，屏蔽字符串中字符不会重复；
+
+**输出描述**：
+
+输出可能的字符串组合
+
+注：字符串之间使用逗号隔开，最后一个字符串后携带逗号
+
+**用例 1**：
+
+输入：
+
+```
+78
+ux
+```
+
+输出：
+
+```
+uw,vw,vx,
+```
+
+**用例 2**：
+
+输入：
+
+```
+78
+x
+```
+
+输出：
+
+```
+uw,vw,
+```
+
+难度：中等
+
+标签：回溯、深度优先搜索、字符串、枚举
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+// 数字到字母的映射
+unordered_map<char, vector<char>> num_to_letters = {
+  {'0', {'a','b','c'}},
+  {'1', {'d','e','f'}},
+  {'2', {'g','h','i'}},
+  {'3', {'j','k','l'}},
+  {'4', {'m','n','o'}},
+  {'5', {'p','q','r'}},
+  {'6', {'s','t'}},
+  {'7', {'u','v'}},
+  {'8', {'w','x'}},
+  {'9', {'y','z'}}
+};
+
+int main() {
+  string digits, shield;
+  cin >> digits >> shield;
+
+  vector<string> result;
+
+  // 回溯函数，使用 lambda 实现
+  function<void(string, int)> backtrack =
+  [&](const string& current, int index) {
+    // 递归终止条件：达到数字串长度
+    if (index == digits.length()) {
+      // 检查是否包含所有屏蔽字符
+      bool is_valid_combination = true;
+      for (const char shield_char : shield) {
+        if (current.find(shield_char) == string::npos) {
+          is_valid_combination = false;
+          break;
+        }
+      }
+
+      // 如果不包含所有屏蔽字符，则加入结果
+      if (!is_valid_combination) {
+        result.push_back(current);
+      }
+      return;
+    }
+
+    // 获取当前数字对应的字母列表
+    vector<char>& letters = num_to_letters[digits[index]];
+
+    for (char letter : letters) {
+      // 递归生成组合
+      backtrack(current + letter, index + 1);
+    }
+  };
+
+  // 启动回溯
+  backtrack("", 0);
+
+  // 输出结果
+  for (const string& combo : result) {
+    cout << combo << ",";
+  }
+  cout << endl;
+
+  return 0;
+}
+```
+
 
 ## 深度优先搜索
 
