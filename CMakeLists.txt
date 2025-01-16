@@ -3,6 +3,7 @@ project(huawei)
 
 set(CMAKE_CXX_STANDARD 11)
 
+add_subdirectory(flash_back)
 add_subdirectory(math)
 add_subdirectory(recursion)
 add_subdirectory(regex)
