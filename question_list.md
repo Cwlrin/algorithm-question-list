@@ -9649,10 +9649,6 @@ int main() {
 }
 ```
 
-
-
-
-
 #### 矩形相交的面积
 
 **题目描述**：
@@ -9737,8 +9733,6 @@ int main() {
 }
 ```
 
-
-
 #### 分苹果
 
 **题目描述**：
@@ -9795,8 +9789,6 @@ A、B 两个人把苹果分为两堆，A 希望按照他的计算规则等分苹
 7258 6579 2602 6716 3050 3564 5396 1773
 ```
 
-
-
 难度：简单
 
 标签：位运算、数学、数组
@@ -9834,10 +9826,6 @@ int main() {
   return 0;
 }
 ```
-
-
-
-
 
 #### 工号不够用了怎么办
 
@@ -9877,8 +9865,6 @@ int main() {
 1
 ```
 
-
-
 **用例 2**：
 
 输入：
@@ -9909,8 +9895,6 @@ int main() {
 2
 ```
 
-
-
 难度：简单
 
 标签：数学、位运算
@@ -9935,8 +9919,6 @@ int main() {
   return 0;
 }
 ```
-
-
 
 #### 数据分类
 
@@ -9979,8 +9961,6 @@ int main() {
 ```
 3
 ```
-
-
 
 说明：
 
@@ -10055,13 +10035,7 @@ int main() {
 }
 ```
 
-
-
-
-
 #### 整数编码
-
-
 
 **题目描述**：
 
@@ -10097,8 +10071,6 @@ int main() {
 ```
 00
 ```
-
-
 
 说明：输出的 16 进制字符，不足两位的前面补 0，如 00、01、02。
 
@@ -10149,46 +10121,40 @@ E807
 ```cpp
 #include <bits/stdc++.h>
 
-using namespace std;  
+using namespace std;
 
-int main() {  
-  string input;  
-  cin >> input; // 读取输入  
-  uint64_t number = stoull(input); // 将输入转换为无符号64位整数  
+int main() {
+  string input;
+  cin >> input; // 读取输入
+  uint64_t number = stoull(input); // 将输入转换为无符号64位整数
 
-  vector<uint8_t> encoded_bytes;  
+  vector<uint8_t> encoded_bytes;
 
   // 编码过程
-  do {  
-    uint8_t byte = number & 0x7F; // 取低7位  
-    number >>= 7; // 右移7位  
-    // 如果还有更多的字节，设置最高位为1  
-    if (number != 0) {  
-      byte |= 0x80; // 设置最高位为1  
-    }  
-    encoded_bytes.push_back(byte);  
-  } while (number != 0);  
-    
-  // 使用小端序，把字节反转  
-  stringstream result;  
-  for (unsigned char encoded_byte : encoded_bytes) {
-    // 输出为16进制格式，确保每个字节占2位，不足补0，转为大写  
-    result << uppercase << setfill('0') << setw(2) << hex << static_cast<int>(encoded_byte);
-  }  
-    
-  cout << result.str() << endl; // 输出编码结果  
+  do {
+    uint8_t byte = number & 0x7F; // 取低7位
+    number >>= 7; // 右移7位
+    // 如果还有更多的字节，设置最高位为1
+    if (number != 0) {
+      byte |= 0x80; // 设置最高位为1
+    }
+    encoded_bytes.push_back(byte);
+  } while (number != 0);
 
-  return 0;  
+  // 使用小端序，把字节反转
+  stringstream result;
+  for (unsigned char encoded_byte : encoded_bytes) {
+    // 输出为16进制格式，确保每个字节占2位，不足补0，转为大写
+    result << uppercase << setfill('0') << setw(2) << hex << static_cast<int>(encoded_byte);
+  }
+
+  cout << result.str() << endl; // 输出编码结果
+
+  return 0;
 }
 ```
 
-
-
-
-
 #### 勾股数元组
-
-
 
 **题目描述**：
 
@@ -10267,7 +10233,7 @@ NA
 
 using namespace std;
 
-// 自定义函数用于计算最大公约数（GCD）  
+// 自定义函数用于计算最大公约数（GCD）
 int gcd(int a, int b) {
   while (b != 0) {
     int temp = b;
@@ -10277,44 +10243,44 @@ int gcd(int a, int b) {
   return a;
 }
 
-// 用于检查三个数字是否两两互质  
+// 用于检查三个数字是否两两互质
 bool AreCoprime(int a, int b, int c) {
   return gcd(a, b) == 1 && gcd(a, c) == 1 && gcd(b, c) == 1;
 }
 
 int main() {
   int n, m;
-  cin >> n >> m; // 输入范围  
+  cin >> n >> m; // 输入范围
 
-  vector<tuple<int, int, int> > coprime_tuples; // 用于存放满足条件的勾股数元组  
+  vector<tuple<int, int, int> > coprime_tuples; // 用于存放满足条件的勾股数元组
 
-  // 查找 (a, b, c) 所有可能的组合  
+  // 查找 (a, b, c) 所有可能的组合
   for (int c = n; c <= m; ++c) {
     for (int a = n; a < c; ++a) {
-      int b_square = c * c - a * a;             // 计算 b 的平方  
-      int b = static_cast<int>(sqrt(b_square)); // 计算 b  
+      int b_square = c * c - a * a;             // 计算 b 的平方
+      int b = static_cast<int>(sqrt(b_square)); // 计算 b
 
-      // 检查 b 是否合适  
+      // 检查 b 是否合适
       if (b > a && b <= m && b * b == b_square) {
-        // b 应该大于 a，且小于等于 M  
-        // 检查是否两两互质  
+        // b 应该大于 a，且小于等于 M
+        // 检查是否两两互质
         if (AreCoprime(a, b, c)) {
-          coprime_tuples.emplace_back(a, b, c); // 记录元组  
+          coprime_tuples.emplace_back(a, b, c); // 记录元组
         }
       }
     }
   }
 
-  // 如果没有找到结果，输出 NA  
+  // 如果没有找到结果，输出 NA
   if (coprime_tuples.empty()) {
     cout << "NA" << endl;
     return 0;
   }
 
-  // 排序元组  
+  // 排序元组
   sort(coprime_tuples.begin(), coprime_tuples.end());
 
-  // 输出结果  
+  // 输出结果
   for (const auto& t : coprime_tuples) {
     int a, b, c;
     tie(a, b, c) = t;
@@ -10325,15 +10291,11 @@ int main() {
 }
 ```
 
-
-
 ## 正则匹配
 
 ### 100 分
 
 ##### 火星文计算
-
-
 
 **题目描述**：
 
@@ -10488,12 +10450,6 @@ int main() {
 }
 ```
 
-
-
-
-
-
-
 ### 200 分
 
 #### 文本统计分析
@@ -10642,13 +10598,11 @@ int main() {
 }
 ```
 
-
 ## 分治递归
 
 ### 100 分
 
 #### 分披萨
-
 
 **题目描述**：
 
@@ -10714,7 +10668,6 @@ int main() {
 至此，披萨瓜分完毕，"吃货"拿到的披萨总大小为 10 + 7 + 2 = 19
 
 可能存在多种拿法，以上只是其中一种。
-
 
 难度：困难
 
@@ -10803,20 +10756,99 @@ int main() {
 }
 ```
 
-## 回溯算法
-
+#### 分糖果
 
 **题目描述**：
 
+小明从糖果盒中随意抓一把糖果，每次小明会取出一半的糖果分给同学们。
 
+当糖果不能平均分配时，小明可以选择从糖果盒中（假设盒中糖果足够）取出一个糖果或放回一个糖果。
+
+小明最少需要多少次（取出、放回和平均分配均记一次），能将手中糖果分至只剩一颗。
 
 **输入描述**：
 
-
+抓取的糖果数（<10000000000）：15
 
 **输出描述**：
 
+最少分至一颗糖果的次数：5
 
+**用例 1**：
+
+输入：
+
+```
+15
+```
+
+输出：
+
+```
+5
+```
+
+说明：
+
+15+1=16;
+
+16/2=8;
+
+8/2=4;
+
+4/2=2;
+
+2/2=1;
+
+难度：中等
+
+标签：数学、位运算、贪心
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  long long n;
+  cin >> n;
+
+  int ops = 0;
+  while (n != 1) {
+    // 偶数直接除2
+    if (n % 2 == 0) {
+      n /= 2;
+    }
+    // 奇数需要特殊处理
+    else {
+      // 对于 10 这种特殊数字
+      if (n == 3) {
+        ops += 2; // 3 需要特殊处理：3-1=2，再除2
+        break;
+      }
+
+      // 对于奇数，判断+1或-1能更快到1
+      if ((n + 1) % 4 == 0) {
+        n++;
+      } else {
+        n--;
+      }
+    }
+    ops++;
+  }
+
+  cout << ops << endl;
+
+  return 0;
+}
+```
+
+## 回溯算法
+
+**题目描述**：
+
+**输入描述**：
+
+**输出描述**：
 
 **用例 1**：
 
@@ -10831,8 +10863,6 @@ int main() {
 ```
 
 ```
-
-
 
 **用例 2**：
 
