@@ -11272,6 +11272,151 @@ int main() {
 
 ### 200 分
 
+#### 项目排期
+
+**题目描述**：
+
+项目组共有 N 个开发人员，项目经理接到了 M 个独立的需求，每个需求的工作量不同，且每个需求只能由一个开发人员独立完成，不能多人合作。
+
+假定各个需求直接无任何先后依赖关系，请设计算法帮助项目经理进行工作安排，使整个项目能用最少的时间交付。
+
+**输入描述**：
+
+第一行输入为 M 个需求的工作量，单位为天，用逗号隔开。
+
+例如：
+
+> X1 X2 X3 ... Xm
+
+表示共有 M 个需求，每个需求的工作量分别为X1天，X2天，...，Xm天。其中：
+
+- 0 < M < 30
+- 0 < Xm < 200
+
+第二行输入为项目组人员数量N
+
+例如：
+
+> 5
+
+表示共有5名员工，其中 0 < N < 10
+
+**输出描述**：
+
+最快完成所有工作的天数
+
+例如：
+
+> 25
+
+表示最短需要25天完成所有工作
+
+**用例 1**：
+
+输入：
+
+```
+6 2 7 7 9 3 2 1 3 11 4
+2
+```
+
+输出：
+
+```
+28
+```
+
+
+
+说明：共有两位员工，其中一位分配需求 6 2 7 7 3 2 1 共需要28天完成，另一位分配需求 9 3 11 4 共需要27天完成，故完成所有工作至少需要28天。
+
+难度：困难
+
+标签：二分查找、回溯、贪心、动态规划
+
+（28/33）
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <numeric>
+
+using namespace std;
+
+// 检查当前桶容量是否可以装下所有球
+bool CanAllocateBalls(int idx, const vector<int>& balls, vector<int>& buckets, int limit, int n) {
+  if (idx == balls.size()) return true; // 所有球都成功分配
+
+  const int current_ball = balls[idx];
+
+  // 尝试将当前球分配给每个桶
+  for (int i = 0; i < n; i++) {
+    // 如果当前桶容量能够容纳该球
+    if (buckets[i] + current_ball <= limit) {
+      buckets[i] += current_ball; // 将球装入桶中
+
+      // 递归尝试分配下一个球
+      if (CanAllocateBalls(idx + 1, balls, buckets, limit, n)) {
+        return true; // 成功分配
+      }
+
+      // 回溯：撤销操作
+      buckets[i] -= current_ball;
+    }
+    // 剪枝：如果当前桶没有装入任何球，后面的桶也不应该再装此球
+    if (buckets[i] == 0) break;
+  }
+
+  return false; // 无法分配
+}
+
+int main() {
+  vector<int> balls;
+  int num;
+
+  // 读取球的工作量
+  while (cin >> num) {
+    balls.push_back(num);
+    if (cin.peek() == '\n') break; // 当输入结束时（换行）跳出
+  }
+
+  // 读取开发人员数量
+  int n;
+  cin >> n;
+
+  // 对工作量进行降序排序
+  sort(balls.begin(), balls.end(), greater<int>());
+
+  // 二分查找的上下界
+  int low = balls[0]; // 至少需要最大工作量的容量
+  int high = accumulate(balls.begin(), balls.end(), 0); // 总工作量
+
+  int best_capacity = high; // 最优桶容量
+
+  // 开始二分查找
+  while (low <= high) {
+    int mid = low + (high - low) / 2; // 中间桶容量
+    vector<int> buckets(n, 0); // 初始化桶为0
+
+    // 检查能否在此容量下完成分配
+    if (CanAllocateBalls(0, balls, buckets, mid, n)) {
+      best_capacity = mid; // 更新最优解
+      high = mid - 1; // 尝试更小的容量
+    } else {
+      low = mid + 1; // 增加桶容量
+    }
+  }
+
+  // 输出结果
+  cout << best_capacity << endl;
+
+  return 0;
+}
+```
+
+
+
 
 
 
