@@ -11160,11 +11160,11 @@ int main() {
 
 **题目描述**：
 
-在星球争霸篮球赛对抗赛中，最大的宇宙战队希望每个人都能拿到MVP，MVP的条件是单场最高分得分获得者。
+在星球争霸篮球赛对抗赛中，最大的宇宙战队希望每个人都能拿到 MVP，MVP 的条件是单场最高分得分获得者。
 
 可以并列所以宇宙战队决定在比赛中尽可能让更多队员上场，并且让所有得分的选手得分都相同，
 
-然而比赛过程中的每1分钟的得分都只能由某一个人包揽。
+然而比赛过程中的每 1 分钟的得分都只能由某一个人包揽。
 
 **输入描述**：
 
@@ -11178,7 +11178,7 @@ int main() {
 
 **输出描述**：
 
-输出有得分的队员都是MVP时，最少得MVP得分。
+输出有得分的队员都是 MVP 时，最少得 MVP 得分。
 
 **用例 1**：
 
@@ -11200,6 +11200,97 @@ int main() {
 样例解释 一共 4 人得分，分别都是 6 分
 
 5 + 1 ， 5 + 1 ， 5 + 1 ， 2 + 2 + 2
+
+难度：困难
+
+标签：回溯、贪心、动态规划、排序、数组
+
+（38/40）
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int t;
+  cin >> t; // 读入得分分钟数
+
+  vector<int> scores(t);
+  for (int i = 0; i < t; i++) {
+    cin >> scores[i]; // 读入每分钟的得分
+  }
+
+  // 计算总得分
+  const int total_score = accumulate(scores.begin(), scores.end(), 0);
+
+  // 定义递归进行分配
+  function<bool(deque<int>&, int, vector<int>&, int)> partition =
+      [&](deque<int>& link, int index, vector<int>& buckets, int sub_sum) {
+    // 如果所有得分都分配完，返回 true
+    if (index == link.size())
+      return true;
+
+    int select = link[index];
+
+    for (int i = 0; i < buckets.size(); i++) {
+      if (i > 0 && buckets[i] == buckets[i - 1])
+        continue; // 避免重复处理
+
+      if (select + buckets[i] <= sub_sum) {
+        buckets[i] += select; // 分配得分
+        // 递归检查下一个得分
+        if (partition(link, index + 1, buckets, sub_sum))
+          return true;
+        buckets[i] -= select; // 回退
+      }
+    }
+
+    return false; // 无法分配
+  };
+
+  // 检查能否分配成 m 组
+  const function<bool(deque<int>&, int, int)> can_partition_m_subsets =
+      [&](deque<int>& link, int sum, int m) {
+    if (sum % m != 0)
+      return false; // 总分不能被 m 整除
+
+    const int sub_sum = sum / m;
+
+    // 若最大得分超过目标分数，无法分配
+    if (sub_sum < link[0])
+      return false;
+
+    // 移除被完全占用的得分
+    while (!link.empty() && link[0] == sub_sum) {
+      link.pop_front();
+      m--;
+    }
+
+    vector<int> buckets(m, 0);
+    return partition(link, 0, buckets, sub_sum);
+  };
+
+  // 进行从总人数到最少人数的尝试
+  int max_players = t;                                        // 初始设定最多人数
+  sort(scores.begin(), scores.end(), greater<int>());         // 从大到小排序
+  const deque<int> score_deque(scores.begin(), scores.end()); // 将分数转换为双端队列
+
+  // 尝试从所有人数到1人，每次减少人数
+  while (max_players >= 1) {
+    // 复制分数队列以进行检查
+    deque<int> link_cp = score_deque;
+    if (can_partition_m_subsets(link_cp, total_score, max_players)) {
+      cout << total_score / max_players << endl; // 输出最小MVP得分
+      return 0;
+    }
+    max_players--;
+  }
+
+  // 理论上不会到达这里
+  cout << total_score << endl;
+  return 0;
+}
+```
 
 #### 游戏分组
 
@@ -11292,6 +11383,199 @@ int main() {
 
   // 输出结果
   cout << min_diff << endl;
+
+  return 0;
+}
+```
+
+#### AI 处理器组合
+
+**题目描述**：
+
+某公司研发了一款高性能 AI 处理器。每台物理设备具备 8 颗 AI 处理器，编号分别为 0、1、2、3、4、5、6、7。
+
+编号 0-3 的处理器处于同一个链路中，编号 4-7 的处理器处于另外一个链路中，不通链路中的处理器不能通信。如下图所示：
+
+![img](https://hydro.ac/d/HWOD2023/p/1/file/YaQlWX5dmRgeof1TtQ9LN.png)
+
+现给定服务器可用的处理器编号数组 array，以及任务申请的处理器数量 num，找出符合下列亲和性调度原则的芯片组合。
+
+如果不存在符合要求的组合，则返回空列表。
+
+亲和性调度原则：
+
+- 如果申请处理器个数为 1，则选择同一链路，剩余可用的处理器数量为 1 个的最佳，其次是剩余 3 个的为次佳，然后是剩余 2 个，最后是剩余 4 个。
+- 如果申请处理器个数为 2，则选择同一链路剩余可用的处理器数量 2 个的为最佳，其次是剩余 4 个，最后是剩余 3 个。
+- 如果申请处理器个数为 4，则必须选择同一链路剩余可用的处理器数量为 4 个。
+- 如果申请处理器个数为 8，则申请节点所有 8 个处理器。
+
+提示：
+
+1. 任务申请的处理器数量只能是 1、2、4、8。
+2. 编号 0-3 的处理器处于一个链路，编号 4-7 的处理器处于另外一个链路。
+3. 处理器编号唯一，且不存在相同编号处理器。
+
+**输入描述**：
+
+输入包含可用的处理器编号数组 array，以及任务申请的处理器数量 num 两个部分。
+
+第一行为 array，第二行为 num。例如：
+
+```
+[0, 1, 4, 5, 6, 7]
+1
+```
+
+表示当前编号为 0、1、4、5、6、7 的处理器可用。任务申请 1 个处理器。
+
+- 0 <= array.length <= 8
+- 0 <= array [i] <= 7
+- num in [1, 2, 4, 8]
+
+**输出描述**：
+
+输出为组合列表，当 array = [0，1，4，5，6，7]，num = 1 时，输出为 [[0], [1]]。
+
+**用例 1**：
+
+输入：
+
+```
+[0, 1, 4, 5, 6, 7]
+1
+```
+
+输出：
+
+```
+[[0], [1]]
+```
+
+说明：
+
+根据第一条亲和性调度原则，在剩余两个处理器的链路（0, 1, 2, 3）中选择处理器。
+
+由于只有 0 和 1 可用，则返回任意一颗处理器即可。
+
+**用例 2**：
+
+输入：
+
+```
+[0, 1, 4, 5, 6, 7]
+4
+```
+
+输出：
+
+```
+[[4, 5, 6, 7]]
+```
+
+说明：根据第三条亲和性调度原则，必须选择同一链路剩余可用的处理器数量为 4 个的环
+
+难度：中等
+
+标签：深度优先搜索、回溯、排序
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+void dfs(vector<int>& link, int level, int index, vector<int>& path,
+         vector<vector<int> >& res) {
+  if (path.size() == level) {
+    res.push_back(path);
+    return;
+  }
+
+  for (int i = index; i < link.size(); i++) {
+    path.push_back(link[i]);
+    dfs(link, level, i + 1, path, res);
+    path.pop_back();
+  }
+}
+
+int main() {
+  vector<int> link1;
+  vector<int> link2;
+
+  getchar(); // 读取第一行的开头 '['
+
+  int id;
+  while (cin >> id) {
+    if (id < 4) {
+      link1.push_back(id);
+    } else {
+      link2.push_back(id);
+    }
+
+    if (getchar() != ',') {
+      // 读取每个处理器数字id后面的逗号
+      break;
+    }
+
+    getchar(); // 读取空格
+  }
+
+  int num;
+  cin >> num;
+
+  sort(link1.begin(), link1.end());
+  sort(link2.begin(), link2.end());
+
+  map<int, vector<int> > dic;
+  dic[1] = vector<int>{1, 3, 2, 4};
+  dic[2] = vector<int>{2, 4, 3};
+  dic[4] = vector<int>{4};
+
+  vector<vector<int> > res;
+
+  if (num == 8) {
+    if (link1.size() == 4 && link2.size() == 4) {
+      link2.insert(link2.begin(), link1.begin(), link1.end());
+      res.push_back(link2);
+    }
+  } else {
+    vector<int> path;
+    for (const int& val : dic[num]) {
+      if (link1.size() == val || link2.size() == val) {
+        if (link1.size() == val) {
+          dfs(link1, num, 0, path, res);
+        }
+
+        if (link2.size() == val) {
+          dfs(link2, num, 0, path, res);
+        }
+
+        break; // 找到最优选择策略了，所以无需继续
+      }
+    }
+  }
+
+  // 输出打印
+  cout << "[";
+
+  for (size_t i = 0; i < res.size(); i++) {
+    cout << "[";
+
+    for (size_t j = 0; j < res[i].size(); j++) {
+      cout << res[i][j];
+
+      if (j < res[i].size() - 1) {
+        cout << ", ";
+      }
+    }
+
+    cout << "]";
+
+    if (i < res.size() - 1) {
+      cout << ", ";
+    }
+  }
+
+  cout << "]";
 
   return 0;
 }
