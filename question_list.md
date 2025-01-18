@@ -12377,6 +12377,173 @@ int main() {
 
 ## 深度优先搜索
 
+### 200 分
+
+#### 找单词
+
+**题目描述**：
+
+给一个字符串和一个二维字符数组，如果该字符串存在于该数组中，则按字符串的字符顺序输出字符串每个字符所在单元格的位置下标字符串，如果找不到返回字符串“N”。
+
+1.需要按照字符串的字符组成顺序搜索，且搜索到的位置必须是相邻单元格，其中“相邻单元格”是指那些水平相邻或垂直相邻的单元格。
+
+2.同一个单元格内的字母不允许被重复使用。
+
+3.假定在数组中最多只存在一个可能的匹配。
+
+**输入描述**：
+
+第 1 行为一个数字 N 指示二维数组在后续输入所占的行数。
+
+第 2 行到第 N+1 行输入为一个二维大写字符数组，每行字符用半角, 分割。
+
+第 N+2 行为待查找的字符串，由大写字符组成。
+
+二维数组的大小为 N\*N，0 < N <= 100。
+
+单词长度 K，0 < K < 1000。
+
+**输出描述**：
+
+输出一个位置下标字符串，拼接格式为：第 1 个字符行下标+”,”+第 1 个字符列下标+”,”+第 2 个字符行下标+”,”+第 2 个字符列下标… +”,”+第 N 个字符行下标+”,”+第 N 个字符列下标。
+
+**用例 1**：
+
+输入：
+
+```
+4
+A,C,C,F
+C,D,E,D
+B,E,S,S
+F,E,C,A
+ACCESS
+```
+
+输出：
+
+```
+0,0,0,1,0,2,1,2,2,2,2,3
+```
+
+说明：ACCESS 分别对应二维数组的 [0,0] [0,1] [0,2] [1,2] [2,2] [2,3] 下标位置。
+
+难度：中等
+
+标签：深度优先搜索、数组、字符串、回溯、矩阵
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+bool dfs(vector<vector<char> >& grid, string& word, int row, int col, int index,
+         vector<vector<bool> >& visited,
+         vector<pair<int, int> >& current_path) {
+  // 边界条件检查和是否匹配检查  
+  if (index == word.length()) {
+    return true;
+  }
+
+  // 检查是否越界、是否访问过、是否匹配  
+  if (row < 0 || row >= grid.size() ||
+      col < 0 || col >= grid[0].size() ||
+      visited[row][col] ||
+      grid[row][col] != word[index]) {
+    return false;
+  }
+
+  // 标记当前单元格已访问  
+  visited[row][col] = true;
+  current_path.emplace_back(row, col);
+
+  // 四个方向：上、右、下、左  
+  int dx[4] = {-1, 0, 1, 0};
+  int dy[4] = {0, 1, 0, -1};
+
+  // 尝试四个方向  
+  for (int i = 0; i < 4; i++) {
+    int new_row = row + dx[i];
+    int new_col = col + dy[i];
+
+    if (dfs(grid, word, new_row, new_col, index + 1, visited, current_path)) {
+      return true;
+    }
+  }
+
+  // 回溯：取消标记  
+  visited[row][col] = false;
+  current_path.pop_back();
+  return false;
+}
+
+int main() {
+  int n;
+  cin >> n;
+
+  // 读取二维数组  
+  vector<vector<char> > grid(n, vector<char>(n));
+  for (int i = 0; i < n; i++) {
+    string line;
+    cin >> line;
+
+    // 解析每一行  
+    istringstream ss(line);
+    string cell;
+    int j = 0;
+    while (getline(ss, cell, ',')) {
+      grid[i][j++] = cell[0];
+    }
+  }
+
+  // 读取目标字符串  
+  string word;
+  cin >> word;
+
+  // 存储结果路径  
+  vector<pair<int, int> > final_path;
+  bool found = false;
+
+  // 遍历每个起始点  
+  for (int i = 0; i < n && !found; i++) {
+    for (int j = 0; j < n && !found; j++) {
+      // 起始字符匹配  
+      if (grid[i][j] == word[0]) {
+        // 访问标记数组  
+        vector<vector<bool> > visited(n, vector<bool>(n, false));
+        vector<pair<int, int> > current_path;
+
+        // 如果找到路径  
+        if (dfs(grid, word, i, j, 0, visited, current_path)) {
+          found = true;
+          final_path = current_path;
+        }
+      }
+    }
+  }
+
+  // 输出路径  
+  if (found) {
+    for (int i = 0; i < final_path.size(); i++) {
+      cout << final_path[i].first << "," << final_path[i].second;
+      if (i < final_path.size() - 1) {
+        cout << ",";
+      }
+    }
+    cout << endl;
+  } else {
+    cout << "N" << endl;
+  }
+
+  return 0;
+}
+```
+
+
+
+
+
+## 广度优先搜索
+
 **题目描述**：
 
 **输入描述**：
@@ -12396,6 +12563,8 @@ int main() {
 ```
 
 ```
+
+说明：
 
 **用例 2**：
 
