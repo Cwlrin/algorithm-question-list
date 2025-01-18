@@ -64,7 +64,7 @@ int main() {
   vector<int> res;
 
   // DFS生成组合
-  function<void(string)> dfs = [&](string path) {
+  function<void(string)> dfs = [&](const string& path) {
     // 非空路径加入结果
     if (!path.empty()) {
       res.emplace_back(stoi(path));
