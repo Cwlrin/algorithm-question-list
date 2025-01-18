@@ -12200,6 +12200,181 @@ int main() {
 }
 ```
 
+#### 最佳的出牌方法
+
+**题目描述**：
+
+手上有一副扑克牌，每张牌按牌面数字记分（J = 11, Q = 12, K = 13，没有大小王)，出牌时按照以下规则记分：
+
+- 出单张，记牌面分数，例如出一张 2，得分为 2
+- 出对或 3 张，记牌面分数总和再 x2，例如出 3 张 3，得分为(3+3+3)x2 = 18
+- 出 5 张顺，记牌面分数总和再 x2，例如出 34567 顺，得分为(3+4+5+6+7)x2 = 50
+- 出 4 张炸弹，记牌面分数总和再 x3，例如出 4 张 4，得分为 4x4x3 = 48
+
+求出一副牌最高的得分数
+
+**输入描述**：
+
+按顺序排好的一副牌，最少 1 张，最多 15 张。
+
+1-9 输入为数字 1-9，10 输入为数字 0，JQK 输入为大写字母 JQK.
+
+无需考虑输入非法的情况，例如输入字符不在 [0-9JQK] 范围或某一张牌超过 4 张
+
+**输出描述**：
+
+最高的得分数
+
+积分规则中没有的出牌方式不支持，例如不支持 3 带 1、4 带 2，不支持 5 张以上的顺，且 10JQKA (0JQK1) 不算顺。
+
+**用例 1**：
+
+输入：
+
+```
+33445677
+```
+
+输出：
+
+```
+67
+```
+
+说明：
+
+出对 3、对 4、对 7，单张 5、6，得分为 67;
+
+出 34567 顺，再出单张 3、4、7，得分为 64
+
+因此最高得分是按对出，可得到最高分 67，输出结果 67
+
+难度：困难
+
+标签：动态规划、回溯、贪心
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int max_score = 0;
+
+void dfs(vector<int>& card_count, int start_idx, int current_score,
+         int remaining_cards) {
+  // 如果没有剩余牌，更新最大分数
+  if (remaining_cards == 0) {
+    max_score = max(max_score, current_score);
+    return;
+  }
+
+  // 跳过没有牌的位置
+  while (start_idx <= 13 && card_count[start_idx] == 0) {
+    start_idx++;
+  }
+
+  // 已经遍历完所有位置
+  if (start_idx > 13) {
+    max_score = max(max_score, current_score);
+    return;
+  }
+
+  // 尝试出单张
+  if (card_count[start_idx] >= 1) {
+    card_count[start_idx]--;
+    dfs(card_count, start_idx, current_score + start_idx, remaining_cards - 1);
+    card_count[start_idx]++;
+  }
+
+  // 尝试出对子
+  if (card_count[start_idx] >= 2) {
+    card_count[start_idx] -= 2;
+    dfs(card_count, start_idx, current_score + start_idx * 2 * 2,
+        remaining_cards - 2);
+    card_count[start_idx] += 2;
+  }
+
+  // 尝试出三张
+  if (card_count[start_idx] >= 3) {
+    card_count[start_idx] -= 3;
+    dfs(card_count, start_idx, current_score + start_idx * 3 * 2,
+        remaining_cards - 3);
+    card_count[start_idx] += 3;
+  }
+
+  // 尝试出炸弹
+  if (card_count[start_idx] >= 4) {
+    card_count[start_idx] -= 4;
+    dfs(card_count, start_idx, current_score + start_idx * 4 * 3,
+        remaining_cards - 4);
+    card_count[start_idx] += 4;
+  }
+
+  // 尝试出顺子
+  if (start_idx + 4 <= 13) {
+    bool can_sequence = true;
+    for (int j = 0; j < 5; j++) {
+      if (card_count[start_idx + j] < 1) {
+        can_sequence = false;
+        break;
+      }
+    }
+
+    if (can_sequence) {
+      int seq_sum = start_idx + (start_idx + 1) + (start_idx + 2) + (
+                            start_idx + 3) + (start_idx + 4);
+      for (int j = 0; j < 5; j++) {
+        card_count[start_idx + j]--;
+      }
+      dfs(card_count, start_idx, current_score + seq_sum * 2,
+          remaining_cards - 5);
+      for (int j = 0; j < 5; j++) {
+        card_count[start_idx + j]++;
+      }
+    }
+  }
+
+  // 跳过当前位置
+  dfs(card_count, start_idx + 1, current_score, remaining_cards);
+}
+
+int main() {
+  string cards;
+  cin >> cards;
+
+  // 初始化card_count
+  vector<int> card_count(14, 0);
+  for (char c : cards) {
+    int num = 0;
+    if (c >= '1' && c <= '9')
+      num = c - '0';
+    else if (c == '0')
+      num = 10;
+    else if (c == 'J')
+      num = 11;
+    else if (c == 'Q')
+      num = 12;
+    else
+      if (c == 'K')
+        num = 13;
+    card_count[num]++;
+  }
+
+  // 计算总的剩余牌数
+  int total_cards = cards.length();
+
+  // 重置最大分数
+  max_score = 0;
+
+  // 开始深度优先搜索，从第1个位置开始
+  dfs(card_count, 1, 0, total_cards);
+
+  // 输出最大分数
+  cout << max_score << endl;
+
+  return 0;
+}
+```
+
 ## 深度优先搜索
 
 **题目描述**：
