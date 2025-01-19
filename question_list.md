@@ -13141,46 +13141,115 @@ int main() {
 
 算法标签：广度优先搜索、贪心、堆（优先队列）
 
-
+#### 树状结构查询
 
 **题目描述**：
 
+通常使用多行的节点、父节点表示一棵树，比如
+
+> 西安 陕西
+>
+> 陕西 中国
+>
+> 江西 中国
+>
+> 中国 亚洲
+>
+> 泰国 亚洲
+
+输入一个节点之后，请打印出来树中他的所有下层节点
+
 **输入描述**：
 
+第一行输入行数，下面是多行数据，每行以空格区分节点和父节点
+
+接着是查询节点
+
 **输出描述**：
+
+输出查询节点的所有下层节点。以字典序排序
+
+树中的节点是唯一的，不会出现两个节点，是同一个名字
 
 **用例 1**：
 
 输入：
 
 ```
-
+5
+b a
+c a
+d c
+e c
+f d
+c
 ```
 
 输出：
 
 ```
-
+d
+e
+f
 ```
 
-说明：
+难度：简单
 
-**用例 2**：
+标签：树、深度优先搜索、广度优先搜索、递归
 
-输入：
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
 
+int main() {
+  int n;
+  cin >> n;
+
+  // 建立映射关系
+  unordered_map<string, vector<string>> tree;
+  set<string> nodes;
+
+  // 读取树的节点关系
+  for (int i = 0; i < n; i++) {
+    string child, parent;
+    cin >> child >> parent;
+
+    tree[parent].push_back(child);
+    nodes.insert(child);
+    nodes.insert(parent);
+  }
+
+  // 查询节点
+  string query;
+  cin >> query;
+
+  // 存储查询结果的集合
+  set<string> result;
+
+  // 深度优先搜索查找所有下层节点
+  function<void(string)> dfs = [&](string node) {
+    // 如果该节点没有子节点，直接返回
+    if (tree.count(node) == 0) return;
+
+    // 遍历所有子节点
+    for (string child : tree[node]) {
+      result.insert(child);
+      // 递归查找子节点的下层节点
+      dfs(child);
+    }
+  };
+
+  // 执行深度优先搜索
+  dfs(query);
+
+  // 输出结果
+  for (string node : result) {
+    cout << node << endl;
+  }
+
+  return 0;
+}
 ```
-
-```
-
-输出：
-
-```
-
-```
-
-说明：
-
 
 ## 双指针
 
