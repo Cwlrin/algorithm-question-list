@@ -12847,6 +12847,188 @@ int main() {
 
 ### 200 分
 
+#### 跳马
+
+**题目描述**：
+
+马是象棋（包括中国象棋和国际象棋）中的棋子，走法是每步直一格再斜一格，即先横着或者直者走一格，然后再斜着走一个对角线，可进可退，可越过河界，俗称 "马走日" 字。
+
+给定 m 行 n 列的棋盘（网格图），棋盘上只有棋子象棋中的棋子“马”，并且每个棋子有等级之分，等级为 k 的马可以跳 1~k 步（走的方式与象棋中“马”的规则一样，不可以超出棋盘位置），问是否能将所有马跳到同一位置，如果存在，输出最少需要的总步数（每匹马的步数相加），不存在则输出-1。
+
+注：允许不同的马在跳的过程中跳到同一位置，坐标为（x, y）的马跳一次可以跳到的坐标为：(x+1, y+2)，(x+1, y-2)，(x+2, y+1)，(x+2, y-1)，(x-1, y+2)，(x-1, y-2)，(x-2, y+1)，(x-2, y-1)，的格点上，但是不可以超出棋盘范围。
+
+**输入描述**：
+
+第一行输入 m，n，代表 m 行 n 列的网格图棋盘（1 ≤ m, n ≤ 25）
+
+接下来输入 m 行 n 列的网格图棋盘，如果第 i 行，第 j 列的元素为 "." ，代表此格点没有棋子，如果为数字 k（1 ≤ k ≤ 9），代表此格点存在等级为 k 的“马”
+
+**输出描述**：
+
+输出最少需要的总步数（每匹马的步数相加），不存在则输出-1。
+
+**用例 1**：
+
+输入：
+
+```
+3 2
+..
+2.
+..
+```
+
+输出：
+
+```
+0
+```
+
+说明：只有一匹马，不需要跳动
+
+**用例 2**：
+
+输入：
+
+```
+3 5
+47.48
+4744.
+7....
+```
+
+输出：
+
+```
+17
+```
+
+难度：困难
+
+标签：广度优先搜索、图论
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+// 马可以跳跃的8个方向
+const int dx[] = {1, 1, 2, 2, -1, -1, -2, -2};
+const int dy[] = {2, -2, 1, -1, 2, -2, 1, -1};
+
+int main() {
+  int m, n;
+  cin >> m >> n;
+
+  vector<vector<char> > board(m, vector<char>(n));
+  vector<pair<int, int> > horses; // 记录马的位置
+  vector<int> levels;             // 记录马的等级
+
+  // 读取棋盘数据并记录每匹马的位置和等级
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
+      cin >> board[i][j];
+      if (isdigit(board[i][j])) {
+        // 检查是否是马
+        horses.emplace_back(i, j);
+        levels.push_back(board[i][j] - '0');
+      }
+    }
+  }
+
+  // 如果只有一匹马，不需要跳动，直接返回0
+  if (horses.size() == 1) {
+    cout << 0 << endl;
+    return 0;
+  }
+
+  // 初始化 stepMap，记录每个位置的马所花费的最小步数之和
+  vector<vector<int> > step_map(m, vector<int>(n, 0));
+
+  // reach集合用于记录所有马都能跳到的公共位置
+  unordered_set<int> reach;
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
+      reach.insert(i * n + j); // 初始化为棋盘上的所有位置
+    }
+  }
+
+  // 操作每匹马
+  for (int k = 0; k < horses.size(); k++) {
+    int x = horses[k].first;
+    int y = horses[k].second;
+    int level = levels[k];
+
+    // BFS 初始化
+    queue<pair<int, int> > q;
+    q.emplace(x, y);
+
+    // 记录该马能到达的位置
+    unordered_set<int> vis;
+    vis.insert(x * n + y);
+
+    // 记录该马能跳到的位置
+    unordered_set<int> current_reach;
+    current_reach.insert(x * n + y);
+
+    // BFS过程
+    for (int step = 1; step <= level; step++) {
+      int q_size = q.size(); // 当前层的节点数量
+
+      for (int j = 0; j < q_size; j++) {
+        auto [curr_x, curr_y] = q.front();
+        q.pop();
+
+        // 从当前位置出发，进行跳跃
+        for (int direction = 0; direction < 8; direction++) {
+          int new_x = curr_x + dx[direction];
+          int new_y = curr_y + dy[direction];
+
+          // 检查步数是否越界
+          if (new_x >= 0 && new_x < m && new_y >= 0 && new_y < n) {
+            int pos_index = new_x * n + new_y;
+
+            // 如果该位置未被访问，将其加入队列并更新
+            if (vis.find(pos_index) == vis.end()) {
+              q.emplace(new_x, new_y);
+              vis.insert(pos_index);
+              step_map[new_x][new_y] += step; //步数累加
+              current_reach.insert(pos_index);
+            }
+          }
+        }
+      }
+    }
+
+    // 更新公共 reachable 位置集
+    unordered_set<int> updated_reach;
+    for (int pos : reach) {
+      if (current_reach.find(pos) != current_reach.end()) {
+        updated_reach.insert(pos);
+      }
+    }
+    reach = updated_reach; // 更新 reachable 集合为交集
+  }
+
+  // 如果没有公共位置，返回-1
+  if (reach.empty()) {
+    cout << -1 << endl;
+    return 0;
+  }
+
+  // 计算所有公共位置中的最小步数和
+  int min_total_steps = INT_MAX;
+  for (int pos : reach) {
+    int rx = pos / n; // 行索引
+    int ry = pos % n; // 列索引
+    min_total_steps = min(min_total_steps, step_map[rx][ry]);
+  }
+
+  cout << min_total_steps << endl; // 输出结果
+  return 0;
+}
+```
+
+
 **题目描述**：
 
 **输入描述**：
@@ -12885,45 +13067,7 @@ int main() {
 
 说明：
 
-**题目描述**：
-
-**输入描述**：
-
-**输出描述**：
-
-**用例 1**：
-
-输入：
-
-```
-
-```
-
-输出：
-
-```
-
-```
-
-说明：
-
-**用例 2**：
-
-输入：
-
-```
-
-```
-
-输出：
-
-```
-
-```
-
-说明：
-
-### 双指针
+#### 双指针
 
 **题目描述**：
 
