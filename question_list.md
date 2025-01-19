@@ -13436,7 +13436,7 @@ int main() {
 
 - 第一行为 m 、n ，代表输入是一个 m × n 的数组。
 - 第二行是一串 m × n 个用空格分隔的整数。每连续 n 个数代表一行，再往后 n 个代表下一行，以此类推。对应的值代表对应的网格是空旷位置，还是信号源，还是阻隔物。
-- 第三行是 i 、 j，代表需要计算array[i][j]的网络信号值。
+- 第三行是 i 、 j，代表需要计算 array[i][j]的网络信号值。
 
 注意：此处 i 和 j 均从 0 开始，即第一行 i 为 0。
 
@@ -13454,13 +13454,13 @@ int main() {
 
 ![img](https://hydro.ac/d/HWOD2023/p/92/file/tnIRJQWGchx_2_4Fkaf5b.png)
 
-需要输出第1行第4列的网络信号值，如下图，值为2。
+需要输出第 1 行第 4 列的网络信号值，如下图，值为 2。
 
 ![img](https://hydro.ac/d/HWOD2023/p/92/file/sOwYJzTK-LxMDbxwnGrF_.png)
 
 **输出描述**：
 
-输出对应位置的网络信号值，如果网络信号未覆盖到，也输出0。
+输出对应位置的网络信号值，如果网络信号未覆盖到，也输出 0。
 
 一个网格如果可以途径不同的传播衰减路径传达，取较大的值作为其信号值。
 
@@ -13479,8 +13479,6 @@ int main() {
 ```
 2
 ```
-
-
 
 **用例 2**：
 
@@ -13576,6 +13574,284 @@ int main() {
 
   // 输出目标位置的信号值
   cout << signal_value[target_i][target_j] << endl;
+
+  return 0;
+}
+```
+
+#### 计算疫情扩散时间
+
+**题目描述**：
+
+在一个地图中(地图由 n\*n 个区域组成），有部分区域被感染病菌。 感染区域每天都会把周围（上下左右）的 4 个区域感染。 请根据给定的地图计算，多少天以后，全部区域都会被感染。 如果初始地图上所有区域全部都被感染，或者没有被感染区域，返回-1
+
+**输入描述**：
+
+一行 N\*N 个数字（只包含 0,1，不会有其他数字）表示一个地图，数字间用,分割，0 表示未感染区域，1 表示已经感染区域 每 N 个数字表示地图中一行，输入数据共表示 N 行 N 列的区域地图。
+
+例如输入 1,0,1,0,0,0,1,0,1，表示地图
+
+```none
+1,0,1
+0,0,0
+1,0,1
+```
+
+**输出描述**：
+
+一个整数，表示经过多少天以后，全部区域都被感染 1<=N<200
+
+**用例 1**：
+
+输入：
+
+```
+1,0,1,0,0,0,1,0,1
+```
+
+输出：
+
+```
+2
+```
+
+说明：1 天以后，地图中仅剩余中心点未被感染；2 天以后，全部被感染。
+
+**用例 2**：
+
+输入：
+
+```
+0,0,0,0
+```
+
+输出：
+
+```
+-1
+```
+
+说明：无感染区域
+
+**用例 3**：
+
+输入：
+
+```
+1,1,1,1,1,1,1,1,1
+```
+
+输出：
+
+```
+-1
+```
+
+说明：全部都感染
+
+难度：中等
+
+算法：队列、广度优先搜索、图
+
+
+#### 宜居星球改造计划
+
+**题目描述**：
+
+2XXX年，人类通过对火星的大气进行宜居改造分析，使得火星已在理论上具备人类宜居的条件；
+
+由于技术原因，无法一次性将火星大气全部改造，只能通过局部处理形式；
+
+假设将火星待改造的区域为row * column的网格，每个网格有3个值，宜居区、可改造区、死亡区，使用YES、NO、NA代替，YES表示该网格已经完成大气改造，NO表示该网格未进行改造，后期可进行改造，NA表示死亡区，不作为判断是否改造完的宜居，无法穿过；
+
+初始化下，该区域可能存在多个宜居区，并目每个宜居区能同时在每个大阳日单位向上下左右四个方向的相邻格子进行扩散，自动将4个方向相邻的真空区改造成宜居区；
+
+请计算这个待改造区域的网格中，可改造区是否能全部成宜居区，如果可以，则返回改造的大阳日天教，不可以则返回-1
+
+**输入描述**：
+
+输入row * column个网格数据，每个网格值枚举值如下: YES，NO，NA；
+
+样例:
+
+```none
+YES YES NO
+NO NO NO
+NA NO YES
+```
+
+**输出描述**：
+
+可改造区是否能全部变成宜居区，如果可以，则返回改造的太阳日天数，不可以则返回-1。
+
+grid\[i\]\[j\]只有3种情况，YES、NO、NA
+
+- row == grid.length
+- column == grid[i].length
+- 1 ≤ row, column ≤ 8
+
+**用例 1**：
+
+输入：
+
+```
+YES YES NO
+NO NO NO
+YES NO NO
+```
+
+输出：
+
+```
+2
+```
+
+说明：经过2个太阳日，完成宜居改造
+
+**用例 2**：
+
+输入：
+
+```
+YES NO NO NO
+NO NO NO NO
+NO NO NO NO
+NO NO NO NO
+```
+
+输出：
+
+```
+6
+```
+
+说明：经过6个太阳日，可完成改造
+
+**用例 3**：
+
+输入：
+
+```
+NO NA
+```
+
+输出：
+
+```
+-1
+```
+
+说明：无改造初始条件，无法进行改造
+
+**用例 4**：
+
+输入：
+
+```
+YES NO NO YES
+NO NO YES NO
+NO YES NA NA
+YES NO NA NO
+```
+
+输出：
+
+```
+-1
+```
+
+说明：右下角的区域，被周边三个死亡区挡住，无法实现改造
+
+难度：中等
+
+标签：广度优先搜索、图、队列
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <string>
+#include <sstream>
+
+using namespace std;
+
+int main() {
+  string line;
+  vector<vector<string> > grid;
+  int rows = 0, cols = 0;
+
+  // 读取输入
+  while (getline(cin, line)) {
+    stringstream ss(line);
+    vector<string> row;
+    string cell;
+    while (ss >> cell) {
+      row.push_back(cell);
+    }
+    grid.push_back(row);
+    cols = row.size(); // 每行的列数
+    rows++;
+  }
+
+  // BFS 初始化
+  queue<pair<int, int> > q; // BFS 队列
+  int total_no_count = 0;     // 统计可改造区域数量
+  int days = 0;             // 记录所需天数
+
+  // 填充初始队列和统计可改造区域
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < cols; ++j) {
+      if (grid[i][j] == "YES") {
+        q.push(make_pair(i, j)); // 初始化 BFS
+      } else if (grid[i][j] == "NO") {
+        total_no_count++; // 统计可改造区域
+      }
+    }
+  }
+
+  // 如果没有可改造区域，检查是否有已改造的区域
+  if (total_no_count == 0) {
+    cout << (q.empty() ? -1 : 0) << endl;
+    return 0;
+  }
+
+  // BFS 扩散
+  int directions[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}}; // 上下左右方向
+
+  while (!q.empty()) {
+    int size = q.size();
+    bool modified = false; // 标记这一轮是否有区域被改造
+
+    for (int i = 0; i < size; ++i) {
+      // 使用传统方式访问队列元素
+      int x = q.front().first;
+      int y = q.front().second;
+      q.pop();
+
+      // 尝试向上下左右扩散
+      for (int j = 0; j < 4; ++j) {
+        int new_x = x + directions[j][0];
+        int new_y = y + directions[j][1];
+
+        // 检查边界条件
+        if (new_x >= 0 && new_x < rows && new_y >= 0 && new_y < cols && grid[new_x][
+              new_y] == "NO") {
+          grid[new_x][new_y] = "YES";      // 更新为已改造区域
+          q.push(make_pair(new_x, new_y)); // 加入队列
+          total_no_count--;                // 可改造区域减少
+          modified = true;               // 标记发生改造
+        }
+      }
+    }
+
+    // 如果这一轮有更新，表示天数加一
+    if (modified) {
+      days++;
+    }
+  }
+
+  // 如果所有可改造区域都已改造
+  cout << (total_no_count == 0 ? days : -1) << endl;
 
   return 0;
 }
