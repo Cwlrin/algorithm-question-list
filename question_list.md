@@ -13653,24 +13653,23 @@ int main() {
 
 算法：队列、广度优先搜索、图
 
-
 #### 宜居星球改造计划
 
 **题目描述**：
 
-2XXX年，人类通过对火星的大气进行宜居改造分析，使得火星已在理论上具备人类宜居的条件；
+2XXX 年，人类通过对火星的大气进行宜居改造分析，使得火星已在理论上具备人类宜居的条件；
 
 由于技术原因，无法一次性将火星大气全部改造，只能通过局部处理形式；
 
-假设将火星待改造的区域为row * column的网格，每个网格有3个值，宜居区、可改造区、死亡区，使用YES、NO、NA代替，YES表示该网格已经完成大气改造，NO表示该网格未进行改造，后期可进行改造，NA表示死亡区，不作为判断是否改造完的宜居，无法穿过；
+假设将火星待改造的区域为 row \* column 的网格，每个网格有 3 个值，宜居区、可改造区、死亡区，使用 YES、NO、NA 代替，YES 表示该网格已经完成大气改造，NO 表示该网格未进行改造，后期可进行改造，NA 表示死亡区，不作为判断是否改造完的宜居，无法穿过；
 
-初始化下，该区域可能存在多个宜居区，并目每个宜居区能同时在每个大阳日单位向上下左右四个方向的相邻格子进行扩散，自动将4个方向相邻的真空区改造成宜居区；
+初始化下，该区域可能存在多个宜居区，并目每个宜居区能同时在每个大阳日单位向上下左右四个方向的相邻格子进行扩散，自动将 4 个方向相邻的真空区改造成宜居区；
 
 请计算这个待改造区域的网格中，可改造区是否能全部成宜居区，如果可以，则返回改造的大阳日天教，不可以则返回-1
 
 **输入描述**：
 
-输入row * column个网格数据，每个网格值枚举值如下: YES，NO，NA；
+输入 row \* column 个网格数据，每个网格值枚举值如下: YES，NO，NA；
 
 样例:
 
@@ -13684,7 +13683,7 @@ NA NO YES
 
 可改造区是否能全部变成宜居区，如果可以，则返回改造的太阳日天数，不可以则返回-1。
 
-grid\[i\]\[j\]只有3种情况，YES、NO、NA
+grid\[i\]\[j\]只有 3 种情况，YES、NO、NA
 
 - row == grid.length
 - column == grid[i].length
@@ -13706,7 +13705,7 @@ YES NO NO
 2
 ```
 
-说明：经过2个太阳日，完成宜居改造
+说明：经过 2 个太阳日，完成宜居改造
 
 **用例 2**：
 
@@ -13725,7 +13724,7 @@ NO NO NO NO
 6
 ```
 
-说明：经过6个太阳日，可完成改造
+说明：经过 6 个太阳日，可完成改造
 
 **用例 3**：
 
@@ -13857,6 +13856,129 @@ int main() {
 }
 ```
 
+#### 战场索敌
+
+**题目描述**：
+
+有一个大小是 N\*M 的战场地图，被墙壁 '#' 分隔成大小不同的区域，上下左右四个方向相邻的空地 '.' 属于同一个区域，只有空地上可能存在敌人'E”，请求出地图上总共有多少区域里的敌人数小于 K。
+
+**输入描述**：
+
+第一行输入为 N,M,K；
+
+- N 表示地图的行数，M 表示地图的列数， K 表示目标敌人数量
+- N，M<=100
+
+之后为一个 NxM 大小的字符数组。
+
+**输出描述**：
+
+敌人数小于 K 的区域数量
+
+**用例 1**：
+
+输入：
+
+```
+3 5 2
+..#EE
+E.#E.
+###..
+```
+
+输出：
+
+```
+1
+```
+
+说明：地图被墙壁分为两个区域，左边区域有 1 个敌人，右边区域有 3 个敌人，符合条件的区域数量是 1
+
+难度：中等
+
+标签：广度优先搜索，深度优先搜索、图、队列
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+void bfs(int start_x, int start_y, const vector<vector<char> >& grid,
+         vector<vector<bool> >& visited, int& enemy_count) {
+  int directions[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}}; // 四个方向
+  queue<pair<int, int> > q;
+  q.push(make_pair(start_x, start_y)); // 使用 make_pair 创建 pair
+  visited[start_x][start_y] = true;
+
+  while (!q.empty()) {
+    pair<int, int> current = q.front();
+    q.pop();
+    int cur_x = current.first;  // 获取 X 坐标
+    int cur_y = current.second; // 获取 Y 坐标
+
+    // 如果当前格子是敌人，增加敌人计数
+    if (grid[cur_x][cur_y] == 'E') {
+      enemy_count++;
+    }
+
+    for (auto& dir : directions) {
+      int new_x = cur_x + dir[0];
+      int new_y = cur_y + dir[1];
+
+      // 检查边界和访问状态
+      if (new_x >= 0 && new_x < grid.size() && new_y >= 0 && new_y < grid[0].
+          size() &&
+          grid[new_x][new_y] != '#' && !visited[new_x][new_y]) {
+        visited[new_x][new_y] = true;
+        q.push(make_pair(new_x, new_y)); // 加入队列
+      }
+    }
+  }
+}
+
+int main() {
+  int n, m, k;
+  cin >> n >> m >> k;
+
+  vector<vector<char> > grid(n, vector<char>(m));
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < m; ++j) {
+      cin >> grid[i][j];
+    }
+  }
+
+  vector<vector<bool> > visited(n, vector<bool>(m, false));
+  int valid_region_count = 0;
+
+  // 遍历每个单元格，开始 BFS
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < m; ++j) {
+      if (grid[i][j] == '.' && !visited[i][j]) {
+        int enemy_count = 0;
+        bfs(i, j, grid, visited, enemy_count);
+        // 检查敌人数是否小于 K
+        if (enemy_count < k) {
+          valid_region_count++;
+        }
+      }
+      // 加入单独处理 enemy
+      if (grid[i][j] == 'E' && !visited[i][j]) {
+        int enemy_count = 0;
+        bfs(i, j, grid, visited, enemy_count);
+        // 检查敌人数是否小于 K
+        if (enemy_count < k) {
+          valid_region_count++;
+        }
+      }
+
+    }
+  }
+
+  cout << valid_region_count << endl;
+
+  return 0;
+}
+```
 
 ## 双指针
 
