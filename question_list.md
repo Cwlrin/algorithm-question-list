@@ -13049,7 +13049,7 @@ int main() {
 
 第一行为两个数字，M，N，表示地图的大小为 M \* N
 
-- 0 < M,N ≤ 200
+- 0 < M, N ≤ 200
 
 后面一个 M \* N 的矩阵，其中的值是 0 或 -1 或正整数，加油站的总数不超过 200 个
 
@@ -13245,6 +13245,170 @@ int main() {
   // 输出结果
   for (string node : result) {
     cout << node << endl;
+  }
+
+  return 0;
+}
+```
+
+#### 周末爬山
+
+**题目描述**：
+
+周末小明准备去爬山锻炼，0 代表平地，山的高度使用 1 到 9 来表示，小明每次爬山或下山高度只能相差 k 及 k 以内，每次只能上下左右一个方向上移动一格，小明从左上角(0,0)位置出发
+
+**输入描述**：
+
+第一行输入 m n k(空格分隔)
+
+- 代表 m*n 的二维山地图，k 为小明每次爬山或下山高度差的最大值，
+
+然后接下来输入山地图，一共 m 行 n 列，均以空格分隔。取值范围：
+
+- 0 < m ≤ 500
+- 0 < n ≤ 500
+- 0 < k < 5
+
+**输出描述**：
+
+请问小明能爬到的最高峰多高，到该最高峰的最短步数，输出以空格分隔。
+
+同高度的山峰输出较短步数。
+
+如果没有可以爬的山峰，则高度和步数都返回 0。
+
+所有用例输入均为正确格式，且在取值范围内，考生不需要考虑不合法的输入格式。
+
+**用例 1**：
+
+输入：
+
+```
+5 4 1
+0 1 2 0
+1 0 0 0
+1 0 1 2
+1 3 1 0
+0 0 0 9
+```
+
+输出：
+
+```
+2 2
+```
+
+说明：根据山地图可知，能爬到的最高峰在(0,2)位置，高度为 2，最短路径为(0,0)-(0,1)-(0,2)，最短步数为 2。
+
+**用例 2**：
+
+输入：
+
+```
+5 4 3
+0 0 0 0
+0 0 0 0
+0 9 0 0
+0 0 0 0
+0 0 0 9
+```
+
+输出：
+
+```
+0 0
+```
+
+说明：根据山地图可知，每次爬山距离 3，无法爬到山峰上，步数为 0。
+
+难度：中等
+
+标签：广度优先搜索、图、动态规划、回溯、深度优先搜索
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <tuple>
+#include <cstdlib>  // for abs
+using namespace std;
+
+int main() {
+  int m, n, k;
+  cin >> m >> n >> k;
+
+  // 读取地图
+  vector<vector<int> > grid(m, vector<int>(n));
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < n; ++j) {
+      cin >> grid[i][j];
+    }
+  }
+
+  // 定义方向数组：上下左右
+  int dx[4] = {-1, 1, 0, 0};
+  int dy[4] = {0, 0, -1, 1};
+
+  // 记录访问状态
+  vector<vector<bool> > visited(m, vector<bool>(n, false));
+
+  // BFS 队列，存储坐标 (x, y) 和步数 step
+  queue<tuple<int, int, int> > q;
+
+  // 初始化
+  q.push({0, 0, 0});
+  visited[0][0] = true;
+
+  // 记录最高山峰和最小步数
+  int max_height = grid[0][0];
+  int min_steps = 0;
+
+  while (!q.empty()) {
+    // 使用 std::get 获取队列元素
+    int x = get<0>(q.front());
+    int y = get<1>(q.front());
+    int step = get<2>(q.front());
+    q.pop();
+
+    // 检查当前位置的高度
+    int cur_height = grid[x][y];
+
+    // 更新最高山峰和最小步数
+    if (cur_height > max_height) {
+      max_height = cur_height;
+      min_steps = step; // 更新到更高峰的步数
+    } else if (cur_height == max_height) {
+      min_steps = min(min_steps, step); // 更新较小步数
+    }
+
+    // 四个方向搜索
+    for (int i = 0; i < 4; ++i) {
+      int new_x = x + dx[i];
+      int new_y = y + dy[i];
+
+      // 越界检查
+      if (new_x < 0 || new_x >= m || new_y < 0 || new_y >= n)
+        continue;
+      // 已访问检查
+      if (visited[new_x][new_y])
+        continue;
+
+      // 高度差检查
+      if (abs(grid[new_x][new_y] - cur_height) > k)
+        continue;
+
+      // 标记访问并加入队列
+      visited[new_x][new_y] = true;
+      q.push({new_x, new_y, step + 1});
+    }
+  }
+
+  // 检查结果输出
+  if (max_height == grid[0][0]) {
+    // 根据你的描述，如果没有可爬的更高山峰
+    cout << "0 0" << endl;
+  } else {
+    cout << max_height << " " << min_steps << endl;
   }
 
   return 0;
