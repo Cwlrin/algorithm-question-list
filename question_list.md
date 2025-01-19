@@ -13261,7 +13261,7 @@ int main() {
 
 第一行输入 m n k(空格分隔)
 
-- 代表 m*n 的二维山地图，k 为小明每次爬山或下山高度差的最大值，
+- 代表 m\*n 的二维山地图，k 为小明每次爬山或下山高度差的最大值，
 
 然后接下来输入山地图，一共 m 行 n 列，均以空格分隔。取值范围：
 
@@ -13414,6 +13414,173 @@ int main() {
   return 0;
 }
 ```
+
+#### 计算网络信号
+
+**题目描述**：
+
+网络信号经过传递会逐层衰减，且遇到阻隔物无法直接穿透，在此情况下需要计算某个位置的网络信号值。注意: 网络信号可以绕过阻隔物。
+
+- array\[m\]\[n\] 的二维数组代表网格地图，
+- array\[i\]\[j\] = 0 代表 i 行 j 列是空旷位置;
+- array\[i\]\[j\] = x(x 为正整数)代表 i 行 j 列是信号源，信号强度是 x;
+- array\[i\]\[j\] = -1 代表 i 行 j 列是阻隔物。
+- 信号源只有 1 个，阻隔物可能有 0 个或多个
+- 网络信号衰减是上下左右相邻的网格衰减 1
+
+现要求输出对应位置的网络信号值。
+
+**输入描述**：
+
+输入为三行，
+
+- 第一行为 m 、n ，代表输入是一个 m × n 的数组。
+- 第二行是一串 m × n 个用空格分隔的整数。每连续 n 个数代表一行，再往后 n 个代表下一行，以此类推。对应的值代表对应的网格是空旷位置，还是信号源，还是阻隔物。
+- 第三行是 i 、 j，代表需要计算array[i][j]的网络信号值。
+
+注意：此处 i 和 j 均从 0 开始，即第一行 i 为 0。
+
+例如
+
+```none
+6 5
+0 0 0 -1 0 0 0 0 0 0 0 0 -1 4 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0
+1 4
+```
+
+[Copy](javascript:;)
+
+代表如下地图
+
+![img](https://hydro.ac/d/HWOD2023/p/92/file/tnIRJQWGchx_2_4Fkaf5b.png)
+
+需要输出第1行第4列的网络信号值，如下图，值为2。
+
+![img](https://hydro.ac/d/HWOD2023/p/92/file/sOwYJzTK-LxMDbxwnGrF_.png)
+
+**输出描述**：
+
+输出对应位置的网络信号值，如果网络信号未覆盖到，也输出0。
+
+一个网格如果可以途径不同的传播衰减路径传达，取较大的值作为其信号值。
+
+**用例 1**：
+
+输入：
+
+```
+6 5
+0 0 0 -1 0 0 0 0 0 0 0 0 -1 4 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0
+1 4
+```
+
+输出：
+
+```
+2
+```
+
+
+
+**用例 2**：
+
+输入：
+
+```
+6 5
+0 0 0 -1 0 0 0 0 0 0 0 0 -1 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+2 1
+```
+
+输出：
+
+```
+0
+```
+
+难度：中等
+
+标签：广度优先搜索、图、动态规划
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  int m, n;
+  cin >> m >> n;
+
+  vector<vector<int> > array(m, vector<int>(n));
+
+  // 输入网格数组
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < n; ++j) {
+      cin >> array[i][j];
+    }
+  }
+
+  // 读取需要计算的 (i, j)
+  int target_i, target_j;
+  cin >> target_i >> target_j;
+
+  // BFS 初始化
+  queue<tuple<int, int, int> > q; // (x, y, 信号强度)
+  int signal_strength = 0;        // 信号源的强度
+
+  // 查找信号源并初始化 BFS
+  for (int i = 0; i < m; ++i) {
+    for (int j = 0; j < n; ++j) {
+      if (array[i][j] > 0) {
+        // 检查信号源
+        q.push({i, j, array[i][j]});   // (行, 列, 信号强度)
+        signal_strength = array[i][j]; // 保存信号强度
+      }
+    }
+  }
+
+  // 方向数组：上下左右
+  int dx[4] = {-1, 1, 0, 0};
+  int dy[4] = {0, 0, -1, 1};
+
+  // 记录信号强度到达的值
+  vector<vector<int> > signal_value(m, vector<int>(n, 0));
+  signal_value[get<0>(q.front())][get<1>(q.front())] = signal_strength;
+  // 信号源的强度初始化
+
+  // BFS 传播信号
+  while (!q.empty()) {
+    auto [x, y, strength] = q.front();
+    q.pop();
+
+    // 逐邻居传播信号
+    for (int i = 0; i < 4; ++i) {
+      int new_x = x + dx[i];
+      int new_y = y + dy[i];
+
+      // 边界检查
+      if (new_x < 0 || new_x >= m || new_y < 0 || new_y >= n)
+        continue;
+      // 不能到达阻碍物
+      if (array[new_x][new_y] == -1)
+        continue;
+
+      int new_signal_strength = strength - 1; // 信号衰减
+      // 只在信号大于现有值时更新
+      if (new_signal_strength > signal_value[new_x][new_y]) {
+        signal_value[new_x][new_y] = new_signal_strength; // 更新信号值
+        q.push({new_x, new_y, new_signal_strength});      // 继续传播
+      }
+    }
+  }
+
+  // 输出目标位置的信号值
+  cout << signal_value[target_i][target_j] << endl;
+
+  return 0;
+}
+```
+
 
 ## 双指针
 
