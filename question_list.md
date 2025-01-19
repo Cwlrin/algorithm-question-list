@@ -12439,12 +12439,12 @@ using namespace std;
 bool dfs(vector<vector<char> >& grid, string& word, int row, int col, int index,
          vector<vector<bool> >& visited,
          vector<pair<int, int> >& current_path) {
-  // 边界条件检查和是否匹配检查  
+  // 边界条件检查和是否匹配检查
   if (index == word.length()) {
     return true;
   }
 
-  // 检查是否越界、是否访问过、是否匹配  
+  // 检查是否越界、是否访问过、是否匹配
   if (row < 0 || row >= grid.size() ||
       col < 0 || col >= grid[0].size() ||
       visited[row][col] ||
@@ -12452,15 +12452,15 @@ bool dfs(vector<vector<char> >& grid, string& word, int row, int col, int index,
     return false;
   }
 
-  // 标记当前单元格已访问  
+  // 标记当前单元格已访问
   visited[row][col] = true;
   current_path.emplace_back(row, col);
 
-  // 四个方向：上、右、下、左  
+  // 四个方向：上、右、下、左
   int dx[4] = {-1, 0, 1, 0};
   int dy[4] = {0, 1, 0, -1};
 
-  // 尝试四个方向  
+  // 尝试四个方向
   for (int i = 0; i < 4; i++) {
     int new_row = row + dx[i];
     int new_col = col + dy[i];
@@ -12470,7 +12470,7 @@ bool dfs(vector<vector<char> >& grid, string& word, int row, int col, int index,
     }
   }
 
-  // 回溯：取消标记  
+  // 回溯：取消标记
   visited[row][col] = false;
   current_path.pop_back();
   return false;
@@ -12480,13 +12480,13 @@ int main() {
   int n;
   cin >> n;
 
-  // 读取二维数组  
+  // 读取二维数组
   vector<vector<char> > grid(n, vector<char>(n));
   for (int i = 0; i < n; i++) {
     string line;
     cin >> line;
 
-    // 解析每一行  
+    // 解析每一行
     istringstream ss(line);
     string cell;
     int j = 0;
@@ -12495,24 +12495,24 @@ int main() {
     }
   }
 
-  // 读取目标字符串  
+  // 读取目标字符串
   string word;
   cin >> word;
 
-  // 存储结果路径  
+  // 存储结果路径
   vector<pair<int, int> > final_path;
   bool found = false;
 
-  // 遍历每个起始点  
+  // 遍历每个起始点
   for (int i = 0; i < n && !found; i++) {
     for (int j = 0; j < n && !found; j++) {
-      // 起始字符匹配  
+      // 起始字符匹配
       if (grid[i][j] == word[0]) {
-        // 访问标记数组  
+        // 访问标记数组
         vector<vector<bool> > visited(n, vector<bool>(n, false));
         vector<pair<int, int> > current_path;
 
-        // 如果找到路径  
+        // 如果找到路径
         if (dfs(grid, word, i, j, 0, visited, current_path)) {
           found = true;
           final_path = current_path;
@@ -12521,7 +12521,7 @@ int main() {
     }
   }
 
-  // 输出路径  
+  // 输出路径
   if (found) {
     for (int i = 0; i < final_path.size(); i++) {
       cout << final_path[i].first << "," << final_path[i].second;
@@ -12538,11 +12538,392 @@ int main() {
 }
 ```
 
+### 加密算法
 
+**题目描述**：
 
+有一种特殊的加密算法，明文为一段数字串，经过密码本查找转换，生成另一段密文数字串。
 
+规则如下：
+
+1. 明文为一段数字串由 0~9 组成
+
+2. 密码本为数字 0~9 组成的二维数组
+
+3. 需要按明文串的数字顺序在密码本里找到同样的数字串，密码本里的数字串是由相邻的单元格数字组成，上下和左右是相邻的，注意：对角线不相邻，同一个单元格的数字不能重复使用。
+
+4. 每一位明文对应密文即为密码本中找到的单元格所在的行和列序号（序号从 0 开始）组成的两个数宇。
+
+   如明文第 i 位 Data [i] 对应密码本单元格为 Book [x][y]，则明文第 i 位对应的密文为 X Y，X 和 Y 之间用空格隔开。
+
+如果有多条密文，返回字符序最小的密文。
+
+如果密码本无法匹配，返回 "error"。
+
+请你设计这个加密程序。
+
+示例 1：
+
+密码本：
+
+> 0 0 2
+>
+> 1 3 4
+>
+> 6 6 4
+
+明文："3"，密文："1 1"
+
+示例 2：
+
+密码本：
+
+> 0 0 2
+>
+> 1 3 4
+>
+> 6 6 4
+
+明文："0 3"，密文："0 1 1 1"
+
+示例 3：
+
+密码本：
+
+> 0 0 2 4
+>
+> 1 3 4 6
+>
+> 3 4 1 5
+>
+> 6 6 6 5
+
+明文："0 0 2 4"，密文："0 0 0 1 0 2 0 3" 和 "0 0 0 1 0 2 1 2"，返回字典序最小的 "0 0 0 1 0 2 0 3"
+
+明文："8 2 2 3"，密文："error"，密码本中无法匹配
+
+**输入描述**：
+
+第一行输入 1 个正整数 N，代表明文的长度（1 ≤ N ≤ 200）
+
+第二行输入 N 个明文组成的序列 Data [i]（0 ≤ Data [i] ≤ 9）
+
+第三行输入 1 个正整数 M，代表密文的长度
+
+接下来 M 行，每行 M 个数，代表密文矩阵
+
+**输出描述**：
+
+输出字典序最小密文，如果无法匹配，输出 "error"
+
+**用例 1**：
+
+输入：
+
+```
+2
+0 3
+3
+0 0 2
+1 3 4
+6 6 4
+```
+
+输出：
+
+```
+0 1 1 1
+```
+
+说明：
+
+**用例 2**：
+
+输入：
+
+```
+2
+0 5
+3
+0 0 2
+1 3 4
+6 6 4
+```
+
+输出：
+
+```
+error
+```
+
+说明：找不到 0 5 的序列，返回 error
+
+难度：中等
+
+标签：深度优先搜索、矩阵、回溯
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+// 按照 上、左、右、下 的优先级顺序
+vector<vector<int> > directions = {{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
+
+bool dfs(vector<vector<int> >& book, vector<int>& data, int index,
+         int row, int col, vector<pair<int, int> >& current_path,
+         vector<vector<bool> >& visited) {
+  // 如果已经匹配了所有字符
+  if (index == data.size()) {
+    return true;
+  }
+
+  // 按照 上、左、右、下 的优先级搜索
+  for (auto& dir : directions) {
+    int new_row = row + dir[0];
+    int new_col = col + dir[1];
+
+    // 检查新坐标是否合法
+    if (new_row >= 0 && new_row < book.size() &&
+        new_col >= 0 && new_col < book[0].size() &&
+        !visited[new_row][new_col] &&
+        book[new_row][new_col] == data[index]) {
+
+      // 标记为已访问
+      visited[new_row][new_col] = true;
+      current_path.emplace_back(new_row, new_col);
+
+      // 继续搜索下一个字符
+      if (dfs(book, data, index + 1, new_row, new_col, current_path, visited)) {
+        return true;
+      }
+
+      // 回溯
+      visited[new_row][new_col] = false;
+      current_path.pop_back();
+    }
+  }
+
+  return false;
+}
+
+int main() {
+  int n; // 明文长度
+  cin >> n;
+
+  vector<int> data(n);
+  for (int i = 0; i < n; i++) {
+    cin >> data[i];
+  }
+
+  int m; // 密码本大小
+  cin >> m;
+
+  vector<vector<int> > book(m, vector<int>(m));
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < m; j++) {
+      cin >> book[i][j];
+    }
+  }
+
+  vector<vector<pair<int, int> > > all_paths;
+
+  // 遍历所有可能的起始位置
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < m; j++) {
+      if (book[i][j] == data[0]) {
+        vector<vector<bool> > visited(m, vector<bool>(m, false));
+        vector<pair<int, int> > current_path;
+
+        // 初始化起始位置
+        visited[i][j] = true;
+        current_path.emplace_back(i, j);
+
+        // 尝试从该位置开始搜索
+        if (dfs(book, data, 1, i, j, current_path, visited)) {
+          all_paths.push_back(current_path);
+        }
+      }
+    }
+  }
+
+  // 输出结果
+  if (all_paths.empty()) {
+    cout << "error" << endl;
+  } else {
+    // 由于已经按照优先级搜索，第一个路径就是最优解
+    for (auto& pos : all_paths[0]) {
+      cout << pos.first << " " << pos.second << " ";
+    }
+    cout << endl;
+  }
+
+  return 0;
+}
+```
 
 ## 广度优先搜索
+
+### 100 分
+
+**题目描述**：
+
+**输入描述**：
+
+**输出描述**：
+
+**用例 1**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+**用例 2**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+### 200 分
+
+**题目描述**：
+
+**输入描述**：
+
+**输出描述**：
+
+**用例 1**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+**用例 2**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+## 广度优先搜索
+
+### 200 分
+
+**题目描述**：
+
+**输入描述**：
+
+**输出描述**：
+
+**用例 1**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+**用例 2**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+**题目描述**：
+
+**输入描述**：
+
+**输出描述**：
+
+**用例 1**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+**用例 2**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+### 双指针
 
 **题目描述**：
 
