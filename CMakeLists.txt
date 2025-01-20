@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_subdirectory(bfs)
 add_subdirectory(dfs)
+add_subdirectory(double_pointer)
 add_subdirectory(flash_back)
 add_subdirectory(math)
 add_subdirectory(recursion)

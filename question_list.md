@@ -13999,7 +13999,7 @@ int main() {
 11111
 ```
 
-- 地图范围最大 300*300
+- 地图范围最大 300\*300
 - 0 ≤ 地图元素 ≤ 2
 
 **输出描述**：
@@ -14022,7 +14022,6 @@ int main() {
 ```
 8
 ```
-
 
 **用例 2**：
 
@@ -14140,7 +14139,7 @@ int main() {
 
 **题目描述**：
 
-存在一个 m*n 的二维数组，其成员取值范围为 0，1，2。
+存在一个 m\*n 的二维数组，其成员取值范围为 0，1，2。
 
 其中值为 1 的元素具备同化特性，每经过 1S，将上下左右值为 0 的元素同化为 1。
 
@@ -14210,19 +14209,19 @@ int main() {
     }
   }
 
-  // 将 (0, 0) 的值设为 1  
+  // 将 (0, 0) 的值设为 1
   if (matrix[0][0] == 0) {
     matrix[0][0] = 1;
   }
 
-  // 定义方向数组  
+  // 定义方向数组
   vector<pair<int, int> > directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-  queue<pair<int, int> > bfs_queue; // BFS队列  
-  bfs_queue.emplace(0, 0);           // 初始位置  
+  queue<pair<int, int> > bfs_queue; // BFS队列
+  bfs_queue.emplace(0, 0);           // 初始位置
 
-  int count = 0; // 记录值为1的元素个数  
+  int count = 0; // 记录值为1的元素个数
 
-  // BFS遍历  
+  // BFS遍历
   while (!bfs_queue.empty()) {
     pair<int, int> current = bfs_queue.front();
     bfs_queue.pop();
@@ -14230,34 +14229,142 @@ int main() {
     int x = current.first;
     int y = current.second;
 
-    // 当前元素被值为1记录  
+    // 当前元素被值为1记录
     count++;
 
-    // 遍历四个方向  
+    // 遍历四个方向
     for (const auto& dir : directions) {
       int new_x = x + dir.first;
       int new_y = y + dir.second;
 
-      // 检查边界和同化条件  
+      // 检查边界和同化条件
       if (new_x >= 0 && new_x < m && new_y >= 0 && new_y < n && matrix[new_x][new_y]
           == 0) {
-        matrix[new_x][new_y] = 1;      // 同化  
-        bfs_queue.emplace(new_x, new_y); // 将新的位置加入队列  
+        matrix[new_x][new_y] = 1;      // 同化
+        bfs_queue.emplace(new_x, new_y); // 将新的位置加入队列
       }
     }
   }
 
-  // 最终输出矩阵中值为0或2的元素个数  
-  int total_elements = m * n;               // 总元素个数  
-  int non_one_count = total_elements - count; // 非1元素的个数  
+  // 最终输出矩阵中值为0或2的元素个数
+  int total_elements = m * n;               // 总元素个数
+  int non_one_count = total_elements - count; // 非1元素的个数
 
-  cout << non_one_count << endl; // 输出结果  
+  cout << non_one_count << endl; // 输出结果
   return 0;
 }
 ```
 
+## 单双指针
 
-## 双指针
+### 100 分
+
+#### 最长连续子序列
+
+**题目描述**：
+
+有 N 个正整数组成的一个序列。给定整数 sum，求长度最长的连续子序列，使他们的和等于 sum，返回此子序列的长度，
+
+如果没有满足要求的序列，返回-1。
+
+**输入描述**：
+
+第一行输入是：N 个正整数组成的一个序列
+
+第二行输入是：给定整数 sum
+
+**输出描述**：
+
+最长的连续子序列的长度
+
+- 输入序列仅由数字和英文逗号构成，数字之间采用英文逗号分隔
+- 序列长度：1 <= N <= 200
+- 输入序列不考虑异常情况
+
+**用例 1**：
+
+输入：
+
+```
+1,2,3,4,2
+6
+```
+
+输出：
+
+```
+3
+```
+
+说明：1,2,3 和 4,2 两个序列均能满足要求，所以最长的连续序列为 1,2,3，因此结果为 3。
+
+**用例 2**：
+
+输入：
+
+```
+1,2,3,4,2
+20
+```
+
+输出：
+
+```
+-1
+```
+
+说明：没有满足要求的子序列，返回-1
+
+难度：中等
+
+标签：滑动窗口、前缀和、哈希表、数组
+
+```cpp
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+int main() {
+  // 读取输入  
+  string input;
+  getline(cin, input);
+  int sum;
+  cin >> sum;
+
+  // 解析输入序列  
+  vector<int> nums;
+  stringstream ss(input);
+  string token;
+
+  while (getline(ss, token, ',')) {
+    nums.push_back(stoi(token)); // 将字符串转换为整数并添加到向量中  
+  }
+
+  int n = nums.size();
+  int longest_length = -1; // 记录最长子序列的长度  
+
+  // 使用双指针法查找最长连续子序列  
+  for (int start = 0; start < n; start++) {
+    int current_sum = 0; // 当前窗口的和  
+    for (int end = start; end < n; end++) {
+      current_sum += nums[end]; // 扩展窗口  
+
+      if (current_sum == sum) {
+        // 更新最长长度  
+        longest_length = max(longest_length, end - start + 1);
+      }
+    }
+  }
+
+  cout << longest_length << endl; // 输出结果  
+  return 0;
+}
+```
+
+## 滑动窗口
 
 **题目描述**：
 
