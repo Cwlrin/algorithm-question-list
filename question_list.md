@@ -12763,88 +12763,6 @@ int main() {
 
 ## 广度优先搜索
 
-### 100 分
-
-**题目描述**：
-
-**输入描述**：
-
-**输出描述**：
-
-**用例 1**：
-
-输入：
-
-```
-
-```
-
-输出：
-
-```
-
-```
-
-说明：
-
-**用例 2**：
-
-输入：
-
-```
-
-```
-
-输出：
-
-```
-
-```
-
-说明：
-
-### 200 分
-
-**题目描述**：
-
-**输入描述**：
-
-**输出描述**：
-
-**用例 1**：
-
-输入：
-
-```
-
-```
-
-输出：
-
-```
-
-```
-
-说明：
-
-**用例 2**：
-
-输入：
-
-```
-
-```
-
-输出：
-
-```
-
-```
-
-说明：
-
-## 广度优先搜索
-
 ### 200 分
 
 #### 跳马
@@ -14877,6 +14795,120 @@ int main() {
 
 ### 100 分
 
+#### 增强的 strstr
+
+**题目描述**：
+
+C 语言有一个库函数： char *strstr(const char *haystack, const char \*needle) ，实现在字符串 haystack 中查找第一次出现字符串 needle 的位置，如果未找到则返回 null。
+
+现要求实现一个 strstr 的增强函数，可以使用带可选段的字符串来模糊查询，与 strstr 一样返回首次查找到的字符串位置。
+
+可选段使用“[]”标识，表示该位置是可选段中任意一个字符即可满足匹配条件。比如“a[bc]”表示可以匹配“ab”或“ac”。
+
+注意目标字符串中可选段可能出现多次。
+
+**输入描述**：
+
+与 strstr 函数一样，输入参数是两个字符串指针，分别是源字符串和目标字符串。
+
+**输出描述**：
+
+与 strstr 函数不同，返回的是源字符串中，匹配子字符串相对于源字符串地址的偏移（从 0 开始算），如果没有匹配返回-1。
+
+补充说明：源字符串中必定不包含‘[]’；目标字符串中‘[]’必定成对出现，且不会出现嵌套。
+
+输入的字符串长度在[1,100]之间。
+
+**用例 1**：
+
+输入：
+
+```
+abcd
+b[cd]
+```
+
+输出：
+
+```
+1
+```
+
+说明：相当于是在源字符串中查找 bc 或者 bd，bc 子字符串相对于 abcd 的偏移是 1
+
+难度：中等
+
+标签：字符串、滑动窗口、贪心、动态规划
+
+```cpp
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int main() {
+  string haystack, needle;
+
+  // 读取输入的源字符串和目标字符串
+  getline(cin, haystack);
+  getline(cin, needle);
+
+  vector<vector<char> > layers; // 用于存储目标字符串的层次
+  vector<char> current_layer;   // 当前层次的字符集合
+
+  // 解析目标字符串并构建层次
+  for (size_t i = 0; i < needle.size(); i++) {
+    if (needle[i] == '[') {
+      current_layer.clear(); // 新层开始，清空当前层
+      i++;                   // 跳过 '['
+      while (i < needle.size() && needle[i] != ']') {
+        current_layer.push_back(needle[i]); // 将可选字符添加到当前层
+        i++;
+      }
+      layers.push_back(current_layer); // 将当前层添加到层次列表
+    } else {
+      // 如果是普通字符，单独作为一层
+      layers.push_back(vector<char>{needle[i]});
+    }
+  }
+
+  int layer_count = layers.size(); // 层的数量
+  int layers_size = haystack.size();
+
+  // Slidng窗口匹配
+  for (int i = 0; i <= layers_size - layer_count; i++) {
+    bool match = true; // 默认匹配标记为真
+
+    for (int j = 0; j < layer_count; j++) {
+      bool found = false; // 每层是否找到匹配字符
+      for (char ch : layers[j]) {
+        if (haystack[i + j] == ch) {
+          found = true; // 找到匹配字符
+          break;
+        }
+      }
+      if (!found) {
+        match = false; // 如果一层没有找到匹配，标记为不匹配
+        break;
+      }
+    }
+
+    if (match) {
+      cout << i << endl; // 匹配成功，输出起始位置
+      return 0;          // 结束程序
+    }
+  }
+
+  cout << -1 << endl; // 如果没有找到匹配，输出 -1
+  return 0;
+}
+```
+
+## 二分法、三分法
+
+### 100 分
+
 #### 内存资源分配
 
 **题目描述**：
@@ -15016,7 +15048,7 @@ int main() {
 }
 ```
 
-## 二分法
+## 区间问题
 
 **题目描述**：
 
