@@ -14328,52 +14328,51 @@ int main() {
 using namespace std;
 
 int main() {
-  // 读取输入  
+  // 读取输入
   string input;
   getline(cin, input);
   int sum;
   cin >> sum;
 
-  // 解析输入序列  
+  // 解析输入序列
   vector<int> nums;
   stringstream ss(input);
   string token;
 
   while (getline(ss, token, ',')) {
-    nums.push_back(stoi(token)); // 将字符串转换为整数并添加到向量中  
+    nums.push_back(stoi(token)); // 将字符串转换为整数并添加到向量中
   }
 
   int n = nums.size();
-  int longest_length = -1; // 记录最长子序列的长度  
+  int longest_length = -1; // 记录最长子序列的长度
 
-  // 使用双指针法查找最长连续子序列  
+  // 使用双指针法查找最长连续子序列
   for (int start = 0; start < n; start++) {
-    int current_sum = 0; // 当前窗口的和  
+    int current_sum = 0; // 当前窗口的和
     for (int end = start; end < n; end++) {
-      current_sum += nums[end]; // 扩展窗口  
+      current_sum += nums[end]; // 扩展窗口
 
       if (current_sum == sum) {
-        // 更新最长长度  
+        // 更新最长长度
         longest_length = max(longest_length, end - start + 1);
       }
     }
   }
 
-  cout << longest_length << endl; // 输出结果  
+  cout << longest_length << endl; // 输出结果
   return 0;
 }
 ```
 
 #### 分割数组的最大差值
 
-
 **题目描述**：
 
-给定一个由若干整数组成的数组nums ，可以在数组内的任意位置进行分割，将该数组分割成两个非空子数组（即左数组和右数组），分别对子数组求和得到两个值，计算这两个值的差值，请输出所有分割方案中，差值最大的值。
+给定一个由若干整数组成的数组 nums ，可以在数组内的任意位置进行分割，将该数组分割成两个非空子数组（即左数组和右数组），分别对子数组求和得到两个值，计算这两个值的差值，请输出所有分割方案中，差值最大的值。
 
 **输入描述**：
 
-第一行输入数组中元素个数n，1 < n ≤ 100000 第二行输入数字序列，以空格进行分隔，数字取值为4字节整数
+第一行输入数组中元素个数 n，1 < n ≤ 100000 第二行输入数字序列，以空格进行分隔，数字取值为 4 字节整数
 
 **输出描述**：
 
@@ -14406,7 +14405,7 @@ int main() {
 
 左数组 = [1,-2,3,4] 且右数组=[-9,7]，和的差值 = | 6 - (-2) | = 8，
 
-左数组 = [1,-2,3,4,-9] 且 右数组 = [7]，和的差值 = | -3 - 7| = 10最大的差值为10
+左数组 = [1,-2,3,4,-9] 且 右数组 = [7]，和的差值 = | -3 - 7| = 10 最大的差值为 10
 
 难度：中等
 
@@ -14415,7 +14414,7 @@ int main() {
 ```cpp
 #include <iostream>
 #include <vector>
-#include <cstdlib> // for abs  
+#include <cstdlib> // for abs
 
 using namespace std;
 
@@ -14423,28 +14422,142 @@ int main() {
   int n;
   cin >> n;
 
-  vector<long long> nums(n); // 使用 long long 来避免溢出  
+  vector<long long> nums(n); // 使用 long long 来避免溢出
   for (int i = 0; i < n; i++) {
     cin >> nums[i];
   }
 
   long long total_sum = 0;
   for (long long num : nums) {
-    total_sum += num; // 计算整个数组的和  
+    total_sum += num; // 计算整个数组的和
   }
 
   long long left_sum = 0;
   long long max_diff = 0;
 
-  // 遍历数组，找到最大差值  
+  // 遍历数组，找到最大差值
   for (int i = 0; i < n - 1; i++) {
-    // 注意分割点只到 n-1，保证左右非空  
+    // 注意分割点只到 n-1，保证左右非空
     left_sum += nums[i];
-    long long right_sum = total_sum - left_sum; // 右部分的和  
+    long long right_sum = total_sum - left_sum; // 右部分的和
     max_diff = max(max_diff, abs(left_sum - right_sum));
   }
 
-  cout << max_diff << endl; // 输出结果  
+  cout << max_diff << endl; // 输出结果
+  return 0;
+}
+```
+
+#### 最大花费金额
+
+**题目描述**：
+
+双十一众多商品进行打折销售，小明想购买自己心仪的一些物品，但由于受购买资金限制，所以他决定从众多心仪商品中购买三件，而且想尽可能的花完资金。
+
+现在请你设计一个程序帮助小明计算尽可能花费的最大资金数额。
+
+**输入描述**：
+
+- 输入第一行为一维整型数组 M，数组长度小于 100，数组元素记录单个商品的价格，单个商品价格小于 1000。
+- 输入第二行为购买资金的额度 R，R 小于 100000。
+- 输入格式是正确的，无需考虑格式错误的情况。
+
+**输出描述**：
+
+- 输出为满足上述条件的最大花费额度。
+- 如果不存在满足上述条件的商品，请返回 -1。
+
+**用例 1**：
+
+输入：
+
+```
+23,26,36,27
+78
+```
+
+输出：
+
+```
+76
+```
+
+说明：金额 23、26 和 27 相加得到 76，而且最接近且小于输入金额 78。
+
+**用例 2**：
+
+输入：
+
+```
+23,30,40
+26
+```
+
+输出：
+
+```
+-1
+```
+
+说明：因为输入的商品，无法组合出来满足三件之和小于 26.故返回 -1。
+
+难度：中等
+
+标签：双指针、排序
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  string input;
+  getline(cin, input); // 读取价格数组
+
+  // 解析输入的价格数组
+  vector<int> prices;
+  stringstream ss(input);
+  string token;
+
+  while (getline(ss, token, ',')) {
+    prices.push_back(stoi(token)); // 将字符串转换为整数
+  }
+
+  int budget;
+  cin >> budget; // 读取预算
+
+  int n = prices.size();
+  sort(prices.begin(), prices.end()); // 对数组进行升序排序
+
+  int max_expense = -1; // 初始化最大花费金额为-1，表示未找到
+
+  // 遍历所有可能的 I 指针
+  for (int i = 0; i < n - 2; i++) {
+    // I 的上限是 n-2，避免越界
+    int l = i + 1; // L 指向 I 后一个元素
+    int r = n - 1; // R 指向最后一个元素
+
+    while (l < r) {
+      // 当 L < R 时，继续尝试组合
+      int sum = prices[i] + prices[l] + prices[r];
+
+      if (sum == budget) {
+        // 如果找到了恰好等于预算的组合
+        cout << sum << endl;
+        return 0;
+      }
+
+      if (sum < budget) {
+        // 记录当前组合并尝试更大的组合
+        max_expense = max(max_expense, sum);
+        l++; // 增大当前和
+      } else {
+        r--; // 减小当前和
+      }
+    }
+  }
+
+  cout << max_expense << endl; // 输出结果
   return 0;
 }
 ```
