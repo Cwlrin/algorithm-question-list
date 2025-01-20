@@ -14399,11 +14399,11 @@ int main() {
 
 左数组 = [1] 且 右数组 = [-2,3,4,-9,7]，和的差值 = | 1 - 3 | = 2
 
-左数组 = [1,-2] 且 右数组 = [3,4,-9,7]，和的差值 = | -1 - 5 | =6
+左数组 = [1,-2] 且 右数组 = [3,4,-9,7]，和的差值 = | -1 - 5 | = 6
 
 左数组 = [1,-2,3] 且 右数组 = [4,-9,7]，和的差值 = | 2 - 2 | = 0
 
-左数组 = [1,-2,3,4] 且右数组=[-9,7]，和的差值 = | 6 - (-2) | = 8，
+左数组 = [1,-2,3,4] 且右数组 = [-9,7]，和的差值 = | 6 - (-2) | = 8，
 
 左数组 = [1,-2,3,4,-9] 且 右数组 = [7]，和的差值 = | -3 - 7| = 10 最大的差值为 10
 
@@ -14702,7 +14702,7 @@ int main() {
 
 例如： 3-4-5-6-7-8，7-8-9-10-J-Q，3-4-5-6-7-8-9-10-J-Q-K-A
 
-可用的牌 3<4<5<6<7<8<9<10<J<Q<K<A<2<B(小王)<C(大王)，每种牌除大小王外有四种花色
+可用的牌 3 < 4 < 5 < 6 < 7 < 8 < 9 < 10 < J < Q < K < A < 2 < B(小王)< C(大王)，每种牌除大小王外有四种花色
 
 (共有 13×4+2 张牌)
 
@@ -14874,6 +14874,149 @@ int main() {
 ```
 
 ## 滑动窗口
+
+### 100 分
+
+#### 内存资源分配
+
+**题目描述**：
+
+有一个简易内存池，内存按照大小粒度分类，每个粒度有若干个可用内存资源，用户会进行一系列内存申请，需要按需分配内存池中的资源返回申请结果成功失败列表。
+
+分配规则如下：
+
+- 分配的内存要大于等于内存的申请量，存在满足需求的内存就必须分配，优先分配粒度小的，但内存不能拆分使用；
+- 需要按申请顺序分配，先申请的先分配。
+- 有可用内存分配则申请结果为 true，没有可用则返回 false。
+
+注意：不考虑内存释放
+
+**输入描述**：
+
+输入为两行字符串
+
+第一行为内存池资源列表，包含内存粒度数据信息，粒度数据间用逗号分割
+
+- 一个粒度信息内用冒号分割，冒号前为内存粒度大小，冒号后为数量
+- 资源列表不大于 1024
+- 每个粒度的数量不大于 4096
+
+第二行为申请列表，申请的内存大小间用逗号分割
+
+- 申请列表不大于 100000
+
+如 64:2,128:1,32:4,1:128 50,36,64,128,127
+
+**输出描述**：
+
+输出为内存池分配结果
+
+如 true, true, true, false, false
+
+**用例 1**：
+
+输入：
+
+```
+64:2,128:1,32:4,1:128
+50,36,64,128,127
+```
+
+输出：
+
+```
+true,true,true,false,false
+```
+
+说明：
+
+内存池资源包含：64K 共 2 个、128K 共 1 个、32K 共 4 个、1K 共 128 个的内存资源；
+
+针对 50,36,64,128,127 的内存申请序列，分配的内存依次是：64,64,128,NULL,NULL,
+
+第三次申请内存时已经将 128 分配出去，因此输出结果是：
+
+true,true,true,false,false
+
+难度：中等
+
+标签：数组、哈希表、贪心、字符串
+
+```cpp
+#include <iostream>
+#include <map>
+#include <sstream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+  string memory_pool_input, request_input;
+
+  // 读取内存池和申请列表
+  getline(cin, memory_pool_input);
+  getline(cin, request_input);
+
+  // 存储内存池资源
+  map<int, int> memory_pool; // 粒度 -> 数量
+
+  // 解析内存池字符串
+  stringstream ss(memory_pool_input);
+  string token;
+  while (getline(ss, token, ',')) {
+    size_t colon_pos = token.find(':');
+    // 获取粒度大小和数量
+    int size = stoi(token.substr(0, colon_pos));      // 粒度大小
+    int quantity = stoi(token.substr(colon_pos + 1)); // 数量
+    memory_pool[size] += quantity;                    // 将相同大小的内存合并
+  }
+
+  // 解析申请并处理
+  vector<string> request_results; // 存储申请结果
+  stringstream ss_requests(request_input);
+
+  while (getline(ss_requests, token, ',')) {
+    // 确保申请的格式有效，跳过空值
+    if (token.empty()) {
+      continue; // 忽略空申请
+    }
+
+    int request_size = stoi(token); // 当前申请的内存大小
+    bool allocated = false;
+
+    // 查找合适的内存资源
+    for (auto it = memory_pool.lower_bound(request_size);
+         it != memory_pool.end();
+         ++it) {
+      if (it->second > 0) {
+        // 找到满足要求的粒度
+        it->second--;     // 执行资源分配
+        allocated = true; // 申请成功
+        request_results.emplace_back("true");
+        break; // 处理完当前申请，跳出循环
+      }
+    }
+
+    // 如果没有可用资源
+    if (!allocated) {
+      request_results.emplace_back("false");
+    }
+  }
+
+  // 输出结果
+  for (size_t i = 0; i < request_results.size(); ++i) {
+    cout << request_results[i];
+    if (i < request_results.size() - 1) {
+      cout << ","; // 输出逗号分隔
+    }
+  }
+  cout << endl;
+
+  return 0;
+}
+```
+
+## 二分法
 
 **题目描述**：
 
