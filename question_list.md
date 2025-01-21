@@ -15312,6 +15312,85 @@ int main() {
 }
 ```
 
+#### 恢复数字序列
+
+**题目描述**：
+
+对于一个连续正整数组成的序列，可以将其拼接成一个字符串，再将字符串里的部分字符打乱顺序。如序列8 9 10 11 12，拼接成的字符串为89101112，打乱一部分字符后得到90811211，原来的正整数10就被拆成了0和1。
+
+现给定一个按如上规则得到的打乱字符的字符串，请将其还原成连续正整数序列，并输出序列中最小的数字。
+
+**输入描述**：
+
+输入一行，为打乱字符的字符串和正整数序列的长度，两者间用空格分隔，字符串长度不超过200，正整数不超过1000，保证输入可以还原成唯一序列。
+
+**输出描述**：
+
+输出一个数字，为序列中最小的数字。
+
+**用例 1**：
+
+输入：
+
+```
+19801211 5
+```
+
+输出：
+
+```
+8
+```
+
+
+难度：中等
+
+标签：字符串、滑动窗口、哈希表、双指针
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  string scrambled;
+  int sequence_length;
+
+  // 读取打乱字符串和序列长度  
+  cin >> scrambled >> sequence_length;
+
+  // 统计打乱字符串中的字符频率  
+  unordered_map<char, int> scrambled_count;
+  for (char c : scrambled) {
+    scrambled_count[c]++;
+  }
+
+  // 遍历可能的连续正整数序列  
+  for (int start = 1; start <= 100000; start++) {
+    // 当前窗口对应的数字序列  
+    string generated;
+    for (int i = 0; i < sequence_length; i++) {
+      generated += to_string(start + i);
+    }
+
+    // 统计当前生成字符串的字符频率  
+    unordered_map<char, int> generatedCount;
+    for (char c : generated) {
+      generatedCount[c]++;
+    }
+
+    // 比较当前生成窗口的字符频率是否和打乱字符串的字符频率一致  
+    if (scrambled_count == generatedCount) {
+      cout << start << endl; // 输出最小的起始数字  
+      return 0;              // 找到后结束程序  
+    }
+  }
+
+  cout << -1 << endl; // 如果没有找到有效序列，输出 -1  
+  return 0;
+}
+```
+
 ## 二分法、三分法
 
 ### 100 分
