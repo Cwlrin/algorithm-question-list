@@ -14799,7 +14799,7 @@ int main() {
 
 **题目描述**：
 
-C 语言有一个库函数： char *strstr(const char * haystack, const char \*needle) ，实现在字符串 haystack 中查找第一次出现字符串 needle 的位置，如果未找到则返回 null。
+C 语言有一个库函数： char _strstr(const char _ haystack, const char \*needle) ，实现在字符串 haystack 中查找第一次出现字符串 needle 的位置，如果未找到则返回 null。
 
 现要求实现一个 strstr 的增强函数，可以使用带可选段的字符串来模糊查询，与 strstr 一样返回首次查找到的字符串位置。
 
@@ -15619,6 +15619,7 @@ int main() {
   return 0;
 }
 ```
+
 #### 数组连续和
 
 **题目描述**：
@@ -15689,22 +15690,130 @@ int main() {
     cin >> nums[i];
   }
 
-  long long count = 0;       // 用于记录符合条件的子数组数量  
-  int start = 0;             // 窗口的起始指针  
-  long long current_sum = 0; // 当前子数组和  
+  long long count = 0;       // 用于记录符合条件的子数组数量
+  int start = 0;             // 窗口的起始指针
+  long long current_sum = 0; // 当前子数组和
 
   for (int end = 0; end < n; end++) {
-    current_sum += nums[end]; // 增加当前元素到和中  
+    current_sum += nums[end]; // 增加当前元素到和中
 
-    // 当且仅当 current_sum >= x 时，统计符合条件的子数组  
+    // 当且仅当 current_sum >= x 时，统计符合条件的子数组
     while (current_sum >= x && start <= end) {
-      count += (n - end);         // 所有以 start 开头的有效子数组  
-      current_sum -= nums[start]; // 移动 start，缩小窗口  
-      start++;                    // 移动窗口的起始位置  
+      count += (n - end);         // 所有以 start 开头的有效子数组
+      current_sum -= nums[start]; // 移动 start，缩小窗口
+      start++;                    // 移动窗口的起始位置
     }
   }
 
-  cout << count << endl; // 输出结果  
+  cout << count << endl; // 输出结果
+  return 0;
+}
+```
+
+#### 计算最接近的数
+
+**题目描述**：
+
+给定一个数组 X 和正整数 K，请找出使表达式：
+
+> X [i] - X [i + 1] - ... - X [i + K - 1]
+
+结果最接近于数组中位数的下标 i ，如果有多个 i 满足条件，请返回最大的 i.
+
+其中，数组中位数：长度为 N 的数组，按照元素的值大小升序排列后，下标为 N/2 元素的值
+
+1. 数组 X 的元素均为正整数
+2. X 的长度 n 取值范围：2 ≤ n ≤ 1000
+3. K 大于 0 目小于数组的大小
+4. i 的取值范围: 0 ≤ i < 1000
+5. 题目的排序数组 X [N] 的中位数是 X [N/2]
+
+**用例 1**：
+
+输入：
+
+```
+[50,50,2,3],2
+```
+
+输出：
+
+```
+1
+```
+
+说明：中位数为 50：[50,50,2,3]升序排序后变成[2,3,50,50]，中位数为下标 4/2=2 的元素 50
+
+计算结果为 1：X [50,50,2,3] 根据题目计算 X[i] - ... - X[i + k - 1] 得出三个数 0 (X[0] - X[1] = 50 - 50) 、48 (X[1] - X[2] = 50 - 2) 和 -1 (X[2]-X[3] = 2 - 3) ，其中 48 最接近 50，因此返回下标 1。
+
+难度：中等
+
+标签：数组、排序、数学、贪心
+
+```cpp
+#include <algorithm>
+#include <climits>
+#include <cmath>
+#include <iostream>
+#include <sstream>
+#include <vector>
+
+using namespace std;
+
+int solution(const vector<int>& x, int k) {
+  // Step 1: Find the median
+  vector<int> sorted_x = x; // Make a copy of X to sort
+  sort(sorted_x.begin(), sorted_x.end());
+  int n = sorted_x.size();
+
+  int median = sorted_x[n / 2]; // Median for even length is at n/2
+
+  // Step 2: Initialize variables to find the closest value
+  int closest_index = -1;
+  int closest_value = INT_MAX;
+
+  // Step 3: Calculate each start index's value for the expression
+  for (int i = 0; i <= n - k; i++) {
+    int current_sum = x[i];
+
+    for (int j = 1; j < k; j++) {
+      // We start from 1 because we already took X[i]
+      current_sum -= x[i + j];
+    }
+
+    // Calculate the distance from the median
+    int current_distance = abs(current_sum - median);
+
+    // Choose the suitable index as described
+    if (current_distance < closest_value ||
+        (current_distance == closest_value && i > closest_index)) {
+      closest_value = current_distance;
+      closest_index = i;
+    }
+  }
+
+  return closest_index;
+}
+
+int main() {
+  string s;
+  cin >> s;
+
+  // Input processing to read the vector and K
+  int index = s.rfind(',');
+
+  stringstream ss(s.substr(1, index - 1));
+  string token;
+
+  vector<int> x;
+  while (getline(ss, token, ',')) {
+    x.emplace_back(stoi(token));
+  }
+
+  int k = stoi(s.substr(index + 1));
+
+  cout << solution(x, k);
+
   return 0;
 }
 ```
