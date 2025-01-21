@@ -15555,8 +15555,6 @@ int main() {
 
 标签：数组、滑动窗口、双指针
 
-
-
 ```cpp
 #include <algorithm>
 #include <iostream>
@@ -15565,7 +15563,7 @@ int main() {
 using namespace std;
 
 int main() {
-  // 读取数组  
+  // 读取数组
   vector<int> nums;
   int num;
   while (cin >> num) {
@@ -15574,11 +15572,11 @@ int main() {
       break;
   }
 
-  // 读取 K 值  
+  // 读取 K 值
   int k;
   cin >> k;
 
-  // 统计小于 K 的数字个数  
+  // 统计小于 K 的数字个数
   int small_count = 0;
   for (int x : nums) {
     if (x < k) {
@@ -15586,13 +15584,13 @@ int main() {
     }
   }
 
-  // 如果没有小于 K 的数字，返回 0  
+  // 如果没有小于 K 的数字，返回 0
   if (small_count == 0) {
     cout << 0 << endl;
     return 0;
   }
 
-  // 使用滑动窗口计算最少交换次数  
+  // 使用滑动窗口计算最少交换次数
   int window_small_count = 0;
   for (int i = 0; i < small_count; i++) {
     if (nums[i] < k) {
@@ -15602,7 +15600,7 @@ int main() {
 
   int max_window_small_count = window_small_count;
 
-  // 滑动窗口  
+  // 滑动窗口
   for (int i = small_count; i < nums.size(); i++) {
     if (nums[i - small_count] < k) {
       window_small_count--;
@@ -15613,13 +15611,119 @@ int main() {
     max_window_small_count = max(max_window_small_count, window_small_count);
   }
 
-  // 最少交换次数 = 窗口大小 - 窗口内小于K的数字个数  
+  // 最少交换次数 = 窗口大小 - 窗口内小于K的数字个数
   int min_swaps = small_count - max_window_small_count;
 
   cout << min_swaps << endl;
 
   return 0;
 }
+```
+
+### 200 分
+
+#### 寻找符合要求的最长子串
+
+**题目描述**：
+
+给定一个字符串 s，找出这样一个子串：
+
+1. 该子串中任意一个字符最多出现 2 次
+2. 该子串不包含指定某个字符
+
+请你找出满足该条件的最长子串的长度
+
+**输入描述**：
+
+第一行为：要求不包含的指定字符，为单个字符，取值范围[0-9a-zA-Z]
+
+第二行为：字符串 s，每个字符范围[0-9a-zA-Z]，长度范围[1, 10000]
+
+**输出描述**：
+
+一个整数，满足条件的最长子串的长度；
+
+如果不存在满足条件的子串，则返回 0
+
+**用例 1**：
+
+输入：
+
+```
+D
+ABC132
+```
+
+输出：
+
+```
+6
+```
+
+**用例 2**：
+
+输入：
+
+```
+D
+ABACA123D
+```
+
+输出：
+
+```
+7
+```
+
+难度：中等
+
+标签：字符串、滑动窗口、哈希表、双指针
+
+```cpp
+#include <iostream>
+#include <unordered_map>
+#include <string>
+using namespace std;
+
+int main() {
+  char forbidden_char;
+  string s;
+
+  // 读取输入
+  cin >> forbidden_char;
+  cin >> s;
+
+  unordered_map<char, int> char_count;
+  int max_length = 0; // 记录满足条件的最长子串长度
+  int start = 0;     // 滑动窗口的起始位置
+
+  for (int end = 0; end < s.size(); end++) {
+    char current_char = s[end];
+
+    // 跳过限制字符
+    if (current_char == forbidden_char) {
+      start = end + 1;   // 移动窗口开始位置
+      char_count.clear(); // 清空字符计数
+      continue;
+    }
+
+    // 记录当前字符
+    char_count[current_char]++;
+
+    // 如果当前字符次数超过 2，则移动左指针
+    while (char_count[current_char] > 2) {
+      char_count[s[start]]--;
+      start++;
+    }
+
+    // 更新最长子串长度
+    max_length = max(max_length, end - start + 1);
+  }
+
+  cout << max_length << endl; // 输出结果
+  return 0;
+}
+
 ```
 
 ## 二分法、三分法
