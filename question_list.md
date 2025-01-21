@@ -15510,44 +15510,117 @@ int main() {
 }
 ```
 
+#### 根据某条件聚类最少交换次数
+
 **题目描述**：
+
+给出数字 K,请输出所有结果小于 K 的整数组合到一起的最少交换次数。
+
+组合一起是指满足条件的数字相邻，不要求相邻后在数组中的位置。
+
+数据范围：
+
+-100 <= K <= 100
+
+-100 <= 数组中数值 <= 100
 
 **输入描述**：
 
+第一行输入数组：1 3 1 4 0
+
+第二行输入 K 数值：2
+
 **输出描述**：
+
+第一行输出最少交换次数：1
 
 **用例 1**：
 
 输入：
 
 ```
-
+1 3 1 4 0
+2
 ```
 
 输出：
 
 ```
-
+1
 ```
 
-说明：
+说明：小于 2 的表达式是 1 1 0, 共三种可能将所有符合要求数字组合一起，最少交换 1 次。
 
-**用例 2**：
+难度：中等
 
-输入：
+标签：数组、滑动窗口、双指针
 
+
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main() {
+  // 读取数组  
+  vector<int> nums;
+  int num;
+  while (cin >> num) {
+    nums.push_back(num);
+    if (cin.get() == '\n')
+      break;
+  }
+
+  // 读取 K 值  
+  int k;
+  cin >> k;
+
+  // 统计小于 K 的数字个数  
+  int small_count = 0;
+  for (int x : nums) {
+    if (x < k) {
+      small_count++;
+    }
+  }
+
+  // 如果没有小于 K 的数字，返回 0  
+  if (small_count == 0) {
+    cout << 0 << endl;
+    return 0;
+  }
+
+  // 使用滑动窗口计算最少交换次数  
+  int window_small_count = 0;
+  for (int i = 0; i < small_count; i++) {
+    if (nums[i] < k) {
+      window_small_count++;
+    }
+  }
+
+  int max_window_small_count = window_small_count;
+
+  // 滑动窗口  
+  for (int i = small_count; i < nums.size(); i++) {
+    if (nums[i - small_count] < k) {
+      window_small_count--;
+    }
+    if (nums[i] < k) {
+      window_small_count++;
+    }
+    max_window_small_count = max(max_window_small_count, window_small_count);
+  }
+
+  // 最少交换次数 = 窗口大小 - 窗口内小于K的数字个数  
+  int min_swaps = small_count - max_window_small_count;
+
+  cout << min_swaps << endl;
+
+  return 0;
+}
 ```
-
-```
-
-输出：
-
-```
-
-```
-
-说明：
-
 
 ## 二分法、三分法
 
