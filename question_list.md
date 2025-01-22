@@ -15822,7 +15822,7 @@ int main() {
 
 **题目描述**：
 
-在第一人称射击游戏中，玩家通过键盘的A、S、D、W四个按键控制游戏人物分别向左、向后、向右、向前进行移动，从而完成走位。
+在第一人称射击游戏中，玩家通过键盘的 A、S、D、W 四个按键控制游戏人物分别向左、向后、向右、向前进行移动，从而完成走位。
 
 假设玩家每按动一次键盘，游戏任务会向某个方向移动一步，如果玩家在操作一定次数的键盘并且各个方向的步数相同时，此时游戏任务必定会回到原点，则称此次走位为完美走位。
 
@@ -15830,17 +15830,17 @@ int main() {
 
 请返回待更换的连续走位的最小可能长度。
 
-如果原走位本身是一个完美走位，则返回0。
+如果原走位本身是一个完美走位，则返回 0。
 
 **输入描述**：
 
-输入为由键盘字母表示的走位s，例如：ASDA
+输入为由键盘字母表示的走位 s，例如：ASDA
 
 走位长度 1 ≤ s.length ≤ 100000
 
 s.length 是 4 的倍数
 
-s中只含有'A', 'S', 'D', 'W' 四种字符
+s 中只含有'A', 'S', 'D', 'W' 四种字符
 
 **输出描述**：
 
@@ -15860,7 +15860,7 @@ WASDAASD
 1
 ```
 
-说明：将第二个A替换为W，即可得到完美走位
+说明：将第二个 A 替换为 W，即可得到完美走位
 
 **用例 2**：
 
@@ -15876,7 +15876,7 @@ AAAA
 3
 ```
 
-说明：将其中三个连续的A替换为WSD，即可得到完美走位
+说明：将其中三个连续的 A 替换为 WSD，即可得到完美走位
 
 难度：中等
 
@@ -15893,49 +15893,49 @@ using namespace std;
 
 int main() {
   string s;
-  cin >> s; // 读取输入  
+  cin >> s; // 读取输入
 
   unordered_map<char, int> count;
-  // 统计每个字符的数量  
+  // 统计每个字符的数量
   for (char c : s) {
     count[c]++;
   }
 
-  // 计算每个字母应有的数量  
-  int n = s.length() / 4;          // 每种字符的目标数量  
-  unordered_map<char, int> excess; // 记录多余的字符  
+  // 计算每个字母应有的数量
+  int n = s.length() / 4;          // 每种字符的目标数量
+  unordered_map<char, int> excess; // 记录多余的字符
 
-  // 计算每种字符有多少个超出目标数量  
+  // 计算每种字符有多少个超出目标数量
   for (char c : "WASD") {
     if (count[c] > n) {
-      excess[c] = count[c] - n; // 记录超过目标数量的部分  
+      excess[c] = count[c] - n; // 记录超过目标数量的部分
     } else {
-      excess[c] = 0; // 如果没有超出，设为0  
+      excess[c] = 0; // 如果没有超出，设为0
     }
   }
 
-  // 双指针寻找最小覆盖子串  
+  // 双指针寻找最小覆盖子串
   int min_length = numeric_limits<int>::max();
   int left = 0;
   int right = 0;
-  unordered_map<char, int> current_count; // 当前窗口内的字符  
+  unordered_map<char, int> current_count; // 当前窗口内的字符
 
   while (right < s.length()) {
-    // 扩大右边界，加入当前字符  
+    // 扩大右边界，加入当前字符
     current_count[s[right]]++;
 
-    // 检查当前窗口是否有效  
+    // 检查当前窗口是否有效
     while ([&]() {
       for (char c : "WASD") {
         if (current_count[c] < excess[c]) {
-          return false; // 如果不足以弥补，就无效  
+          return false; // 如果不足以弥补，就无效
         }
       }
-      return true; // 当前窗口有效  
+      return true; // 当前窗口有效
     }()) {
-      // 有效后计算长度并更新最小长度  
+      // 有效后计算长度并更新最小长度
       min_length = min(min_length, right - left + 1);
-      // 收缩左边界，移除当前左边的字符  
+      // 收缩左边界，移除当前左边的字符
       current_count[s[left]]--;
       left++;
     }
@@ -15943,12 +15943,11 @@ int main() {
     right++;
   }
 
-  // 如果没有找到有效的覆盖子串，返回 -1，表示无法平衡  
+  // 如果没有找到有效的覆盖子串，返回 -1，表示无法平衡
   cout << (min_length == numeric_limits<int>::max() ? -1 : min_length) << endl;
   return 0;
 }
 ```
-
 
 ### 200 分
 
@@ -16060,7 +16059,7 @@ int main() {
 
 **题目描述**：
 
-给定一个矩阵，包含 N * M 个整数，和一个包含 K 个整数的数组。
+给定一个矩阵，包含 N \* M 个整数，和一个包含 K 个整数的数组。
 
 现在要求在这个矩阵中找一个宽度最小的子矩阵，要求子矩阵包含数组中所有的整数。
 
@@ -16074,7 +16073,7 @@ int main() {
 
 下一行包含 K 个整数，表示所需包含的数组，K 个整数可能存在重复数字。
 
-所有输入数据小于1000。
+所有输入数据小于 1000。
 
 **输出描述**：
 
@@ -16098,7 +16097,7 @@ int main() {
 2
 ```
 
-说明：矩阵第0、3列包含了1，2，3，矩阵第3，4列包含了1，2，3
+说明：矩阵第 0、3 列包含了 1，2，3，矩阵第 3，4 列包含了 1，2，3
 
 **用例 2**：
 
@@ -16118,7 +16117,7 @@ int main() {
 5
 ```
 
-说明：矩阵第1、2、3、4、5列包含了1、1、4
+说明：矩阵第 1、2、3、4、5 列包含了 1、1、4
 
 难度：困难
 
@@ -16277,11 +16276,11 @@ int main() {
 
 孙悟空爱吃蟠桃，有一天趁着蟠桃园守卫不在来偷吃。已知蟠桃园有 N 棵桃树，每颗树上都有桃子，守卫将在 H 小时后回来。
 
-孙悟空可以决定他吃蟠桃的速度K（个/小时），每个小时选一颗桃树，并从树上吃掉 K 个，如果树上的桃子少于 K 个，则全部吃掉，并且这一小时剩余的时间里不再吃桃。
+孙悟空可以决定他吃蟠桃的速度 K（个/小时），每个小时选一颗桃树，并从树上吃掉 K 个，如果树上的桃子少于 K 个，则全部吃掉，并且这一小时剩余的时间里不再吃桃。
 
 孙悟空喜欢慢慢吃，但又想在守卫回来前吃完桃子。
 
-请返回孙悟空可以在 H 小时内吃掉所有桃子的最小速度 K（K为整数）。如果以任何速度都吃不完所有桃子，则返回0。
+请返回孙悟空可以在 H 小时内吃掉所有桃子的最小速度 K（K 为整数）。如果以任何速度都吃不完所有桃子，则返回 0。
 
 **输入描述**：
 
@@ -16289,7 +16288,7 @@ int main() {
 
 第二行输入为一个数字，表示守卫离开的时间 H。
 
-其中数字通过空格分割，N、H为正整数，每颗树上都有蟠桃，且 0 < N < 10000，0 < H < 10000。
+其中数字通过空格分割，N、H 为正整数，每颗树上都有蟠桃，且 0 < N < 10000，0 < H < 10000。
 
 **输出描述**：
 
@@ -16309,7 +16308,6 @@ int main() {
 ```
 5
 ```
-
 
 **用例 2**：
 
@@ -16344,7 +16342,6 @@ int main() {
 难度：中等
 
 标签：二分查找、数组、贪心
-
 
 ```cpp
 #include <iostream>
@@ -16419,6 +16416,133 @@ int main() {
 
   cout << result << endl;
 
+  return 0;
+}
+```
+
+### 200 分
+
+#### 矩阵匹配
+
+**题目描述**：
+
+从一个 N \* M（N ≤ M）的矩阵中选出 N 个数，任意两个数字不能在同一行或同一列，求选出来的 N 个数中第 K 大的数字的最小值是多少。
+
+**输入描述**：
+
+输入矩阵要求：1 ≤ K ≤ N ≤ M ≤ 150
+
+输入格式：
+
+N M K
+
+N\*M 矩阵
+
+**输出描述**：
+
+N\*M 的矩阵中可以选出 M! / N! 种组合数组，每个组合数组种第 K 大的数中的最小值。无需考虑重复数字，直接取字典排序结果即可。
+
+注意：结果是第 K 大的数字的最小值
+
+**用例 1**：
+
+输入：
+
+```
+3 4 2
+1 5 6 6
+8 3 4 3
+6 8 6 3
+```
+
+输出：
+
+```
+3
+```
+
+说明：
+
+N\*M 的矩阵中可以选出 M！/ N！种组合数组，每个组合数组种第 K 大的数中的最小值；
+
+上述输入中选出数组组合为：
+
+1,3,6;
+
+1,3,3;
+
+1,4,8;
+
+1,4,3;
+
+......
+
+上述输入样例中选出的组合数组有 24 种，最小数组为 1,3,3，则第 2 大的最小值为 3
+
+难度：困难
+
+标签：二分查找、图论、贪心
+
+```cpp
+#include <algorithm>
+#include <climits>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// 深度优先搜索函数，用于寻找匹配
+bool dfs(int row, int mid, const vector<vector<int> >& matrix,
+         vector<int>& match, vector<bool>& visited) {
+  for (int col = 0; col < matrix[0].size(); ++col) {
+    // 如果该列没有被访问过，并且矩阵中对应元素的值小于等于 mid
+    if (!visited[col] && matrix[row][col] <= mid) {
+      visited[col] = true; // 标记该列已被访问
+      // 如果该列没有匹配，或者可以重新匹配
+      if (match[col] == -1 || dfs(match[col], mid, matrix, match, visited)) {
+        match[col] = row; // 执行匹配
+        return true;      // 匹配成功
+      }
+    }
+  }
+  return false; // 匹配失败
+}
+
+int main() {
+  int n, m, k;
+  cin >> n >> m >> k;
+
+  vector<vector<int> > matrix(n, vector<int>(m));
+  int max_val = INT_MIN;
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < m; ++j) {
+      cin >> matrix[i][j];
+      max_val = max(max_val, matrix[i][j]);
+    }
+  }
+
+  int low = 1, high = max_val, result = -1;
+  while (low <= high) {
+    int mid = low + (high - low) / 2;
+    vector<int> match(m, -1);       // 初始化匹配数组
+    vector<bool> visited(m, false); // 初始化访问数组
+    int count = 0;                  // 匹配成功的行数
+
+    for (int i = 0; i < n; ++i) {
+      fill(visited.begin(), visited.end(), false); // 清空访问标记
+      if (dfs(i, mid, matrix, match, visited))
+        count++; // 调用 dfs 进行匹配
+    }
+
+    // 根据匹配结果调整搜索范围
+    if (count >= n - k + 1) {
+      result = mid;
+      high = mid - 1;
+    } else {
+      low = mid + 1;
+    }
+  }
+  cout << result << endl;
   return 0;
 }
 ```
