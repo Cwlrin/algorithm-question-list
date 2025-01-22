@@ -16694,6 +16694,116 @@ int main() {
 }
 ```
 
+#### 最佳植树距离
+
+**题目描述**：
+
+按照环保公司要求，小明需要在沙化严重的地区进行植树防沙工作，初步目标是种植一条直线的树带。由于有些区域目前不适合种植树木，所以只能在一些可以种植的点来种植树木。
+
+在树苗有限的情况下，要达到最佳效果，就要尽量散开种植，不同树苗之间的最小间距要尽量大。给你一个适合种情树木的点坐标和一个树苗的数量，请帮小明选择一个最佳的最小种植间距。
+
+例如，适合种植树木的位置分别为 1,3,5,6,7,10,13 树苗数量是 3，种植位置在 1,7,13，树苗之间的间距都是 6，均匀分开，就达到了散开种植的目的，最佳的最小种植间距是 6
+
+**输入描述**：
+
+第 1 行表示：适合种树的坐标数量
+
+第 2 行表示：适合种树的坐标位置
+
+第 3 行表示：树苗的数量
+
+位置范围为 1~10000000
+
+种植树苗的数量范围 2~10000000
+
+用例确保种桔的树苗数量不会超过有效种桔坐标数量
+
+**输出描述**：
+
+最佳的最小种植间距
+
+**用例 1**：
+
+输入：
+
+```
+7
+1 5 3 6 10 7 13
+3
+```
+
+输出：
+
+```
+6
+```
+
+说明：3 棵树苗分别种植在 1，7，13 位置时，树苗种植的最均匀，最小间距为 6
+
+难度：中等
+
+标签：二分查找、贪心、排序、数组
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// 判断在给定的最小间距下，是否能够放置指定数量的树苗
+bool CanPlace(const vector<int>& positions, int minDistance, int m) {
+  int count = 1;                   // 放置的树苗数量
+  int last_position = positions[0]; // 上一个放置树苗的位置
+
+  for (int i = 1; i < positions.size(); i++) {
+    // 如果当前坐标与最后放置的树苗的距离大于等于最小间距
+    if (positions[i] - last_position >= minDistance) {
+      count++;                     // 放置树苗
+      last_position = positions[i]; // 更新最后放置的树苗位置
+      if (count >= m)
+        return true; // 如果满足树苗数量，返回 true
+    }
+  }
+  return count >= m; // 计算最终放置的树苗数量是否满足
+}
+
+int main() {
+  int n; // 坐标数量
+  cin >> n;
+
+  vector<int> positions(n);
+  for (int i = 0; i < n; i++) {
+    cin >> positions[i];
+  }
+
+  int m; // 树苗数量
+  cin >> m;
+
+  // 排序坐标位置
+  sort(positions.begin(), positions.end());
+
+  // 二分查找的范围
+  int left = 0;                                     // 最小间距
+  int right = positions.back() - positions.front(); // 最大间距
+
+  // 使用二分查找找出最佳最小种植间距
+  int best_min_distance = 0;
+  while (left <= right) {
+    int mid = (left + right) / 2; // 当前尝试的最小距离
+    if (CanPlace(positions, mid, m)) {
+      best_min_distance = mid; // 记录当前最小距离
+      left = mid + 1;        // 尝试更大的间距
+    } else {
+      right = mid - 1; // 尝试更小的间距
+    }
+  }
+
+  cout << best_min_distance << endl; // 输出最佳最小种植间距
+  return 0;
+}
+```
+
 ## 区间问题
 
 **题目描述**：
