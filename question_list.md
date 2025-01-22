@@ -16804,6 +16804,191 @@ int main() {
 }
 ```
 
+#### 组装最大可靠性设备
+
+**题目描述**：
+
+一个设备由 N 种类型元器件组成（每种类型元器件只需要一个，类型 type 编号从 0~N-1），
+
+每个元器件均有可靠性属性 reliability，可靠性越高的器件其价格 price 越贵。
+
+而设备的可靠性由组成设备的所有器件中可靠性最低的器件决定。
+
+给定预算 S，购买 N 种元器件（每种类型元器件都需要购买一个），在不超过预算的情况下，请给出能够组成的设备的最大可靠性。
+
+**输入描述**：
+
+S N // S 总的预算，N 元器件的种类
+
+total // 元器件的总数，每种型号的元器件可以有多种;
+
+此后有 total 行具体器件的数据
+
+type reliability price // type 整数类型，代表元器件的类型编号从 0 ~ N-1; reliabilty 整数类型 ，代表元器件的可靠性; price 整数类型 ，代表元器件的价格
+
+0 <= S,price <= 10000000
+0 <= N <= 100
+0 <= type <= N-1
+0 <= total <= 100000
+0 < reliability <= 100000
+
+**输出描述**：
+
+符合预算的设备的最大可靠性，如果预算无法买齐 N 种器件，则返回 -1
+
+**用例 1**：
+
+输入：
+
+```
+500 3
+6
+0 80 100
+0 90 200
+1 50 50
+1 70 210
+2 50 100
+2 60 150
+```
+
+输出：
+
+```
+60
+```
+
+说明：
+
+预算 500，设备需要 3 种元件组成，方案
+
+类型 0 的第一个(可靠性 80),
+
+类型 1 的第二个(可靠性 70),
+
+类型 2 的第二个(可靠性 60),
+
+可以使设备的可靠性最大 60
+
+**用例 2**：
+
+输入：
+
+```
+100 1
+1
+0 90 200
+```
+
+输出：
+
+```
+-1
+```
+
+说明：组成设备需要 1 个元件，但是元件价格大于预算，因此无法组成设备，返回-1
+
+难度：困难
+
+标签：二分查找、贪心、动态规划、排序
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <climits>
+
+using namespace std;
+
+struct Component {
+  int reliability;
+  int price;
+};
+
+bool CanAssemble(int minReliability,
+                 const vector<vector<Component> >& components, int budget,
+                 int N) {
+  int total_price = 0;
+
+  for (int type = 0; type < N; ++type) {
+    int min_price = INT_MAX;
+    bool found = false;
+
+    // 寻找当前类型中可靠性 >= minReliability 的组件，并记录最小价格
+    for (const auto& component : components[type]) {
+      if (component.reliability >= minReliability) {
+        found = true;
+        min_price = min(min_price, component.price);
+      }
+    }
+
+    if (!found)
+      return false; // 如果没找到符合要求的组件
+
+    total_price += min_price; // 统计购买所满足的最小价格
+
+    if (total_price > budget)
+      return false; // 超过预算
+  }
+
+  return total_price <= budget; // 返回是否在预算之内
+}
+
+int main() {
+  int s, n; // S为预算，N为元件种类
+  cin >> s >> n;
+
+  int total; // 总部件数
+  cin >> total;
+
+  // 创建一个二维数组记录不同类型的组件
+  vector<vector<Component> > components(n);
+
+  for (int i = 0; i < total; ++i) {
+    int type, reliability, price;
+    cin >> type >> reliability >> price;
+    components[type].push_back({reliability, price});
+  }
+
+  // 对每种类型的组件按可靠性从高到低排序
+  for (int type = 0; type < n; ++type) {
+    sort(components[type].begin(), components[type].end(),
+         [](const Component& a, const Component& b) {
+           return a.reliability > b.reliability; // 按可靠性降序排序
+         });
+  }
+
+  // 二分查找可靠性
+  int left = 1, right = 100000; // 根据可靠性的题目约束
+  int best_reliability = -1;
+
+  // 特殊情况处理: 当 N == 0 时不能构造设备
+  if (n == 0) {
+    cout << -1 << endl;
+    return 0;
+  }
+
+  while (left <= right) {
+    int mid = (left + right) / 2;
+
+    if (CanAssemble(mid, components, s, n)) {
+      best_reliability = mid; // 记录当前可以实现的最佳可靠性
+      left = mid + 1;         // 尝试寻找更高的可靠性
+    } else {
+      right = mid - 1; // 减少可靠性
+    }
+  }
+
+  // 如果无法满足设备的所有类型，则返回 -1
+  if (best_reliability == -1) {
+    cout << -1 << endl;
+  } else {
+    cout << best_reliability << endl; // 输出最大可靠性
+  }
+
+  return 0;
+}
+```
+
 ## 区间问题
 
 **题目描述**：
