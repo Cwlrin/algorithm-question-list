@@ -16271,6 +16271,158 @@ int main() {
 }
 ```
 
+#### 爱吃蟠桃的孙悟空
+
+**题目描述**：
+
+孙悟空爱吃蟠桃，有一天趁着蟠桃园守卫不在来偷吃。已知蟠桃园有 N 棵桃树，每颗树上都有桃子，守卫将在 H 小时后回来。
+
+孙悟空可以决定他吃蟠桃的速度K（个/小时），每个小时选一颗桃树，并从树上吃掉 K 个，如果树上的桃子少于 K 个，则全部吃掉，并且这一小时剩余的时间里不再吃桃。
+
+孙悟空喜欢慢慢吃，但又想在守卫回来前吃完桃子。
+
+请返回孙悟空可以在 H 小时内吃掉所有桃子的最小速度 K（K为整数）。如果以任何速度都吃不完所有桃子，则返回0。
+
+**输入描述**：
+
+第一行输入为 N 个数字，N 表示桃树的数量，这 N 个数字表示每颗桃树上蟠桃的数量。
+
+第二行输入为一个数字，表示守卫离开的时间 H。
+
+其中数字通过空格分割，N、H为正整数，每颗树上都有蟠桃，且 0 < N < 10000，0 < H < 10000。
+
+**输出描述**：
+
+吃掉所有蟠桃的最小速度 K，无解或输入异常时输出 0。
+
+**用例 1**：
+
+输入：
+
+```
+2 3 4 5
+4
+```
+
+输出：
+
+```
+5
+```
+
+
+**用例 2**：
+
+输入：
+
+```
+2 3 4 5
+3
+```
+
+输出：
+
+```
+0
+```
+
+**用例 3**：
+
+输入：
+
+```
+30 11 23 4 20
+6
+```
+
+输出：
+
+```
+23
+```
+
+难度：中等
+
+标签：二分查找、数组、贪心
+
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+
+using namespace std;
+
+int main() {
+  // 读取桃树数量和每棵树上的桃子数
+  vector<int> piles;
+
+  // 处理输入
+  string line;
+  getline(cin, line);
+
+  // 分割字符串并转换为整数
+  size_t pos = 0;
+  while ((pos = line.find(' ')) != string::npos) {
+    string token = line.substr(0, pos);
+    piles.push_back(stoi(token));
+    line.erase(0, pos + 1);
+  }
+  piles.push_back(stoi(line)); // 添加最后一个数
+
+  int h;
+  cin >> h;
+
+  // 特殊情况处理：桃树数量大于可用时间
+  if (piles.size() > h) {
+    cout << 0 << endl;
+    return 0;
+  }
+
+  // 二分查找的左右边界
+  int left = 1;
+  int right = *max_element(piles.begin(), piles.end());
+
+  // 特殊情况处理：来不及吃完
+  int total_hours = 0;
+  for (int pile : piles) {
+    total_hours += ceil((double)pile / right);
+  }
+  if (total_hours > h) {
+    cout << 0 << endl;
+    return 0;
+  }
+
+  // 二分查找最小速度
+  int result = 0;
+  while (left <= right) {
+    int mid = left + (right - left) / 2;
+
+    // 直接在这里实现原来 canEatAll 的逻辑
+    int hours = 0;
+    for (int pile : piles) {
+      // 向上取整，计算吃完这堆桃子需要的时间
+      hours += ceil((double)pile / mid);
+    }
+
+    // 判断是否在规定时间内吃完
+    if (hours <= h) {
+      // 如果当前速度可以吃完，尝试更小的速度
+      result = mid;
+      right = mid - 1;
+    } else {
+      // 当前速度不够，需要增加速度
+      left = mid + 1;
+    }
+  }
+
+  cout << result << endl;
+
+  return 0;
+}
+```
+
 ## 区间问题
 
 **题目描述**：
