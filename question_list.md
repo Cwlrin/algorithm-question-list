@@ -19171,6 +19171,126 @@ int main() {
 
 ## 链表
 
+### 100分
+
+#### 寻找链表的中间结点
+
+**题目描述**：
+
+给定一个单链表 L，请编写程序输出 L 中间结点保存的数据。
+
+如果有两个中间结点，则输出第二个中间结点保存的数据。例如：
+
+给定 L 为 1→7→5，则输出应该为7；
+
+给定 L 为 1→2→3→4，则输出应该为3；
+
+**输入描述**：
+
+每个输入包含1个测试用例。
+
+每个测试用例：
+
+第一行给出链表首结点的地址、结点总个数正整数 N （≤ 10^5）。结点的地址是5位非负整数，NULL地址用-1表示。
+
+接下来有N行，每行格式位：
+
+Address Data Next
+
+其中Address是结点地址，Data是该结点保存的整数数据（0 ≤ Data ≤ 10^8），Next是下一结点的地址。
+
+已确保输入的结点所构成的链表 L 不会成环，但会存在部分输入结点不属于链表 L 情况 。
+
+**输出描述**：
+
+对每个测试用例，在一行中输出 L 中间结点保存的数据。 如果有两个中间结点，则输出第二个中间结点保存的数据。
+
+**用例 1**：
+
+输入：
+
+```
+00010 4
+00000 3 -1
+00010 5 12309
+11451 6 00000
+12309 7 11451
+```
+
+输出：
+
+```
+6
+```
+
+
+**用例 2**：
+
+输入：
+
+```
+10000 3
+76892 7 12309
+12309 5 -1
+10000 1 76892
+```
+
+输出：
+
+```
+7
+```
+
+难度：中等
+
+标签：链表、双指针
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+struct ListNode {
+  int address;
+  int data;
+  int next;
+};
+
+int main() {
+  int head_address, n;
+  cin >> head_address >> n;
+
+  // 存储节点的映射  
+  unordered_map<int, ListNode> node_map;
+  for (int i = 0; i < n; ++i) {
+    int address, data, next;
+    cin >> address >> data >> next;
+    node_map[address] = {address, data, next}; // 记录节点信息  
+  }
+
+  // 快慢指针找中间节点  
+  int slow = head_address;
+  int fast = head_address;
+
+  // 当快指针非空并且快指针的next非空  
+  while (fast != -1 && node_map[fast].next != -1) {
+    slow = node_map[slow].next; // 慢指针走一步  
+    fast = node_map[fast].next; // 快指针走两步  
+    if (fast != -1) {
+      // 确保快指针不为空  
+      fast = node_map[fast].next; // 快指针再走一步  
+    }
+  }
+
+  // 输出中间节点的值  
+  cout << node_map[slow].data << endl;
+
+  return 0;
+}
+```
+
+## 树
+
 **题目描述**：
 
 **输入描述**：
