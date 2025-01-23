@@ -18458,6 +18458,149 @@ int main() {
 }
 ```
 
+#### 仿LISP运算
+
+**题目描述**：
+
+LISP 语言唯一的语法就是括号要配对。
+
+形如 (OP P1 P2 …)，括号内元素由单个空格分割。
+
+其中第一个元素 OP 为操作符，后续元素均为其参数，参数个数取决于操作符类型。
+
+注意：
+
+参数 P1, P2 也有可能是另外一个嵌套的 (OP P1 P2 …) ，当前 OP 类型为 add / sub / mul / div（全小写），分别代表整数的加减乘除法，简单起见，所有 OP 参数个数均为 2 。
+
+举例：
+
+输入：(mul 3 -7)输出：-21
+
+输入：(add 1 2) 输出：3
+
+输入：(sub (mul 2 4) (div 9 3)) 输出 ：5
+
+输入：(div 1 0) 输出：error
+
+题目涉及数字均为整数，可能为负；
+
+不考虑 32 位溢出翻转，计算过程中也不会发生 32 位溢出翻转，
+
+除零错误时，输出 “error”，
+
+除法遇除不尽，向下取整，即 3/2 = 1
+
+**输入描述**：
+
+输入为长度不超过512的字符串，用例保证了无语法错误
+
+**输出描述**：
+
+输出计算结果或者“error”
+
+**用例 1**：
+
+输入：
+
+```
+(div 12 (sub 45 45))
+```
+
+输出：
+
+```
+error
+```
+
+说明：45减45得0，12除以0为除零错误，输出error
+
+**用例 2**：
+
+输入：
+
+```
+(add 1 (div -7 3))
+```
+
+输出：
+
+```
+-2
+```
+
+说明：-7除以3向下取整得-3，1加-3得-2
+
+难度：困难
+
+标签：栈、递归、数学、模拟、字符串
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  string input;
+  getline(cin, input); // 读取整个输入行
+
+  stack<string> stack; // 用于存储操作数和操作符
+  string sb;      // 用于收集字符的临时字符串
+
+  for (char c : input) {
+    if (c != '(' && c != ')' && c != ' ') {
+      // 收集操作符或参数的字符
+      sb += c;
+    } else if (c == ' ' || c == ')') {
+      // 当收集完一个元素时，将其压入栈
+      if (!sb.empty()) {
+        stack.push(sb);
+        sb.clear(); // 清空临时字符串
+      }
+
+      // 遇到闭合括号，进行计算
+      if (c == ')') {
+        // 从栈中取出 p2, p1 和 op
+        int p2 = stoi(stack.top());
+        stack.pop();
+        int p1 = stoi(stack.top());
+        stack.pop();
+        string op = stack.top();
+        stack.pop();
+
+        // 执行计算
+        int result = 0;
+        if (op == "add")
+          result = p1 + p2; // 加法
+        else if (op == "sub")
+          result = p1 - p2; // 减法
+        else if (op == "mul")
+          result = p1 * p2; // 乘法
+        else if (op == "div") {
+          // 处理除法，包括除零错误和向下取整
+          if (p2 == 0) {
+            cout << "error" << endl; // 输出错误信息
+            return 0;                // 终止程序
+          }
+          // 向下取整操作，考虑负数
+          result = p1 / p2;
+          if (p1 % p2 != 0 && (p1 < 0) != (p2 < 0)) {
+            result--; // 调整结果向下取整
+          }
+        }
+
+        // 将计算结果重新压入栈
+        stack.push(to_string(result));
+      }
+    }
+  }
+
+  // 输出最上面的结果，也就是最终计算结果
+  cout << stack.top() << endl;
+
+  return 0;
+}
+```
+
 ## 双端队列
 
 **题目描述**：
