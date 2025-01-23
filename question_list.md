@@ -17836,6 +17836,171 @@ int main() {
 }
 ```
 
+#### 荒岛逃生游戏
+
+**题目描述**：
+
+一个荒岛上有若干人，岛上只有一条路通往岛屿两端的港口，大家需要逃往两端的港口才可逃生。
+
+假定每个人移动的速度一样，且只可选择向左或向右逃生。
+
+若两个人相遇，则进行决斗，战斗力强的能够活下来，并损失掉与对方相同的战斗力；若战斗力相同，则两人同归于尽。
+
+**输入描述**：
+
+给定一行非 0 整数数组，元素个数不超过30000；
+
+正负表示逃生方向（正表示向右逃生，负表示向左逃生），绝对值表示战斗力，越左边的数字表示里左边港口越近，逃生方向相同的人永远不会发生决斗。
+
+**输出描述**：
+
+能够逃生的人总数，没有人逃生输出0，输入异常时输出-1。
+
+**用例 1**：
+
+输入：
+
+```
+5 10 8 -8 -5
+```
+
+输出：
+
+```
+2
+```
+
+说明：第3个人和第4个人同归于尽，第2个人杀死第5个人并剩余5战斗力，第1个人没有遇到敌人。
+
+难度：中等
+
+标签：栈、数组
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  // 读取输入
+  string line;
+  getline(cin, line);
+
+  // 特殊输入处理
+  if (line.empty()) {
+    cout << -1 << endl;
+    return 0;
+  }
+
+  // 解析输入
+  vector<int> people;
+  int num;
+  stringstream ss(line);
+
+  while (ss >> num) {
+    people.push_back(num);
+  }
+
+  // 输入有效性检查
+  if (people.empty() || people.size() > 30000) {
+    cout << -1 << endl;
+    return 0;
+  }
+
+  for (auto p : people) {
+    if (p == 0) {
+      cout << -1 << endl;
+      return 0;
+    }
+  }
+
+  // 使用栈来处理逃生逻辑
+  stack<int> s;           // 用于存储向右逃生的人（正数）
+  int negative_count = 0; // 成功向左逃生的人数
+
+  for (int person : people) {
+    if (person > 0) {
+      // 正数，向右逃生，入栈
+      s.push(person);
+    } else {
+      // 负数，向左逃生
+      int current_fight_power = abs(person);
+      while (current_fight_power > 0 && !s.empty()) {
+        // 先检查栈是否为空
+        // 栈顶元素
+        int top_power = s.top();
+        if (top_power > current_fight_power) {
+          // 正数战斗力大于负数
+          s.pop();
+          s.push(top_power - current_fight_power); // 正数继续逃生
+          current_fight_power = 0;                 // 负数已被打败
+        } else if (top_power < current_fight_power) {
+          // 负数战斗力大于正数
+          s.pop();
+          current_fight_power -= top_power; // 负数继续战斗
+        } else {
+          // 同归于尽
+          s.pop();
+          current_fight_power = 0; // 两者都死亡
+        }
+      }
+      if (current_fight_power > 0) {
+        // 如果栈已空，负数逃生成功
+        negative_count++;
+      }
+    }
+  }
+
+  // 存活的人数为栈中的正数加上成功的负数人数
+  int positive_count = s.size();
+  int total_survivors = positive_count + negative_count;
+
+  cout << total_survivors << endl;
+
+  return 0;
+}
+```
+
+
+**题目描述**：
+
+**输入描述**：
+
+**输出描述**：
+
+**用例 1**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+**用例 2**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+
 ### 200分
 
 #### 计算堆栈中的剩余数字
