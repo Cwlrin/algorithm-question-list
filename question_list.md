@@ -19608,6 +19608,105 @@ int main() {
 }
 ```
 
+#### 传递悄悄话
+
+**题目描述**：
+
+给定一个二叉树，每个节点上站一个人，节点数字表示父节点到该节点传递悄悄话需要花费的时间。
+
+初始时，根节点所在位置的人有一个悄悄话想要传递给其他人，求二叉树所有节点上的人都接收到悄悄话花费的时间。
+
+**输入描述**：
+
+给定二叉树
+
+0 9 20 -1 -1 15 7 -1 -1 -1 -1 3 2
+
+注：-1表示空节点
+
+![image](https://hydro.ac/d/HWOD2023/p/367/file/N_vlVLDOKBSmt9zLJDiRL.png)
+
+**输出描述**：
+
+返回所有节点都接收到悄悄话花费的时间
+
+38
+
+**用例 1**：
+
+输入：
+
+```
+0 9 20 -1 -1 15 7 -1 -1 -1 -1 3 2
+```
+
+输出：
+
+```
+38
+```
+
+难度：中等
+
+标签：树、深度优先搜索、广度优先搜索、递归
+
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+class TreeNode {
+  public:
+    int val_;
+    TreeNode* left_;
+    TreeNode* right_;
+
+    explicit TreeNode(int x) : val_(x), left_(nullptr), right_(nullptr) {}
+};
+
+// 构建二叉树
+TreeNode* buildTree(const vector<int>& nodes, int index) {
+  if (index >= nodes.size() || nodes[index] == -1) {
+    return nullptr;
+  }
+  auto* root = new TreeNode(nodes[index]);
+  root->left_ = buildTree(nodes, 2 * index + 1);
+  root->right_ = buildTree(nodes, 2 * index + 2);
+  return root;
+}
+
+// 深度优先搜索，计算最大路径和
+int dfs(TreeNode* root, int currentSum) {
+  if (!root)
+    return 0;
+  currentSum += root->val_;
+  if (!root->left_ && !root->right_) {
+    return currentSum;
+  }
+  int left_sum = dfs(root->left_, currentSum);
+  int right_sum = dfs(root->right_, currentSum);
+  return max(left_sum, right_sum);
+}
+
+int main() {
+  string input;
+  getline(cin, input); // 读取一行输入
+  stringstream ss(input);
+  vector<int> nodes;
+  int val;
+  while (ss >> val) {
+    nodes.push_back(val);
+  }
+
+  TreeNode* root = buildTree(nodes, 0);
+  int max_time = dfs(root, 0);
+  cout << max_time << endl;
+
+  return 0;
+}
+```
+
 ## 并查集
 
 **题目描述**：
