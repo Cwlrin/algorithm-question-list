@@ -17836,6 +17836,149 @@ int main() {
 }
 ```
 
+### 200分
+
+#### 计算堆栈中的剩余数字
+
+**题目描述**：
+
+向一个空栈中依次存入正整数，假设入栈元素 n(1<=n<=2^31-1)按顺序依次为 nx…n4、 n3、n2、 n1, 每当元素入栈时，如果 n1=n2+…+ny(y 的范围[2,x]， 1<=x<=1000)，则 n1~ny 全部元素出栈，重新入栈新元素 m(m=2*n1)。
+
+如：依次向栈存入 6、 1、 2、 3, 当存入 6、 1、 2 时，栈底至栈顶依次为[6、 1、 2]；当存入 3时， 3=2+1， 3、 2、 1 全部出栈，重新入栈元素 6(6=2*3)，此时栈中有元素 6；
+
+因为 6=6，所以两个 6 全部出栈，存入 12，最终栈中只剩一个元素 12。
+
+**输入描述**：
+
+使用单个空格隔开的正整数的字符串，如”5 6 7 8″， 左边的数字先入栈，输入的正整数个数为 x， 1<=x<=1000。
+
+**输出描述**：
+
+最终栈中存留的元素值，元素值使用空格隔开，如”8 7 6 5″， 栈顶数字在左边。
+
+**用例 1**：
+
+输入：
+
+```
+5 10 20 50 85 1
+
+```
+
+输出：
+
+```
+1 170
+```
+
+说明：5+10+20+50=85， 输入 85 时， 5、 10、 20、 50、 85 全部出栈，入栈 170，最终依次出栈的数字为 1 和 170。
+
+**用例 2**：
+
+输入：
+
+```
+6 7 8 13 9
+```
+
+输出：
+
+```
+9 13 8 7 6
+```
+
+**用例 3**：
+
+输入：
+
+```
+1 2 5 7 9 1 2 2
+```
+
+输出：
+
+```
+4 1 9 14 1
+```
+
+难度：中等
+
+标签：栈、模拟、数组、动态规划
+
+```cpp
+#include <iostream>
+#include <numeric>
+#include <sstream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int main() {
+  // 读取输入
+  string line;
+  getline(cin, line);
+
+  // 解析输入
+  vector<long long> stack;
+  stringstream ss(line);
+  long long num;
+
+  // 依次处理每个数字
+  while (ss >> num) {
+    stack.push_back(num);
+
+    // 检查是否满足出栈条件
+    while (stack.size() >= 2) {
+      bool found = false;
+
+      // 尝试查找从栈顶开始的所有可能子序列
+      for (int i = 2; i <= min(static_cast<int>(stack.size()), 1000); i++) {
+        // 计算最后 i 个元素的和
+        long long sum = 0;
+        for (int j = stack.size() - i; j < stack.size() - 1; j++) {
+          sum += stack[j];
+        }
+
+        // 检查是否满足条件
+        if (stack.back() == sum) {
+          // 出栈 i 个元素
+          long long last = stack.back();
+          for (int k = 0; k < i; k++) {
+            stack.pop_back();
+          }
+
+          // 入栈新元素
+          stack.push_back(2 * last);
+
+          found = true;
+          break;
+        }
+      }
+
+      // 如果没有找到满足条件的子序列，退出循环
+      if (!found)
+        break;
+    }
+  }
+
+  // 输出结果
+  if (stack.empty()) {
+    cout << "No" << endl;
+  } else {
+    // 反向输出栈中元素
+    for (int i = stack.size() - 1; i >= 0; i--) {
+      cout << stack[i];
+      if (i > 0)
+        cout << " ";
+    }
+    cout << endl;
+  }
+
+  return 0;
+}
+```
+
 ## 双端队列
 
 **题目描述**：
