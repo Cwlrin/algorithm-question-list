@@ -20418,6 +20418,228 @@ int main() {
 
 ### 200 分
 
+#### 字符串化繁为简
+
+**题目描述**：
+
+给定一个输入字符串，字符串只可能由英文字母（ 'a' ~ 'z'、'A' ~ 'Z' ）和左右小括号（ '('、')' ）组成。
+
+当字符里存在小括号时，小括号是成对的，可以有一个或多个小括号对，小括号对不会嵌套，小括号对内可以包含1个或多个英文字母，也可以不包含英文字母。
+
+当小括号对内包含多个英文字母时，这些字母之间是相互等效的关系，而且等效关系可以在不同的小括号对之间传递，即当存在 'a' 和 'b' 等效和存在 'b' 和 'c' 等效时，'a' 和 'c' 也等效，另外，同一个英文字母的大写字母和小写字母也相互等效（即使它们分布在不同的括号对里）
+
+需要对这个输入字符串做简化，输出一个新的字符串，输出字符串里只需保留输入字符串里的没有被小括号对包含的字符（按照输入字符串里的字符顺序），并将每个字符替换为在小括号对里包含的且字典序最小的等效字符。
+
+如果简化后的字符串为空，请输出为"0"。
+
+示例 : 输入字符串为"never(dont)give(run)up(f)()"，初始等效字符集合为('d', 'o', 'n', 't')、('r', 'u', 'n')，由于等效关系可以传递，因此最终等效字符集合为('d', 'o', 'n', 't', 'r', 'u')，将输入字符串里的剩余部分按字典序最小的等效字符替换后得到"devedgivedp"
+
+**输入描述**：
+
+input_string
+
+输入为1行，代表输入字符串
+
+输入字符串的长度在1~100000之间
+
+**输出描述**：
+
+output_string
+
+输出为1行，代表输出字符串
+
+**用例 1**：
+
+输入：
+
+```
+()abd
+```
+
+输出：
+
+```
+abd
+```
+
+说明：输入字符串里没有被小括号包含的子字符串为"abd"，其中每个字符没有等效字符，输出为"abd"
+
+**用例 2**：
+
+输入：
+
+```
+(abd)demand(fb)()for
+```
+
+输出：
+
+```
+aemanaaor
+```
+
+说明：等效字符集为('a', 'b', 'd', 'f')，输入字符串里没有被小括号包含的子字符串集合为'demandfor"，将其中字符替换为字典序最小的等效字符后输出为："aemanaaor"
+
+**用例 2**：
+
+输入：
+
+```
+(abd)demand(fb)()for
+```
+
+输出：
+
+```
+aemanaaor
+```
+
+说明：等效字符集为('a', 'b', 'd', 'f')，输入字符串里没有被小括号包含的子字符串集合为'demandfor"，将其中字符替换为字典序最小的等效字符后输出为："aemanaaor"
+
+
+**用例 3**：
+
+输入：
+
+```
+()happy(xyz)new(wxy)year(t)
+```
+
+输出：
+
+```
+happwnewwear
+```
+
+说明：等效字符集为(‘x’, 'y', 'z', 'w')，输入字符串里没有被小括号包含的子字符串集合为"happynewyear"，将其中字符替换为字典序最小的等效字符后输出为："happwnewwear"
+
+**用例 4**：
+
+输入：
+
+```
+()abcdefgAC(a)(Ab)(C)
+```
+
+输出：
+
+```
+AAcdefgAC
+```
+
+说明：等效字符集为('a', 'A', 'b')，输入字符里没有被小括号包含的子字符串集合为"abcdefgAC"，将其中字符替换为字典序最小的等效字符后输出为："AAcdefgAC"
+
+难度：困难
+
+标签：并查集、字符串、贪心、哈希表、图
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// 并查集实现
+class UnionFindSet {
+public:
+    vector<int> parent;  // 存储每个字符的父节点
+
+    // 构造函数，初始化并查集
+    explicit UnionFindSet(int n) {
+        parent.resize(n);
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;  // 每个节点的初始父节点为自己
+        }
+    }
+
+    // 查找父节点，并进行路径压缩
+    int find(int x) {
+        if (x != parent[x]) {
+            parent[x] = find(parent[x]);  // 路径压缩
+        }
+        return parent[x];
+    }
+
+    // 合并两个节点
+    void merge(int x, int y) {
+        int root_x = find(x);
+        int root_y = find(y);
+
+        // 保证字典序较小的字符作为根
+        if (root_x < root_y) {
+            parent[root_y] = root_x;
+        } else {
+            parent[root_x] = root_y;
+        }
+    }
+};
+
+int main() {
+    string input;  // 输入字符串
+    cin >> input;
+
+    vector<char> main_chars;  // 主体字符容器
+    vector<char> eq_chars;  // 等效字符容器
+    UnionFindSet ufs(128);  // 并查集，支持 ASCII 字符
+    set<int> char_set;  // 记录已出现的字符
+
+    bool in_parentheses = false;  // 标志是否在括号内
+
+    // 遍历输入字符串
+    for (char c : input) {
+        if (c == '(') {
+            in_parentheses = true;  // 开始收集等效字符
+            eq_chars.clear();  // 清空等效字符容器
+        } else if (c == ')') {
+            in_parentheses = false;  // 括号结束
+
+            if (!eq_chars.empty()) {
+                // 处理括号内字符的合并
+                int base = eq_chars[0];  // 括号内第一个字符作为基础
+                for (char letter : eq_chars) {
+                    ufs.merge(letter, base);  // 合并所有等效字符
+                    char_set.insert(letter);  // 将当前字符加入集合
+                }
+
+                // 处理字符之间的法则
+                for (const char letter : eq_chars) {
+                    int lower = tolower(letter);  // 获取小写字符
+                    int upper = toupper(letter);  // 获取大写字符
+
+                    // 如果之前出现过小写或大写字符，进行合并
+                    if (char_set.count(lower)) {
+                        ufs.merge(letter, lower);
+                    }
+                    if (char_set.count(upper)) {
+                        ufs.merge(letter, upper);
+                    }
+                }
+            }
+        } else {
+            if (in_parentheses) {
+                eq_chars.emplace_back(c);  // 收集等效字符
+            } else {
+                main_chars.emplace_back(c);  // 收集主体字符
+            }
+        }
+    }
+
+    // 替换等效字符
+    for (char &c : main_chars) {
+        c = static_cast<char>(ufs.find(c));  // 替换为等效的字典序最小的字符
+    }
+
+    // 输出结果
+    if (main_chars.empty()) {
+        cout << "0" << endl;  // 如果结果为空，输出 "0"
+    } else {
+        string result(main_chars.begin(), main_chars.end());
+        cout << result << endl;  // 输出简化后的字符串
+    }
+
+    return 0;
+}
+```
+
 **题目描述**：
 
 **输入描述**：
@@ -20458,7 +20680,6 @@ int main() {
 
 ## 优先队列
 
-### 200 分
 
 **题目描述**：
 
