@@ -19724,7 +19724,7 @@ int main() {
 
 **输入描述**：
 
-2行整数，第1行表示二叉树的中序遍历，第2行表示二叉树的前序遍历，以空格分割
+2 行整数，第 1 行表示二叉树的中序遍历，第 2 行表示二叉树的前序遍历，以空格分割
 
 例如：
 
@@ -19734,7 +19734,7 @@ int main() {
 
 **输出描述**：
 
-1行整数，表示求和树的中序遍历，以空格分割
+1 行整数，表示求和树的中序遍历，以空格分割
 
 例如：
 
@@ -19861,6 +19861,149 @@ int main() {
     }
   }
   cout << endl;
+
+  return 0;
+}
+```
+
+#### 模拟目录管理功能
+
+**题目描述**：
+
+实现一个模拟目录管理功能的软件，输入一个命令序列，输出最后一条命令运行结果。
+
+支持命令：
+
+1. 创建目录命令：mkdir 目录名称，如 mkdir abc 为在当前目录创建 abc 目录，如果已存在同名目录则不执行任何操作。此命令无输出。
+2. 进入目录命令：cd 目录名称，如 cd abc 为进入 abc 目录，特别地，cd .. 为返回上级目录，如果目录不存在则不执行任何操作。此命令无输出。
+3. 查看当前所在路径命令：pwd，输出当前路径字符串。
+
+约束：
+
+1. 目录名称仅支持小写字母；mkdir 和 cd 命令的参数仅支持单个目录，如：mkdir abc 和 cd abc；不支持嵌套路径和绝对路径，如 mkdir abc/efg，cd abc/efg，mkdir /abc/efg，cd /abc/efg 是不支持的。
+2. 目录符号为/，根目录/作为初始目录。
+3. 任何不符合上述定义的无效命令不做任何处理并且无输出。
+
+**输入描述**：
+
+输入 N 行字符串，每一行字符串是一条命令。
+
+**输出描述**：
+
+输出最后一条命令运行结果字符串。
+
+命令行数限制 100 行以内，目录名称限制 10 个字符以内。
+
+**用例 1**：
+
+输入：
+
+```
+mkdir abc
+cd abc
+pwd
+
+```
+
+输出：
+
+```
+/abc/
+```
+
+说明：在根目录创建一个 abc 的目录并进入 abc 目录中查看当前目录路径，输出当前路径/abc/。
+
+难度：中等
+
+标签：树、栈、字符串、哈希表、模拟
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+class DirectoryManager {
+  stack<string> path_;
+  unordered_map<string, unordered_set<string> > directory_structure_;
+
+  public:
+    DirectoryManager() {
+      path_.emplace("/");
+      directory_structure_["/"] = unordered_set<string>();
+    }
+
+    void mkdir(const string& dir_name) {
+      string current_path = path_.top();
+      if (directory_structure_[current_path].find(dir_name) ==
+          directory_structure_[
+            current_path].end()) {
+        directory_structure_[current_path].insert(dir_name);
+        directory_structure_[dir_name] = unordered_set<string>();
+        // 初始化子目录
+      }
+    }
+
+    void cd(const string& dir_name) {
+      if (dir_name == "..") {
+        if (path_.size() > 1) {
+          path_.pop();
+        }
+      } else {
+        string current_path = path_.top();
+        if (directory_structure_[current_path].find(dir_name) !=
+            directory_structure_[
+              current_path].end()) {
+          path_.push(dir_name);
+        }
+      }
+    }
+
+    string pwd() {
+      string result;
+      stack<string> temp = path_;
+      vector<string> dirs;
+      while (!temp.empty()) {
+        dirs.push_back(temp.top());
+        temp.pop();
+      }
+      for (int i = dirs.size() - 1; i >= 0; --i) {
+        if (dirs[i] == "/") {
+          result += "/";
+        } else {
+          result += dirs[i] + "/";
+        }
+      }
+      return result.empty() ? "/" : result;
+    }
+};
+
+int main() {
+  DirectoryManager dm;
+  string line;
+  string last_output = "/"; // 默认初始路径为 "/"
+
+  while (getline(cin, line)) {
+    if (line.empty())
+      break; // 处理空行
+
+    stringstream ss(line);
+    string command;
+    ss >> command;
+
+    if (command == "mkdir") {
+      string dir_name;
+      ss >> dir_name;
+      dm.mkdir(dir_name);
+    } else if (command == "cd") {
+      string dir_name;
+      ss >> dir_name;
+      dm.cd(dir_name);
+    } else if (command == "pwd") {
+      last_output = dm.pwd();
+    }
+  }
+
+  cout << last_output << endl;
 
   return 0;
 }
