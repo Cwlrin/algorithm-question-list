@@ -17652,45 +17652,191 @@ int main() {
 
 ## 栈
 
+### 100分
+
+#### 斗地主之顺子
+
 **题目描述**：
+
+在斗地主扑克牌游戏中， 扑克牌由小到大的顺序为：3,4,5,6,7,8,9,10,J,Q,K,A,2，玩家可以出的扑克牌阵型有：单张、对子、顺子、飞机、炸弹等。
+
+其中顺子的出牌规则为：由至少5张由小到大连续递增的扑克牌组成，且不能包含2。
+
+例如：{3,4,5,6,7}、{3,4,5,6,7,8,9,10,J,Q,K,A}都是有效的顺子；而{J,Q,K,A,2}、 {2,3,4,5,6}、{3,4,5,6}、{3,4,5,6,8}等都不是顺子。
+
+给定一个包含13张牌的数组，如果有满足出牌规则的顺子，请输出顺子。
+
+如果存在多个顺子，请每行输出一个顺子，且需要按顺子的第一张牌的大小（必须从小到大）依次输出。
+
+如果没有满足出牌规则的顺子，请输出No。
 
 **输入描述**：
 
+13张任意顺序的扑克牌，每张扑克牌数字用空格隔开，每张扑克牌的数字都是合法的，并且不包括大小王：2 9 J 2 3 4 K A 7 9 A 5 6
+
+不需要考虑输入为异常字符的情况
+
 **输出描述**：
+
+组成的顺子，每张扑克牌数字用空格隔开：3 4 5 6 7
 
 **用例 1**：
 
 输入：
 
 ```
-
+2 9 J 2 3 4 K A 7 9 A 5 6
 ```
 
 输出：
 
 ```
-
+3 4 5 6 7
 ```
 
-说明：
+说明：13张牌中，可以组成的顺子只有1组：3 4 5 6 7。
 
 **用例 2**：
 
 输入：
 
 ```
-
+2 9 J 10 3 4 K A 7 Q A 5 6
 ```
 
 输出：
 
 ```
-
+3 4 5 6 7
+9 10 J Q K A
 ```
 
-说明：
+说明：13张牌中，可以组成2组顺子，从小到大分别为：3 4 5 6 7 和 9 10 J Q K A
 
+**用例 3**：
 
+输入：
+
+```
+2 9 9 9 3 4 K A 10 Q A 5 6
+```
+
+输出：
+
+```
+No
+```
+
+说明：13张牌中，无法组成顺子。
+
+难度：中等
+
+标签：哈希表、贪心、模拟
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <unordered_map>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+  // 定义牌的映射
+  unordered_map<string, int> card_value = {
+      {"3", 3}, {"4", 4}, {"5", 5}, {"6", 6}, {"7", 7},
+      {"8", 8}, {"9", 9}, {"10", 10}, {"J", 11},
+      {"Q", 12}, {"K", 13}, {"A", 14}
+  };
+
+  // 反向映射
+  unordered_map<int, string> value_card = {
+      {3, "3"}, {4, "4"}, {5, "5"}, {6, "6"}, {7, "7"},
+      {8, "8"}, {9, "9"}, {10, "10"}, {11, "J"},
+      {12, "Q"}, {13, "K"}, {14, "A"}
+  };
+
+  // 读取输入
+  string line;
+  getline(cin, line);
+
+  // 解析输入
+  vector<string> cards;
+  stringstream ss(line);
+  string card;
+  while (ss >> card) {
+    cards.push_back(card);
+  }
+
+  // 统计每张牌的数量
+  unordered_map<int, int> count;
+  for (const string& c : cards) {
+    if (c != "2") {
+      // 排除2
+      count[card_value[c]]++;
+    }
+  }
+
+  // 存储所有顺子
+  vector<vector<int> > straights;
+
+  // 尝试生成顺子
+  for (int len = 12; len >= 5; len--) {
+    // 从最长的顺子开始
+    for (int start = 3; start <= 14 - len + 1; start++) {
+      unordered_map<int, int> tempCount = count;
+      vector<int> straight;
+      bool valid = true;
+
+      // 检查连续len张牌是否存在
+      for (int i = start; i < start + len; i++) {
+        // 如果某张牌不存在，顺子无效
+        if (tempCount.find(i) == tempCount.end() || tempCount[i] == 0) {
+          valid = false;
+          break;
+        }
+        straight.push_back(i);
+        tempCount[i]--;
+      }
+
+      // 如果顺子有效，加入结果并更新原始计数
+      if (valid) {
+        // 更新原始计数
+        for (int card : straight) {
+          count[card]--;
+        }
+        straights.push_back(straight);
+      }
+    }
+  }
+
+  // 按顺子起始牌大小排序
+  sort(straights.begin(), straights.end(),
+       [](const vector<int>& a, const vector<int>& b) {
+         return a[0] < b[0];
+       });
+
+  // 输出结果
+  if (straights.empty()) {
+    cout << "No" << endl;
+  } else {
+    for (const auto& straight : straights) {
+      for (int i = 0; i < straight.size(); i++) {
+        cout << value_card[straight[i]];
+        if (i < straight.size() - 1)
+          cout << " ";
+      }
+      cout << endl;
+    }
+  }
+
+  return 0;
+}
+```
+
+## 双端队列
 
 **题目描述**：
 
