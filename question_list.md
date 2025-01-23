@@ -16995,17 +16995,17 @@ int main() {
 
 部门在进行需求开发时需要进行人力安排。
 
-当前部门需要完成 N 个需求，需求用 requirements 表述，requirements[i] 表示第 i 个需求的工作量大小，单位：人月。
+当前部门需要完成 N 个需求，需求用 requirements  表述，requirements[i] 表示第 i 个需求的工作量大小，单位：人月。
 
 这部分需求需要在 M 个月内完成开发，进行人力安排后每个月人力时固定的。
 
-目前要求每个月最多有2个需求开发，并且每个月需要完成的需求不能超过部门人力。
+目前要求每个月最多有 2 个需求开发，并且每个月需要完成的需求不能超过部门人力。
 
 请帮助部门评估在满足需求开发进度的情况下，每个月需要的最小人力是多少？
 
 **输入描述**：
 
-输入为 M 和 requirements，M 表示需求开发时间要求，requirements 表示每个需求工作量大小，N 为 requirements长度，
+输入为 M 和 requirements，M 表示需求开发时间要求，requirements 表示每个需求工作量大小，N 为 requirements 长度，
 
 1 ≤ N/2 ≤ M ≤ N ≤ 10000
 
@@ -17034,18 +17034,17 @@ int main() {
 
 输入数据两行，
 
-第一行输入数据3表示开发时间要求，
+第一行输入数据 3 表示开发时间要求，
 
 第二行输入数据表示需求工作量大小，
 
 输出数据一行，表示部门人力需求。
 
-当选择人力为6时，2个需求量为3的工作可以在1个月里完成，其他2个工作各需要1个月完成。可以在3个月内完成所有需求。
+当选择人力为 6 时，2 个需求量为 3 的工作可以在 1 个月里完成，其他 2 个工作各需要 1 个月完成。可以在 3 个月内完成所有需求。
 
-当选择人力为5时，4个工作各需要1个月完成，一共需要4个月才能完成所有需求。
+当选择人力为 5 时，4 个工作各需要 1 个月完成，一共需要 4 个月才能完成所有需求。
 
-因此6是部门最小的人力需求。
-
+因此 6 是部门最小的人力需求。
 
 难度：中等
 
@@ -17055,11 +17054,11 @@ int main() {
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <numeric> // std::accumulate  
+#include <numeric> // std::accumulate
 
 using namespace std;
 
-// 检查在给定限重下需要多少辆自行车  
+// 检查在给定限重下需要多少辆自行车
 bool CanCompleteRequirements(const vector<int>& requirements, int m,
                              long long limit) {
   int need = 0;
@@ -17077,46 +17076,46 @@ bool CanCompleteRequirements(const vector<int>& requirements, int m,
     } else {
       r--;
     }
-    need++; // 使用了一辆车  
+    need++; // 使用了一辆车
   }
 
-  return need <= m; // 如果需要的车数小于等于 M，返回 true  
+  return need <= m; // 如果需要的车数小于等于 M，返回 true
 }
 
 int main() {
   int m;
-  cin >> m; // 输入开发时间要求  
+  cin >> m; // 输入开发时间要求
 
   vector<int> requirements;
   int work;
 
-  // 读取需求工作量  
+  // 读取需求工作量
   while (cin >> work) {
     requirements.push_back(work);
   }
 
-  // 排序需求工作量  
+  // 排序需求工作量
   sort(requirements.begin(), requirements.end());
 
-  // 二分查找初始化  
+  // 二分查找初始化
   long long left = *max_element(requirements.begin(), requirements.end());
   long long right = accumulate(requirements.begin(), requirements.end(), 0LL);
 
-  long long result = right; // 结果集  
+  long long result = right; // 结果集
 
-  // 二分查找  
+  // 二分查找
   while (left <= right) {
     long long mid = left + (right - left) / 2;
 
     if (CanCompleteRequirements(requirements, m, mid)) {
-      result = mid;    // 找到可行解  
-      right = mid - 1; // 尝试更小的限重  
+      result = mid;    // 找到可行解
+      right = mid - 1; // 尝试更小的限重
     } else {
-      left = mid + 1; // 增加限重  
+      left = mid + 1; // 增加限重
     }
   }
 
-  cout << result << endl; // 输出部门人力需求  
+  cout << result << endl; // 输出部门人力需求
   return 0;
 }
 ```
@@ -17125,9 +17124,128 @@ int main() {
 
 ### 100 分
 
+#### 路灯照明问题
 
+**题目描述**：
 
-### 200分
+在一条笔直的公路上安装了 N 个路灯，从位置 0 开始安装，路灯之间间距固定为 100 米。 每个路灯都有自己的照明半径，请计算第一个路灯和最后一个路灯之间，无法照明的区间的长度和。
+
+**输入描述**：
+
+第一行为一个数 N，表示路灯个数，1<=N<=100000 第二行为 N 个空格分隔的数，表示路灯的照明半径，1<=照明半径<=100000\*100
+
+**输出描述**：
+
+第一个路灯和最后一个路灯之间，无法照明的区间的长度和
+
+**用例 1**：
+
+输入：
+
+```
+2
+50 50
+```
+
+输出：
+
+```
+0
+```
+
+说明：路灯 1 覆盖 0-50，路灯 2 覆盖 50-100，路灯 1 和路灯 2 之间(0 米-100 米)无未覆盖的区间。
+
+**用例 2**：
+
+输入：
+
+```
+4
+50 70 20 70
+```
+
+输出：
+
+```
+20
+```
+
+说明：
+
+路灯 1 覆盖 0-50
+
+路灯 2 覆盖 30-170
+
+路灯 3 覆盖 180-220
+
+路灯 4 覆盖 230-370
+
+[170,180],[220,230]，两个未覆盖的区间，总里程为 20
+
+难度：中等
+
+标签：贪心、排序、双指针
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+  int n;
+  cin >> n; // 输入路灯数量
+
+  vector<int> radius(n);
+  for (int i = 0; i < n; ++i) {
+    cin >> radius[i]; // 输入每个路灯的照明半径
+  }
+
+  // 计算每个路灯的照明范围
+  vector<pair<int, int> > ranges;
+  for (int i = 0; i < n; ++i) {
+    int position = i * 100;
+    int start = max(0, position - radius[i]);
+    int end = position + radius[i];
+    ranges.emplace_back(start, end);
+  }
+
+  // 按起点升序排序
+  sort(ranges.begin(), ranges.end());
+
+  // 合并重叠的照明范围
+  vector<pair<int, int> > merged;
+  merged.push_back(ranges[0]);
+
+  for (int i = 1; i < ranges.size(); ++i) {
+    pair<int, int> current = ranges[i];
+    pair<int, int>& last = merged.back();
+
+    if (current.first <= last.second) {
+      // 当前区间与最后一个区间有重叠，合并区间
+      last.second = max(last.second, current.second);
+    } else {
+      // 当前区间与最后一个区间无重叠，直接加入结果
+      merged.push_back(current);
+    }
+  }
+
+  // 计算未覆盖的区间长度和
+  int uncovered = 0;
+  for (int i = 1; i < merged.size(); ++i) {
+    int gap = merged[i].first - merged[i - 1].second;
+    if (gap > 0) {
+      uncovered += gap;
+    }
+  }
+
+  cout << uncovered << endl; // 输出未覆盖的区间长度和
+  return 0;
+}
+```
+
+### 200 分
 
 #### 观看文艺汇演问题
 
@@ -17177,7 +17295,7 @@ T 和 L 的单位为分钟
 1
 ```
 
-说明：两场演出间隔时间为0，不满足最小15分钟时间间隔的要求，所以最多只能观看一场演出
+说明：两场演出间隔时间为 0，不满足最小 15 分钟时间间隔的要求，所以最多只能观看一场演出
 
 **用例 2**：
 
@@ -17195,7 +17313,7 @@ T 和 L 的单位为分钟
 2
 ```
 
-说明：两场演出间隔大于15分钟，都能观看到
+说明：两场演出间隔大于 15 分钟，都能观看到
 
 难度：中等
 
@@ -17252,11 +17370,11 @@ int main() {
 
 **题目描述**：
 
-给定坐标轴上的一组线段，线段的起点和终点均为整数并且长度不小于1，请你从中找到最少数量的线段，这些线段可以覆盖柱所有线段。
+给定坐标轴上的一组线段，线段的起点和终点均为整数并且长度不小于 1，请你从中找到最少数量的线段，这些线段可以覆盖柱所有线段。
 
 **输入描述**：
 
-第一行输入为所有线段的数量，不超过10000，后面每行表示一条线段，格式为"x,y"，x和y分别表示起点和终点，取值范围是[-10^5，10^5]。
+第一行输入为所有线段的数量，不超过 10000，后面每行表示一条线段，格式为"x,y"，x 和 y 分别表示起点和终点，取值范围是[-10^5，10^5]。
 
 **输出描述**：
 
@@ -17281,7 +17399,7 @@ int main() {
 
 难度：中等
 
-标签：贪心、排序、双指针
+标签：贪心、排序、双指针、栈
 
 ```cpp
 #include <iostream>
@@ -17362,12 +17480,9 @@ int main() {
 
 **题目描述**：
 
-
 **输入描述**：
 
-
 **输出描述**：
-
 
 **用例 1**：
 
