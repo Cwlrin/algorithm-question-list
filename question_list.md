@@ -20009,6 +20009,132 @@ int main() {
 }
 ```
 
+#### 数组二叉树
+
+
+**题目描述**：
+
+二叉树也可以用数组来存储，给定一个数组，树的根节点的值存储在下标1，对于存储在下标N的节点，它的左子节点和右子节点分别存储在下标2N和2N+1，并且我们用值-1代表一个节点为空。
+
+给定一个数组存储的二叉树，试求从根节点到最小的叶子节点的路径，路径由节点的值组成。
+
+**输入描述**：
+
+输入一行为数组的内容，数组的每个元素都是正整数，元素间用空格分隔。
+
+注意第一个元素即为根节点的值，即数组的第N个元素对应下标N，下标0在树的表示中没有使用，所以我们省略了。
+
+输入的树最多为7层。
+
+**输出描述**：
+
+输出从根节点到最小叶子节点的路径上，各个节点的值，由空格分隔，用例保证最小叶子节点只有一个。
+
+**用例 1**：
+
+输入：
+
+```
+3 5 7 -1 -1 2 4
+```
+
+输出：
+
+```
+3 7 2
+```
+
+说明：最小叶子节点的路径为3 7 2。
+
+**用例 2**：
+
+输入：
+
+```
+5 9 8 -1 -1 7 -1 -1 -1 -1 -1 6
+```
+
+输出：
+
+```
+5 8 7 6
+```
+
+说明：最小叶子节点的路径为5 8 7 6，注意数组仅存储至最后一个非空节点，故不包含节点“7”右子节点的-1。
+
+难度：中等
+
+标签：树、深度优先搜索、广度优先搜索、递归、数组
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+void dfs(const vector<int>& tree, int index, vector<int>& path, int& min_leaf,
+         vector<int>& min_path) {
+  if (index >= tree.size() || tree[index] == -1) {
+    return;
+  }
+
+  path.push_back(tree[index]);
+
+  int left = 2 * index;
+  int right = 2 * index + 1;
+
+  // 检查当前节点是否为叶子
+  bool is_leaf = true;
+  if (left < tree.size() && tree[left] != -1) {
+    is_leaf = false;
+    dfs(tree, left, path, min_leaf, min_path);
+  }
+  if (right < tree.size() && tree[right] != -1) {
+    is_leaf = false;
+    dfs(tree, right, path, min_leaf, min_path);
+  }
+
+  if (is_leaf && tree[index] < min_leaf) {
+    min_leaf = tree[index];
+    min_path = path;
+  }
+
+  path.pop_back(); // 回溯
+}
+
+vector<int> FindMinLeafPath(const vector<int>& tree) {
+  int min_leaf = INT_MAX;
+  vector<int> min_path;
+  vector<int> path;
+  dfs(tree, 1, path, min_leaf, min_path); // 从根开始（索引 1）
+  return min_path;
+}
+
+int main() {
+  string line;
+  getline(cin, line);
+  stringstream ss(line);
+  vector<int> tree;
+  tree.push_back(-1); // 索引 0 未使用
+
+  int val;
+  while (ss >> val) {
+    tree.push_back(val);
+  }
+
+  vector<int> min_path = FindMinLeafPath(tree);
+
+  for (size_t i = 0; i < min_path.size(); ++i) {
+    cout << min_path[i];
+    if (i != min_path.size() - 1) {
+      cout << " ";
+    }
+  }
+  cout << endl;
+
+  return 0;
+}
+```
+
 ## 并查集
 
 **题目描述**：
