@@ -19622,7 +19622,7 @@ int main() {
 
 0 9 20 -1 -1 15 7 -1 -1 -1 -1 3 2
 
-注：-1表示空节点
+注：-1 表示空节点
 
 ![image](https://hydro.ac/d/HWOD2023/p/367/file/N_vlVLDOKBSmt9zLJDiRL.png)
 
@@ -19649,7 +19649,6 @@ int main() {
 难度：中等
 
 标签：树、深度优先搜索、广度优先搜索、递归
-
 
 ```cpp
 #include <bits/stdc++.h>
@@ -19702,6 +19701,166 @@ int main() {
   TreeNode* root = buildTree(nodes, 0);
   int max_time = dfs(root, 0);
   cout << max_time << endl;
+
+  return 0;
+}
+```
+
+### 200 分
+
+#### 二叉树计算
+
+**题目描述**：
+
+给出一个二叉树如下图所示：
+
+![image](https://hydro.ac/d/HWOD2023/p/375/file/FrvjPlfctXQG7dXxtXCBH.png)
+
+请由该二叉树生成一个新的二叉树，它满足其树中的每个节点将包含原始树中的左子树和右子树的和。
+
+![image](https://hydro.ac/d/HWOD2023/p/375/file/6UChfpH83FqmCCUFS-jIe.png)
+
+左子树表示该节点左侧叶子节点为根节点的一颗新树；右子树表示该节点右侧叶子节点为根节点的一颗新树。
+
+**输入描述**：
+
+2行整数，第1行表示二叉树的中序遍历，第2行表示二叉树的前序遍历，以空格分割
+
+例如：
+
+7 -2 6 6 9
+
+6 7 -2 9 6
+
+**输出描述**：
+
+1行整数，表示求和树的中序遍历，以空格分割
+
+例如：
+
+-2 0 20 0 6
+
+**用例 1**：
+
+输入：
+
+```
+-3 12 6 8 9 -10 -7
+8 12 -3 6 -10 9 -7
+```
+
+输出：
+
+```
+0 3 0 7 0 2 0
+```
+
+难度：中等
+
+标签：树、深度优先搜索、递归
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+class TreeNode {
+  public:
+    int val_;
+    TreeNode* left_;
+    TreeNode* right_;
+
+    explicit TreeNode(int x) : val_(x), left_(nullptr), right_(nullptr) {}
+};
+
+// 根据中序遍历和前序遍历构建二叉树
+TreeNode* BuildTree(vector<int>& inorder, vector<int>& preorder) {
+  if (preorder.empty())
+    return nullptr;
+
+  auto* root = new TreeNode(preorder[0]);
+  stack<TreeNode*> stk;
+  stk.push(root);
+  int inorder_index = 0;
+
+  for (int i = 1; i < preorder.size(); ++i) {
+    TreeNode* node = stk.top();
+    if (node->val_ != inorder[inorder_index]) {
+      node->left_ = new TreeNode(preorder[i]);
+      stk.push(node->left_);
+    } else {
+      while (!stk.empty() && stk.top()->val_ == inorder[inorder_index]) {
+        node = stk.top();
+        stk.pop();
+        ++inorder_index;
+      }
+      node->right_ = new TreeNode(preorder[i]);
+      stk.push(node->right_);
+    }
+  }
+
+  return root;
+}
+
+// 生成求和树
+int GenerateSumTree(TreeNode* root) {
+  if (!root)
+    return 0;
+  int left_sum = GenerateSumTree(root->left_);
+  int right_sum = GenerateSumTree(root->right_);
+  int original_val = root->val_;
+  root->val_ = left_sum + right_sum;
+  return original_val + left_sum + right_sum;
+}
+
+// 中序遍历二叉树
+void InorderTraversal(TreeNode* root, vector<int>& result) {
+  stack<TreeNode*> stk;
+  TreeNode* curr = root;
+
+  while (curr || !stk.empty()) {
+    while (curr) {
+      stk.push(curr);
+      curr = curr->left_;
+    }
+    curr = stk.top();
+    stk.pop();
+    result.push_back(curr->val_);
+    curr = curr->right_;
+  }
+}
+
+int main() {
+  vector<int> inorder, preorder;
+  string line;
+
+  getline(cin, line);
+  stringstream ss(line);
+  int val;
+  while (ss >> val) {
+    inorder.push_back(val);
+  }
+
+  getline(cin, line);
+  ss.clear();
+  ss.str(line);
+  while (ss >> val) {
+    preorder.push_back(val);
+  }
+
+  TreeNode* root = BuildTree(inorder, preorder);
+  GenerateSumTree(root);
+
+  vector<int> result;
+  InorderTraversal(root, result);
+
+  for (size_t i = 0; i < result.size(); ++i) {
+    cout << result[i];
+    if (i != result.size() - 1) {
+      cout << " ";
+    }
+  }
+  cout << endl;
 
   return 0;
 }
