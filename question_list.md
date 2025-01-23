@@ -16989,6 +16989,138 @@ int main() {
 }
 ```
 
+#### 部门人力分配
+
+**题目描述**：
+
+部门在进行需求开发时需要进行人力安排。
+
+当前部门需要完成 N 个需求，需求用 requirements 表述，requirements[i] 表示第 i 个需求的工作量大小，单位：人月。
+
+这部分需求需要在 M 个月内完成开发，进行人力安排后每个月人力时固定的。
+
+目前要求每个月最多有2个需求开发，并且每个月需要完成的需求不能超过部门人力。
+
+请帮助部门评估在满足需求开发进度的情况下，每个月需要的最小人力是多少？
+
+**输入描述**：
+
+输入为 M 和 requirements，M 表示需求开发时间要求，requirements 表示每个需求工作量大小，N 为 requirements长度，
+
+1 ≤ N/2 ≤ M ≤ N ≤ 10000
+
+1 ≤ requirements[i] ≤ 10^9
+
+**输出描述**：
+
+对于每一组测试数据，输出部门需要人力需求，行末无多余的空格
+
+**用例 1**：
+
+输入：
+
+```
+3
+3 5 3 4
+```
+
+输出：
+
+```
+6
+```
+
+说明：
+
+输入数据两行，
+
+第一行输入数据3表示开发时间要求，
+
+第二行输入数据表示需求工作量大小，
+
+输出数据一行，表示部门人力需求。
+
+当选择人力为6时，2个需求量为3的工作可以在1个月里完成，其他2个工作各需要1个月完成。可以在3个月内完成所有需求。
+
+当选择人力为5时，4个工作各需要1个月完成，一共需要4个月才能完成所有需求。
+
+因此6是部门最小的人力需求。
+
+
+难度：中等
+
+标签：二分查找、双指针、贪心
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <numeric> // std::accumulate  
+
+using namespace std;
+
+// 检查在给定限重下需要多少辆自行车  
+bool CanCompleteRequirements(const vector<int>& requirements, int m,
+                             long long limit) {
+  int need = 0;
+  int l = 0;
+  int r = requirements.size() - 1;
+
+  while (l <= r) {
+    if (l == r) {
+      need++;
+      break;
+    }
+    if (requirements[l] + requirements[r] <= limit) {
+      l++;
+      r--;
+    } else {
+      r--;
+    }
+    need++; // 使用了一辆车  
+  }
+
+  return need <= m; // 如果需要的车数小于等于 M，返回 true  
+}
+
+int main() {
+  int m;
+  cin >> m; // 输入开发时间要求  
+
+  vector<int> requirements;
+  int work;
+
+  // 读取需求工作量  
+  while (cin >> work) {
+    requirements.push_back(work);
+  }
+
+  // 排序需求工作量  
+  sort(requirements.begin(), requirements.end());
+
+  // 二分查找初始化  
+  long long left = *max_element(requirements.begin(), requirements.end());
+  long long right = accumulate(requirements.begin(), requirements.end(), 0LL);
+
+  long long result = right; // 结果集  
+
+  // 二分查找  
+  while (left <= right) {
+    long long mid = left + (right - left) / 2;
+
+    if (CanCompleteRequirements(requirements, m, mid)) {
+      result = mid;    // 找到可行解  
+      right = mid - 1; // 尝试更小的限重  
+    } else {
+      left = mid + 1; // 增加限重  
+    }
+  }
+
+  cout << result << endl; // 输出部门人力需求  
+  return 0;
+}
+```
+
 ## 区间问题
 
 **题目描述**：
