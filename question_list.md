@@ -17123,11 +17123,141 @@ int main() {
 
 ## 区间问题
 
+### 100 分
+
+
+
+### 200分
+
+#### 观看文艺汇演问题
+
 **题目描述**：
+
+为了庆祝中国共产党成立 100 周年，某公园将举行多场文艺表演，很多演出都是同时进行。
+
+一个人只能同时观看一场演出，且不能迟到早退。
+
+由于演出分布在不同的演出场地，所以连续观看的演出最少有 15 分钟的时间间隔。
+
+小明是一个狂热的文艺迷，想观看尽可能多的演出。
+
+现给出演出时间表，请帮小明计算他最多能观看几场演出。
 
 **输入描述**：
 
+第一行为一个数 N，表示演出场数
+
+1 ≤ N ≤ 1000
+
+接下来 N 行，每行有被空格分割的整数，第一个整数 T 表示演出的开始时间，第二个整数 L 表示演出的持续时间
+
+T 和 L 的单位为分钟
+
+0 ≤ T ≤ 1440
+
+0 < L ≤ 180
+
 **输出描述**：
+
+输出最多能观看的演出场数。
+
+**用例 1**：
+
+输入：
+
+```
+2
+720 120
+840 120
+```
+
+输出：
+
+```
+1
+```
+
+说明：两场演出间隔时间为0，不满足最小15分钟时间间隔的要求，所以最多只能观看一场演出
+
+**用例 2**：
+
+输入：
+
+```
+2
+0 60
+90 60
+```
+
+输出：
+
+```
+2
+```
+
+说明：两场演出间隔大于15分钟，都能观看到
+
+难度：中等
+
+标签：贪心、排序
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// 存储演出信息的结构体
+struct Performance {
+  int start_time; // 演出开始时间
+  int duration;   // 演出持续时间
+  int end_time;   // 演出结束时间
+};
+
+int main() {
+  int n;
+  cin >> n; // 输入演出场数
+
+  vector<Performance> performances(n);
+
+  for (int i = 0; i < n; ++i) {
+    int start, length;
+    cin >> start >> length;
+    performances[i] = {start, length, start + length};
+  }
+
+  // 按照结束时间进行排序，使用 Lambda 函数
+  sort(performances.begin(), performances.end(),
+       [](const Performance& a, const Performance& b) {
+         return a.end_time < b.end_time;
+       });
+
+  int count = 0;           // 能观看的演出数量
+  int last_end_time = -15; // 初始值设置为 -15，确保第一个演出可以观看
+
+  for (const auto& performance : performances) {
+    if (performance.start_time >= last_end_time + 15) {
+      count++;                              // 可以观看该演出
+      last_end_time = performance.end_time; // 更新上次演出结束时间
+    }
+  }
+
+  cout << count << endl; // 输出最多能观看的演出场数
+  return 0;
+}
+```
+
+## 栈
+
+**题目描述**：
+
+
+**输入描述**：
+
+
+**输出描述**：
+
 
 **用例 1**：
 
