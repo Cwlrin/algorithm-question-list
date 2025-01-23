@@ -18062,7 +18062,7 @@ int main() {
 **题目描述**：
 某探险队负责对地下洞穴进行探险。探险队成员在进行探险任务时，随身携带的记录器会不定期地记录自身的坐标，但在记录的间隙中也会记录其他数据。探索工作结束后，探险队需要获取到某成员在探险过程中相对于探险队总部的最远的足迹位置。
 
-仪器记录坐标时，坐标的数据格式为(x,y)，如(1,2)、(100,200)，其中 0 < x < 1000，0 < y < 1000。同时存在非法坐标，如(01,1)、(1,01)，(0,100)属于非法坐标。 设定探险队总部的坐标为(0,0)，某位置相对总部的距离为：xx+yy。 若两个座标的相对总部的距离相同，则第一次到达的坐标为最远的足迹。 若记录仪中的坐标都不合法，输出总部坐标（0,0）。 备注：
+仪器记录坐标时，坐标的数据格式为(x, y)，如(1,2)、(100,200)，其中 0 < x < 1000，0 < y < 1000。同时存在非法坐标，如(01,1)、(1,01)，(0,100)属于非法坐标。 设定探险队总部的坐标为(0,0)，某位置相对总部的距离为：xx+yy。 若两个座标的相对总部的距离相同，则第一次到达的坐标为最远的足迹。 若记录仪中的坐标都不合法，输出总部坐标（0,0）。 备注：
 
 不需要考虑双层括号嵌套的情况，比如 sfsdfsd((1,2))。
 
@@ -18452,7 +18452,7 @@ int main() {
 
 输入一个压缩后的报文，请返回它解压后的原始报文。
 
-压缩规则：n[str]，表示方括号内部的 str 正好重复 n 次。
+压缩规则：n [str]，表示方括号内部的 str 正好重复 n 次。
 
 注意 n 为正整数（0 < n <= 100），str 只包含小写英文字母，不考虑异常情况。
 
@@ -18500,7 +18500,7 @@ kkkmnmn
 mccmccmcc
 ```
 
-说明：m2[c] 解压缩后为 mcc，重复三次为 mccmccmcc
+说明：m2 [c] 解压缩后为 mcc，重复三次为 mccmccmcc
 
 难度：中等
 
@@ -19171,7 +19171,7 @@ int main() {
 
 ## 链表
 
-### 100分
+### 100 分
 
 #### 寻找链表的中间结点
 
@@ -19181,23 +19181,23 @@ int main() {
 
 如果有两个中间结点，则输出第二个中间结点保存的数据。例如：
 
-给定 L 为 1→7→5，则输出应该为7；
+给定 L 为 1→7→5，则输出应该为 7；
 
-给定 L 为 1→2→3→4，则输出应该为3；
+给定 L 为 1→2→3→4，则输出应该为 3；
 
 **输入描述**：
 
-每个输入包含1个测试用例。
+每个输入包含 1 个测试用例。
 
 每个测试用例：
 
-第一行给出链表首结点的地址、结点总个数正整数 N （≤ 10^5）。结点的地址是5位非负整数，NULL地址用-1表示。
+第一行给出链表首结点的地址、结点总个数正整数 N （≤ 10^5）。结点的地址是 5 位非负整数，NULL 地址用-1 表示。
 
-接下来有N行，每行格式位：
+接下来有 N 行，每行格式位：
 
 Address Data Next
 
-其中Address是结点地址，Data是该结点保存的整数数据（0 ≤ Data ≤ 10^8），Next是下一结点的地址。
+其中 Address 是结点地址，Data 是该结点保存的整数数据（0 ≤ Data ≤ 10^8），Next 是下一结点的地址。
 
 已确保输入的结点所构成的链表 L 不会成环，但会存在部分输入结点不属于链表 L 情况 。
 
@@ -19222,7 +19222,6 @@ Address Data Next
 ```
 6
 ```
-
 
 **用例 2**：
 
@@ -19260,29 +19259,29 @@ int main() {
   int head_address, n;
   cin >> head_address >> n;
 
-  // 存储节点的映射  
+  // 存储节点的映射
   unordered_map<int, ListNode> node_map;
   for (int i = 0; i < n; ++i) {
     int address, data, next;
     cin >> address >> data >> next;
-    node_map[address] = {address, data, next}; // 记录节点信息  
+    node_map[address] = {address, data, next}; // 记录节点信息
   }
 
-  // 快慢指针找中间节点  
+  // 快慢指针找中间节点
   int slow = head_address;
   int fast = head_address;
 
-  // 当快指针非空并且快指针的next非空  
+  // 当快指针非空并且快指针的next非空
   while (fast != -1 && node_map[fast].next != -1) {
-    slow = node_map[slow].next; // 慢指针走一步  
-    fast = node_map[fast].next; // 快指针走两步  
+    slow = node_map[slow].next; // 慢指针走一步
+    fast = node_map[fast].next; // 快指针走两步
     if (fast != -1) {
-      // 确保快指针不为空  
-      fast = node_map[fast].next; // 快指针再走一步  
+      // 确保快指针不为空
+      fast = node_map[fast].next; // 快指针再走一步
     }
   }
 
-  // 输出中间节点的值  
+  // 输出中间节点的值
   cout << node_map[slow].data << endl;
 
   return 0;
@@ -19290,6 +19289,223 @@ int main() {
 ```
 
 ## 树
+
+### 100 分
+
+#### 计算三叉搜索树的高度
+
+**题目描述**：
+
+定义构造三叉搜索树规则如下：
+
+每个节点都存有一个数，当插入一个新的数时，从根节点向下寻找，直到找到一个合适的空节点插入。查找的规则是：
+
+如果数小于节点的数减去 500，则将数插入节点的左子树
+
+如果数大于节点的数加上 500，则将数插入节点的右子树
+
+否则，将数插入节点的中子树
+
+给你一系列数，请按以上规则，按顺序将数插入树中，构建出一棵三叉搜索树，最后输出树的高度。
+
+**输入描述**：
+
+第一行为一个数 N，表示有 N 个数，1 ≤ N ≤ 10000
+
+第二行为 N 个空格分隔的整数，每个数的范围为 [1,10000]
+
+**输出描述**：
+
+输出树的高度（根节点的高度为 1）
+
+**用例 1**：
+
+输入：
+
+```
+5
+5000 2000 5000 8000 1800
+```
+
+输出：
+
+```
+3
+```
+
+说明：
+
+最终构造出的树如下，高度为 3：
+
+![image](https://hydro.ac/d/HWOD2023/p/362/file/3T4KuBstqV2w-QHYy4QqT.png)
+
+**用例 2**：
+
+输入：
+
+```
+3
+5000 4000 3000
+```
+
+输出：
+
+```
+3
+```
+
+说明：
+
+最终构造出的树如下，高度为 3：
+
+![image](https://hydro.ac/d/HWOD2023/p/362/file/rOfOkQJG9oMmItjdQOCdU.png)
+
+**用例 3**：
+
+输入：
+
+```
+9
+5000 2000 5000 8000 1800 7500 4500 1400 8100
+```
+
+输出：
+
+```
+4
+```
+
+说明：
+
+最终构造出的树如下，高度为 4：
+
+![image](https://hydro.ac/d/HWOD2023/p/362/file/qF7J-eXbPNf4bN4sBfVXM.png)
+
+难度：中等
+
+标签：树、递归、二叉搜索树
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+class TreeNode {
+  public:
+    int value_;
+    TreeNode* left_;
+    TreeNode* middle_;
+    TreeNode* right_;
+
+    explicit TreeNode(int val) : value_(val), left_(nullptr), middle_(nullptr),
+                                 right_(nullptr) {}
+};
+
+class TernarySearchTree {
+  TreeNode* root_;
+
+  void insert(TreeNode*& node, int val) {
+    if (node == nullptr) {
+      node = new TreeNode(val);
+    } else if (val < node->value_ - 500) {
+      insert(node->left_, val);
+    } else if (val > node->value_ + 500) {
+      insert(node->right_, val);
+    } else {
+      insert(node->middle_, val);
+    }
+  }
+
+  int height(const TreeNode* node) {
+    if (node == nullptr) {
+      return 0;
+    }
+    int left_height = height(node->left_);
+    int middle_height = height(node->middle_);
+    int right_height = height(node->right_);
+    return 1 + max(left_height, max(middle_height, right_height));
+  }
+
+  public:
+    TernarySearchTree() : root_(nullptr) {}
+
+    void Insert(int val) {
+      insert(root_, val);
+    }
+
+    int Height() {
+      return height(root_);
+    }
+};
+
+int main() {
+  int n;
+  cin >> n;
+
+  TernarySearchTree tree;
+  vector<int> numbers(n);
+
+  for (int i = 0; i < n; ++i) {
+    cin >> numbers[i];
+    tree.Insert(numbers[i]);
+  }
+
+  cout << tree.Height() << endl;
+
+  return 0;
+}
+```
+
+#### 生成哈夫曼树
+
+**题目描述**：
+
+给定长度为 n 的无序的数字数组，每个数字代表二叉树的叶子节点的权值，数字数组的值均大于等于 1。
+
+请完成一个函数，根据输入的数字数组，生成哈夫曼树，并将哈夫曼树按照中序遍历输出。
+
+为了保证输出的二叉树中序遍历结果统一，增加以下限制：
+
+二叉树节点中，左节点权值小于右节点权值，根节点权值为左右节点权值之和。当左右节点权值相同时，左子树高度小于等于右子树高度。
+
+注意：
+
+所有用例保证有效，并能生成哈夫曼树。
+
+提醒：
+
+哈夫曼树又称为最优二叉树，是一种带权路径长度最短的二叉树。
+
+所谓树的带权路径长度，就是树中所有的叶节点的权值乘上其到根节点的路径长度（若根节点为 0 层，叶节点到根节点的路径长度为叶节点的层数）
+
+**输入描述**：
+
+例如：由叶子节点：5 15 40 30 10，生成的最优二叉树如下图所示，该树的最短带权路径长度为：40 _ 1 + 30 _ 2 + 5 _ 4 + 10 _ 4 = 205。
+
+![image](https://hydro.ac/d/HWOD2023/p/440/file/NNtwOyVZbsq7KbsgIvonl.png)
+
+**输出描述**：
+
+输出一个哈夫曼树的中序遍历数组，数值间以空格分隔
+
+**用例 1**：
+
+输入：
+
+```
+5
+5 15 40 30 10
+```
+
+输出：
+
+```
+40 100 30 60 15 30 5 15 10
+```
+
+说明：根据输入，生成哈夫曼树，按照中序遍历返回。所有节点中，左节点权值小于等于右节点权值之和。当左右节点权值相同时，左子树高度小于右子树。结果如上图所示。
+
+## 并查集
 
 **题目描述**：
 
