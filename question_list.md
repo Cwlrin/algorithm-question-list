@@ -17476,7 +17476,221 @@ int main() {
 }
 ```
 
+#### 招聘
+
+**题目描述**：
+
+某公司组织一场公开招聘活动，假设由于人数和场地的限制，每人每次面试的时长不等，并已经安排给定，用(S1,E1)、 (S2,E2)、 (Sj,Ej)…(Si < Ei，均为非负整数)表示每场面试的开始和结束时间。
+
+面试采用一对一的方式，即一名面试官同时只能面试一名应试者，一名面试官完成一次面试后可以立即进行下一场面试，且每个面试官的面试人次不超过 m。
+
+为了支撑招聘活动高效顺利进行，请你计算至少需要多少名面试官。
+
+**输入描述**：
+
+输入的第一行为面试官的最多面试人次 m，第二行为当天总的面试场次 n，
+
+接下来的 n 行为每场面试的起始时间和结束时间，起始时间和结束时间用空格分隔。
+
+其中， 1 <= n, m <= 500
+
+**输出描述**：
+
+输出一个整数，表示至少需要的面试官数量。
+
+**用例 1**：
+
+输入：
+
+```
+2
+5
+1 2
+2 3
+3 4
+4 5
+5 6
+```
+
+输出：
+
+```
+3
+```
+
+说明：总共有 5 场面试，且面试时间都不重叠，但每个面试官最多只能面试 2 人次，所以需要 3 名面试官。
+
+**用例 2**：
+
+输入：
+
+```
+3
+3
+1 2
+2 3
+3 4
+```
+
+输出：
+
+```
+1
+```
+
+说明：总共有3场面试，面试时间不重叠，每个面试官最多能面试3人次，所以只需要一名面试官
+
+**用例 3**：
+
+输入：
+
+```
+3
+3
+8 35
+5 10
+1 3
+```
+
+输出：
+
+```
+2
+```
+
+说明：总共有3场面试，[5,10]和[8,35]有重叠，所以至少需要2名面试官
+
+难度：中等
+
+标签：堆（优先队列）、数组、贪心
+
+(20/21)
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+
+using namespace std;
+
+struct Group {
+  int last_r;  // 最后一个区间的结束位置
+  int first_r; // 第一个区间的结束位置
+  int size;    // 缓存的区间数量
+
+  // 自定义比较函数，用于优先队列，优先选择last_r最小的分组
+  bool operator>(const Group& other) const {
+    return last_r > other.last_r;
+  }
+};
+
+int main() {
+  int m, n;
+  cin >> m >> n; // 输入面试官最多面试人次和总面试场次
+
+  vector<pair<int, int> > interviews(n);
+  for (int i = 0; i < n; ++i) {
+    cin >> interviews[i].first >> interviews[i].second;
+  }
+
+  // 按起始位置升序排序
+  sort(interviews.begin(), interviews.end());
+
+  // 使用优先队列管理分组，last_r小的分组优先
+  priority_queue<Group, vector<Group>, greater<Group> > groups;
+
+  for (const auto& interview : interviews) {
+    bool grouped = false;
+
+    // 临时存储不匹配的分组
+    vector<Group> temp;
+    while (!groups.empty()) {
+      Group curr_group = groups.top();
+      groups.pop();
+
+      // 检查是否与当前分组有交集
+      if (interview.first >= curr_group.last_r) {
+        // 无交集，可以加入分组
+        if (curr_group.size < m) {
+          curr_group.last_r = interview.second;
+          curr_group.size++;
+          groups.push(curr_group);
+          grouped = true;
+          break;
+        }
+        // 分组已饱和，保留一个区间的结束位置
+        temp.push_back(curr_group);
+      } else {
+        // 有交集的分组放回临时数组
+        temp.push_back(curr_group);
+      }
+    }
+
+    // 将其他分组放回优先队列
+    for (const auto& g : temp) {
+      groups.push(g);
+    }
+
+    // 如果未加入任何分组，创建新分组
+    if (!grouped) {
+      Group new_group = {
+          interview.second, // last_r
+          interview.second, // first_r
+          1                 // size
+      };
+      groups.push(new_group);
+    }
+  }
+
+  // 输出分组数量
+  cout << groups.size() << endl;
+
+  return 0;
+}
+```
+
 ## 栈
+
+**题目描述**：
+
+**输入描述**：
+
+**输出描述**：
+
+**用例 1**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+**用例 2**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+
 
 **题目描述**：
 
