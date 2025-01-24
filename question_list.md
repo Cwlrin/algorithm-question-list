@@ -21787,43 +21787,319 @@ int main() {
 
 ## 拓扑排序
 
+### 100分
+
+#### boss的收入
+
 **题目描述**：
+
+一个XX产品行销总公司，只有一个boss，其有若干一级分销，一级分销又有若干二级分销，每个分销只有唯一的上级分销。
+
+规定，每个月，下级分销需要将自己的总收入（自己的+下级上交的）每满100元上交15元给自己的上级。
+
+现给出一组分销的关系，和每个分销的收入，请找出boss并计算出这个boss的收入。
+
+比如：
+
+- 收入100元，上交15元；
+- 收入199元（99元不够100），上交15元；
+- 收入200元，上交30元。
+
+输入：
+
+> 分销关系和收入：[[分销id 上级分销id 收入], [分销id 上级分销id 收入], [分销id 上级分销id 收入]]
+
+- 分销ID范围： 0..65535
+- 收入范围：0..65535，单位元
+
+提示：
+
+> 输入的数据只存在1个boss，不存在环路
+
+输出：
+
+> [boss的ID, 总收入]
 
 **输入描述**：
 
+第一行输入关系的总数量 N
+
+第二行开始，输入关系信息，格式：
+
+> 分销ID 上级分销ID 收入
+
+比如：
+
+> 5
+> 1 0 100
+> 2 0 199
+> 3 0 200
+> 4 0 200
+> 5 0 200
+
+给定的输入数据都是合法的，不存在环路，重复的
+
 **输出描述**：
+
+输出：
+
+> boss的ID 总收入
+
+比如：
+
+> 0 120
 
 **用例 1**：
 
 输入：
 
 ```
-
+5
+1 0 100
+2 0 199
+3 0 200
+4 0 200
+5 0 200
 ```
 
 输出：
 
 ```
-
+0 120
 ```
 
-说明：
+难度：中等
+
+标签：树、深度优先搜索、拓扑排序、动态规划
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int n;
+  cin >> n;
+
+  // 定义数据结构  
+  unordered_map<int, int> income;      // 代理商号 -> 收入  
+  unordered_map<int, set<int> > fa_ch; // 父级代理商 -> 子级代理商集合  
+  unordered_map<int, int> ch_fa;       // 子级代理商 -> 父级代理商  
+  set<int> agents;                     // 所有代理商  
+
+  // 读取输入  
+  for (int i = 0; i < n; ++i) {
+    int id, p, inc;
+    cin >> id >> p >> inc;
+    income[id] = inc;
+    ch_fa[id] = p;
+    fa_ch[p].insert(id);
+    agents.insert(id);
+    agents.insert(p);
+  }
+
+  // 找到顶级代理商（root）  
+  int root = -1;
+  for (int agent : agents) {
+    if (ch_fa.find(agent) == ch_fa.end()) {
+      root = agent;
+      break;
+    }
+  }
+
+  // 拓扑排序计算收入  
+  unordered_map<int, int> total_income = income; // 初始化总收入  
+  queue<int> q;
+  for (int agent : agents) {
+    if (fa_ch.find(agent) == fa_ch.end()) {
+      // 叶子节点  
+      q.push(agent);
+    }
+  }
+
+  while (!q.empty()) {
+    int agent = q.front();
+    q.pop();
+    if (ch_fa.find(agent) != ch_fa.end()) {
+      int parent = ch_fa[agent];
+      total_income[parent] += (total_income[agent] / 100) * 15; // 每100元抽15元  
+      fa_ch[parent].erase(agent);                             // 移除已处理的子级  
+      if (fa_ch[parent].empty()) {
+        // 如果父级没有其他子级，加入队列  
+        q.push(parent);
+      }
+    }
+  }
+
+  // 输出结果  
+  cout << root << " " << total_income[root] << endl;
+
+  return 0;
+}
+```
+
+### 200分
+
+#### 查找一个有向网络的头节点和尾节点
+
+**题目描述**：
+
+给定一个有向图，图中可能包含有环，图使用二维矩阵表示，每一行的第一列表示起始节点，第二列表示终止节点，如 [0, 1] 表示从 0 到 1 的路径。
+
+每个节点用正整数表示。
+
+求这个数据的首节点与尾节点，题目给的用例会是一个首节点，但可能存在多个尾节点。同时图中可能含有环。如果图中含有环，返回 [-1]。
+
+说明：入度为0是首节点，出度为0是尾节点。
+
+![image](https://hydro.ac/d/HWOD2023/p/434/file/g--V_yjndKja2y0ap6PMY.png)
+
+**输入描述**：
+
+第一行为后续输入的键值对数量N（N ≥ 0）
+
+第二行为2N个数字。每两个为一个起点，一个终点
+
+如果图有环，输出为 -1
+
+所有输入均合法，不会出现不配对的数据
+
+**输出描述**：
+
+输出一行头节点和尾节点。如果有多个尾节点，按从大到小的顺序输出。
+
+**用例 1**：
+
+输入：
+
+```
+4
+0 1 0 2 1 2 2 3
+```
+
+输出：
+
+```
+0 3
+```
+
 
 **用例 2**：
 
 输入：
 
 ```
-
+2
+0 1 0 2
 ```
 
 输出：
 
 ```
-
+0 1 2
 ```
 
-说明：
+难度：中等
+
+标签：图、深度优先搜索、广度优先搜索、拓扑排序、集合
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  int n;
+  cin >> n;
+
+  if (n == 0) {
+    cout << "-1" << endl; // 若没有边，则返回 -1
+    return 0;
+  }
+
+  vector<int> edges(2 * n);
+  for (int i = 0; i < 2 * n; ++i) {
+    cin >> edges[i];
+  }
+
+  unordered_map<int, vector<int> > graph; // 邻接表
+  unordered_map<int, int> in_degree;      // 入度
+  unordered_map<int, int> out_degree;     // 出度
+
+  // 填充图的邻接表和入度/出度字典
+  for (int i = 0; i < edges.size(); i += 2) {
+    int start = edges[i];
+    int end = edges[i + 1];
+    graph[start].push_back(end);
+    out_degree[start]++;
+    in_degree[end]++;
+  }
+
+  // 找到所有节点
+  unordered_set<int> nodes;
+  for (const auto& pair : in_degree) {
+    nodes.insert(pair.first);
+  }
+  for (const auto& pair : out_degree) {
+    nodes.insert(pair.first);
+  }
+
+  // 检查图中是否存在环
+  auto has_cycle = [&]() {
+    queue<int> q;
+    for (const auto& node : nodes) {
+      if (in_degree[node] == 0) {
+        q.push(node);
+      }
+    }
+
+    int visited_count = 0;
+
+    while (!q.empty()) {
+      int current = q.front();
+      q.pop();
+      visited_count++;
+      for (const auto& neighbor : graph[current]) {
+        in_degree[neighbor]--;
+        if (in_degree[neighbor] == 0) {
+          q.push(neighbor);
+        }
+      }
+    }
+
+    // 如果访问的节点数量小于节点总数，则存在环
+    return visited_count < nodes.size();
+  };
+
+  if (has_cycle()) {
+    cout << "-1" << endl; // 有环的情况下返回 -1
+    return 0;
+  }
+
+  // 找首节点和尾节点
+  vector<int> head_nodes; // 存首节点
+  vector<int> tail_nodes; // 存尾节点
+
+  for (const auto& node : nodes) {
+    if (in_degree[node] == 0) {
+      head_nodes.push_back(node);
+    }
+    if (out_degree[node] == 0) {
+      tail_nodes.push_back(node);
+    }
+  }
+
+  // 只需要一个头节点，尾节点按从小到大排序
+  sort(tail_nodes.begin(), tail_nodes.end()); // 按从小到大排序
+
+  // 输出结果
+  cout << head_nodes[0]; // 输出首节点
+  for (int tail : tail_nodes) {
+    cout << " " << tail; // 输出尾节点
+  }
+  cout << endl;
+
+  return 0;
+}
+```
 
 ## 最小生成树
 
