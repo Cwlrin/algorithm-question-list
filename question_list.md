@@ -21787,38 +21787,38 @@ int main() {
 
 ## 拓扑排序
 
-### 100分
+### 100 分
 
-#### boss的收入
+#### boss 的收入
 
 **题目描述**：
 
-一个XX产品行销总公司，只有一个boss，其有若干一级分销，一级分销又有若干二级分销，每个分销只有唯一的上级分销。
+一个 XX 产品行销总公司，只有一个 boss，其有若干一级分销，一级分销又有若干二级分销，每个分销只有唯一的上级分销。
 
-规定，每个月，下级分销需要将自己的总收入（自己的+下级上交的）每满100元上交15元给自己的上级。
+规定，每个月，下级分销需要将自己的总收入（自己的+下级上交的）每满 100 元上交 15 元给自己的上级。
 
-现给出一组分销的关系，和每个分销的收入，请找出boss并计算出这个boss的收入。
+现给出一组分销的关系，和每个分销的收入，请找出 boss 并计算出这个 boss 的收入。
 
 比如：
 
-- 收入100元，上交15元；
-- 收入199元（99元不够100），上交15元；
-- 收入200元，上交30元。
+- 收入 100 元，上交 15 元；
+- 收入 199 元（99 元不够 100），上交 15 元；
+- 收入 200 元，上交 30 元。
 
 输入：
 
 > 分销关系和收入：[[分销id 上级分销id 收入], [分销id 上级分销id 收入], [分销id 上级分销id 收入]]
 
-- 分销ID范围： 0..65535
+- 分销 ID 范围： 0..65535
 - 收入范围：0..65535，单位元
 
 提示：
 
-> 输入的数据只存在1个boss，不存在环路
+> 输入的数据只存在 1 个 boss，不存在环路
 
 输出：
 
-> [boss的ID, 总收入]
+> [boss 的 ID, 总收入]
 
 **输入描述**：
 
@@ -21826,7 +21826,7 @@ int main() {
 
 第二行开始，输入关系信息，格式：
 
-> 分销ID 上级分销ID 收入
+> 分销 ID 上级分销 ID 收入
 
 比如：
 
@@ -21843,7 +21843,7 @@ int main() {
 
 输出：
 
-> boss的ID 总收入
+> boss 的 ID 总收入
 
 比如：
 
@@ -21880,13 +21880,13 @@ int main() {
   int n;
   cin >> n;
 
-  // 定义数据结构  
-  unordered_map<int, int> income;      // 代理商号 -> 收入  
-  unordered_map<int, set<int> > fa_ch; // 父级代理商 -> 子级代理商集合  
-  unordered_map<int, int> ch_fa;       // 子级代理商 -> 父级代理商  
-  set<int> agents;                     // 所有代理商  
+  // 定义数据结构
+  unordered_map<int, int> income;      // 代理商号 -> 收入
+  unordered_map<int, set<int> > fa_ch; // 父级代理商 -> 子级代理商集合
+  unordered_map<int, int> ch_fa;       // 子级代理商 -> 父级代理商
+  set<int> agents;                     // 所有代理商
 
-  // 读取输入  
+  // 读取输入
   for (int i = 0; i < n; ++i) {
     int id, p, inc;
     cin >> id >> p >> inc;
@@ -21897,7 +21897,7 @@ int main() {
     agents.insert(p);
   }
 
-  // 找到顶级代理商（root）  
+  // 找到顶级代理商（root）
   int root = -1;
   for (int agent : agents) {
     if (ch_fa.find(agent) == ch_fa.end()) {
@@ -21906,12 +21906,12 @@ int main() {
     }
   }
 
-  // 拓扑排序计算收入  
-  unordered_map<int, int> total_income = income; // 初始化总收入  
+  // 拓扑排序计算收入
+  unordered_map<int, int> total_income = income; // 初始化总收入
   queue<int> q;
   for (int agent : agents) {
     if (fa_ch.find(agent) == fa_ch.end()) {
-      // 叶子节点  
+      // 叶子节点
       q.push(agent);
     }
   }
@@ -21921,23 +21921,23 @@ int main() {
     q.pop();
     if (ch_fa.find(agent) != ch_fa.end()) {
       int parent = ch_fa[agent];
-      total_income[parent] += (total_income[agent] / 100) * 15; // 每100元抽15元  
-      fa_ch[parent].erase(agent);                             // 移除已处理的子级  
+      total_income[parent] += (total_income[agent] / 100) * 15; // 每100元抽15元
+      fa_ch[parent].erase(agent);                             // 移除已处理的子级
       if (fa_ch[parent].empty()) {
-        // 如果父级没有其他子级，加入队列  
+        // 如果父级没有其他子级，加入队列
         q.push(parent);
       }
     }
   }
 
-  // 输出结果  
+  // 输出结果
   cout << root << " " << total_income[root] << endl;
 
   return 0;
 }
 ```
 
-### 200分
+### 200 分
 
 #### 查找一个有向网络的头节点和尾节点
 
@@ -21949,15 +21949,15 @@ int main() {
 
 求这个数据的首节点与尾节点，题目给的用例会是一个首节点，但可能存在多个尾节点。同时图中可能含有环。如果图中含有环，返回 [-1]。
 
-说明：入度为0是首节点，出度为0是尾节点。
+说明：入度为 0 是首节点，出度为 0 是尾节点。
 
 ![image](https://hydro.ac/d/HWOD2023/p/434/file/g--V_yjndKja2y0ap6PMY.png)
 
 **输入描述**：
 
-第一行为后续输入的键值对数量N（N ≥ 0）
+第一行为后续输入的键值对数量 N（N ≥ 0）
 
-第二行为2N个数字。每两个为一个起点，一个终点
+第二行为 2N 个数字。每两个为一个起点，一个终点
 
 如果图有环，输出为 -1
 
@@ -21981,7 +21981,6 @@ int main() {
 ```
 0 3
 ```
-
 
 **用例 2**：
 
@@ -22094,6 +22093,147 @@ int main() {
   cout << head_nodes[0]; // 输出首节点
   for (int tail : tail_nodes) {
     cout << " " << tail; // 输出尾节点
+  }
+  cout << endl;
+
+  return 0;
+}
+```
+
+#### 启动多任务排序
+
+**题目描述**：
+
+一个应用启动时，会有多个初始化任务需要执行，并且任务之间有依赖关系，例如 A 任务依赖 B 任务，那么必须在 B 任务执行完成之后，才能开始执行 A 任务。
+
+现在给出多条任务依赖关系的规则，请输入任务的顺序执行序列，规则采用贪婪策略，即一个任务如果没有依赖的任务，则立刻开始执行，如果同时有多个任务要执行，则根据任务名称字母顺序排序。
+
+例如：B 任务依赖 A 任务，C 任务依赖 A 任务，D 任务依赖 B 任务和 C 任务，同时，D 任务还依赖 E 任务。那么执行任务的顺序由先到后是：
+
+A 任务，E 任务，B 任务，C 任务，D 任务
+
+这里 A 和 E 任务都是没有依赖的，立即执行。
+
+**输入描述**：
+
+输入参数每个元素都表示任意两个任务之间的依赖关系，输入参数中符号"->"表示依赖方向，例如：
+
+A->B：表示 A 依赖 B
+
+多个依赖之间用单个空格分隔
+
+**输出描述**：
+
+输出排序后的启动任务列表，多个任务之间用单个空格分隔
+
+**用例 1**：
+
+输入：
+
+```
+A->B C->B
+```
+
+输出：
+
+```
+B A C
+```
+
+难度：中等
+
+标签：图、拓扑排序、优先队列、广度优先搜索
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+  // 输入任务依赖关系
+  string dependencies;
+  getline(cin, dependencies);
+
+  // 构建图和入度字典
+  unordered_map<string, vector<string> > graph; // 邻接表
+  unordered_map<string, int> in_degree;         // 入度字典
+
+  size_t pos = 0;
+  string input = dependencies;
+  while ((pos = input.find(" ")) != string::npos) {
+    string dep = input.substr(0, pos);
+    input.erase(0, pos + 1);
+
+    size_t arrow_pos = dep.find("->");
+    if (arrow_pos == string::npos)
+      continue;
+
+    string u = dep.substr(0, arrow_pos);
+    string v = dep.substr(arrow_pos + 2);
+
+    graph[v].push_back(u); // u 依赖 v
+    in_degree[u]++;
+    if (in_degree.find(v) == in_degree.end()) {
+      in_degree[v] = 0;
+    }
+  }
+
+  // 处理最后一个依赖关系
+  size_t arrow_pos = input.find("->");
+  if (arrow_pos != string::npos) {
+    string u = input.substr(0, arrow_pos);
+    string v = input.substr(arrow_pos + 2);
+
+    graph[v].push_back(u); // u 依赖 v
+    in_degree[u]++;
+    if (in_degree.find(v) == in_degree.end()) {
+      in_degree[v] = 0;
+    }
+  }
+
+  // 优先队列（最小堆），按字母顺序排序
+  priority_queue<string, vector<string>, greater<string> > min_heap;
+
+  // 将所有入度为0的任务加入优先队列
+  for (const auto& pair : in_degree) {
+    if (pair.second == 0) {
+      min_heap.push(pair.first);
+    }
+  }
+
+  vector<string> result;
+  while (!min_heap.empty()) {
+    // 当前梯队的所有任务
+    vector<string> current_tier;
+    while (!min_heap.empty()) {
+      current_tier.push_back(min_heap.top());
+      min_heap.pop();
+    }
+
+    // 按字母顺序执行当前梯队的任务
+    for (const string& task : current_tier) {
+      result.push_back(task);
+
+      // 减少依赖任务的入度
+      for (const string& neighbor : graph[task]) {
+        in_degree[neighbor]--;
+        if (in_degree[neighbor] == 0) {
+          min_heap.push(neighbor);
+        }
+      }
+    }
+  }
+
+  // 输出结果
+  for (size_t i = 0; i < result.size(); ++i) {
+    cout << result[i];
+    if (i != result.size() - 1) {
+      cout << " ";
+    }
   }
   cout << endl;
 
