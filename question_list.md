@@ -23253,6 +23253,86 @@ int main() {
 }
 ```
 
+#### 字符串加密
+
+**题目描述**：
+
+给你一串未加密的字符串str，通过对字符串的每一个字母进行改变来实现加密，加密方式是在每一个字母str[i]偏移特定数组元素a[i]的量，数组a前三位已经赋值：a[0]=1,a[1]=2,a[2]=4。
+
+当i>=3时，数组元素a[i]=a[i-1]+a[i-2]+a[i-3]。
+
+例如：原文 abcde 加密后 bdgkr，其中偏移量分别是1,2,4,7,13。
+
+**输入描述**：
+
+第一行为一个整数n（1<=n<=1000），表示有n组测试数据，每组数据包含一行，原文str（只含有小写字母，0<长度<=50）。
+
+**输出描述**：
+
+每组测试数据输出一行，表示字符串的密文。
+
+**用例 1**：
+
+输入：
+
+```
+1
+xy
+```
+
+输出：
+
+```
+ya
+```
+
+说明：第一个字符x偏移量是1，即为y，第二个字符y偏移量是2，即为a。
+
+难度：简单
+
+标签：数学、动态规划、字符串
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  int n;
+  cin >> n;
+
+  for (int i = 0; i < n; ++i) {
+    string str;
+    cin >> str;
+    int length = str.length();
+
+    // 生成偏移数组  
+    vector<int> a(length, 0);
+    if (length >= 1)
+      a[0] = 1;
+    if (length >= 2)
+      a[1] = 2;
+    if (length >= 3)
+      a[2] = 4;
+    for (int j = 3; j < length; ++j) {
+      a[j] = (a[j - 1] + a[j - 2] + a[j - 3]) % 26; // 确保偏移量在 0 到 25 之间  
+    }
+
+    // 加密字符串  
+    string encrypted_str;
+    for (int j = 0; j < length; ++j) {
+      char encrypted_char = (str[j] - 'a' + a[j]) % 26 + 'a';
+      encrypted_str.push_back(encrypted_char);
+    }
+
+    // 输出结果  
+    cout << encrypted_str << endl;
+  }
+
+  return 0;
+}
+```
+
 ## 贪心
 
 **题目描述**：
