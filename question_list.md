@@ -23333,6 +23333,104 @@ int main() {
 }
 ```
 
+### 200分
+
+#### 跳格子3
+
+**题目描述**：
+
+小明和朋友们一起玩跳格子游戏，
+
+每个格子上有特定的分数 score = [1, -1, -6, 7, -17, 7]，
+
+从起点score[0]开始，每次最大的步长为k，请你返回小明跳到终点 score[n-1] 时，能得到的最大得分。
+
+**输入描述**：
+
+第一行输入总的格子数量 n
+
+第二行输入每个格子的分数 score[i]
+
+第三行输入最大跳的步长 k
+
+格子的总长度 n 和步长 k 的区间在 [1, 100000]
+
+每个格子的分数 score[i] 在 [-10000, 10000] 区间中
+
+**输出描述**：
+
+输出最大得分
+
+**用例 1**：
+
+输入：
+
+```
+6
+1 -1 -6 7 -17 7
+2
+```
+
+输出：
+
+```
+14
+```
+
+说明：输出最大得分数，小明从起点score[0]开始跳，第一次跳score[1],第二次跳到score[3],第三次跳到score[5]，因此得到的最大的得分是score[0] + score[1] + score[3] + score[5] = 14
+
+难度：中等
+
+标签：动态规划、队列、滑动窗口
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  int n, k;
+  cin >> n;
+
+  vector<int> score(n);
+  for (int i = 0; i < n; ++i) {
+    cin >> score[i];
+  }
+
+  cin >> k;
+
+  // 动态规划数组
+  vector<int> dp(n, 0);
+  dp[0] = score[0];
+
+  // 双端队列维护滑动窗口
+  deque<int> dq;
+  dq.push_back(0);
+
+  for (int i = 1; i < n; ++i) {
+    // 移除不在窗口内的索引
+    while (!dq.empty() && dq.front() < i - k) {
+      dq.pop_front();
+    }
+
+    // 当前 dp[i] 为窗口内最大值 + score[i]
+    dp[i] = dp[dq.front()] + score[i];
+
+    // 维护递减队列
+    while (!dq.empty() && dp[i] >= dp[dq.back()]) {
+      dq.pop_back();
+    }
+
+    dq.push_back(i);
+  }
+
+  // 输出结果
+  cout << dp[n - 1] << endl;
+
+  return 0;
+}
+```
+
 ## 贪心
 
 **题目描述**：
