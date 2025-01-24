@@ -20905,6 +20905,10 @@ int main() {
 
 说明：见描述中示例2，最大区域对应网格点数目为1
 
+难度：中等
+
+标签：深度优先搜索、广度优先搜索、图、矩阵、并查集
+
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
@@ -20955,6 +20959,115 @@ int main() {
   }
   // 输出最大活动区域的网格点数目
   cout << max_area << endl;
+  return 0;
+}
+```
+
+#### Linux发行版的数量
+
+**题目描述**：
+
+Linux操作系统有多个发行版，distrowatch.com提供了各个发行版的资料。这些发行版互相存在关联，例如Ubuntu基于Debian开发，而Mint又基于Ubuntu开发，那么我们认为Mint同Debian也存在关联。
+
+发行版集是一个或多个相关存在关联的操作系统发行版，集合内不包含没有关联的发行版。
+
+给你一个 n * n 的矩阵 isConnected，其中 isConnected[i][j] = 1 表示第 i 个发行版和第 j 个发行版直接关联，而 isConnected[i][j] = 0 表示二者不直接相连。
+
+返回最大的发行版集中发行版的数量。
+
+**输入描述**：
+
+第一行输入发行版的总数量N，
+
+之后每行表示各发行版间是否直接相关
+
+1 ≤ N ≤ 200
+
+**输出描述**：
+
+输出最大的发行版集中发行版的数量
+
+**用例 1**：
+
+输入：
+
+```
+4
+1 1 0 0
+1 1 1 0
+0 1 1 0
+0 0 0 1
+```
+
+输出：
+
+```
+3
+```
+
+说明：
+
+Debian(1)和Unbuntu2)相关
+
+Mint(3)和Ubuntu(2)相关，
+
+EeulerOS(4)和另外三个都不相关，
+
+所以存在两个发行版集，发行版集中发行版的数量分别是3和1，所以输出3。
+
+难度：中等
+
+标签：深度优先搜索、广度优先搜索、图、矩阵、并查集
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+void dfs(int node, vector<vector<int> >& is_connected, vector<bool>& visited) {
+  visited[node] = true; // 标记当前节点为已访问  
+  for (int i = 0; i < is_connected.size(); i++) {
+    if (is_connected[node][i] == 1 && !visited[i]) {
+      // 如果有连接且未访问  
+      dfs(i, is_connected, visited); // 递归访问连接的节点  
+    }
+  }
+}
+
+int main() {
+  int n;
+  cin >> n;                                            // 输入发行版数量  
+  vector<vector<int> > is_connected(n, vector<int>(n)); // 创建邻接矩阵  
+
+  // 输入邻接矩阵  
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      cin >> is_connected[i][j];
+    }
+  }
+
+  vector<bool> visited(n, false); // 访问状态数组  
+  int max_count = 0;              // 记录最大的连通分量  
+
+  // 遍历所有节点  
+  for (int i = 0; i < n; i++) {
+    if (!visited[i]) {
+      // 仅当节点未访问时进行 DFS  
+      int count = 0; // 当前连通分量的大小  
+      dfs(i, is_connected, visited);
+      for (int j = 0; j < n; j++) {
+        if (visited[j]) {
+          count++; // 统计当前连通分量大小  
+        }
+      }
+      max_count = max(max_count, count);           // 更新最大连通分量  
+      fill(visited.begin(), visited.end(), false); // 重置访问状态  
+    }
+  }
+
+  // 输出结果  
+  cout << max_count << endl;
+
   return 0;
 }
 ```
