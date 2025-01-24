@@ -22758,7 +22758,97 @@ Pi为充值 i 元获得的短信条数。1 ≤ Pi ≤ 1000 , 1 ≤ n ≤ 100
 
 说明：所有充电设备的输出功率组合，均大于充电站最大充电输出功率30，此时最优元素值为0。
 
+难度：中等
 
+标签：动态规划、位运算
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  int n;
+  cin >> n;
+
+  vector<int> power(n);
+  for (int i = 0; i < n; ++i) {
+    cin >> power[i];
+  }
+
+  int p_max;
+  cin >> p_max;
+
+  // 初始化 dp 数组
+  vector<bool> dp(p_max + 1, false);
+  dp[0] = true;
+
+  // 动态规划求解
+  for (int i = 0; i < n; ++i) {
+    for (int j = p_max; j >= power[i]; --j) {
+      dp[j] = dp[j] || dp[j - power[i]];
+    }
+  }
+
+  // 寻找最优元素
+  int optimal = 0;
+  for (int j = p_max; j >= 0; --j) {
+    if (dp[j]) {
+      optimal = j;
+      break;
+    }
+  }
+
+  // 输出结果
+  cout << optimal << endl;
+
+  return 0;
+}
+```
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <bitset>
+
+using namespace std;
+
+int main() {
+  int n;
+  cin >> n;
+
+  vector<int> power(n);
+  for (int i = 0; i < n; ++i) {
+    cin >> power[i];
+  }
+
+  int p_max;
+  cin >> p_max;
+
+  // 使用 bitset 优化 dp 数组
+  bitset<1000001> dp;
+  dp[0] = true; // 初始状态：空集的总和为 0
+
+  // 动态规划求解（位运算优化）
+  for (int i = 0; i < n; ++i) {
+    dp |= (dp << power[i]); // 位运算更新 dp
+  }
+
+  // 寻找最优元素
+  int optimal = 0;
+  for (int j = p_max; j >= 0; --j) {
+    if (dp[j]) {
+      optimal = j;
+      break;
+    }
+  }
+
+  // 输出结果
+  cout << optimal << endl;
+
+  return 0;
+}
+```
 
 ## 动态规划
 
