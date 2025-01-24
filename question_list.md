@@ -22488,24 +22488,41 @@ t 代表该工作消耗的时长（单位 h， t > 0），w 代表该项工作�
 ```
 30
 ```
+难度：中等
 
-说明：
+标签：动态规划、贪心
 
-**用例 2**：
+```cpp
+#include <bits/stdc++.h>
 
-输入：
+using namespace std;
 
+int main() {
+  int T, n;
+  cin >> T >> n;
+
+  vector<int> t(n + 1), w(n + 1);
+  for (int i = 1; i <= n; ++i) {
+    cin >> t[i] >> w[i];
+  }
+
+  // 初始化 dp 数组
+  vector<int> dp(T + 1, 0);
+
+  // 动态规划求解
+  for (int i = 1; i <= n; ++i) {
+    for (int j = T; j >= t[i]; --j) {
+      dp[j] = max(dp[j], dp[j - t[i]] + w[i]);
+    }
+  }
+
+  // 输出结果
+  cout << dp[T] << endl;
+
+  return 0;
+}
 ```
 
-```
-
-输出：
-
-```
-
-```
-
-说明：
 
 ## 动态规划
 
