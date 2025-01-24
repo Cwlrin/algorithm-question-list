@@ -20428,7 +20428,7 @@ int main() {
 
 需要进行核酸检测的人，是病毒传播链条上的所有人员，即有可能通过确诊病例所能传播到的所有人。
 
-例如：A是确诊病例，A和B有接触、B和C有接触、C和D有接触、D和E有接触，那么B\C\D\E都是需要进行核酸检测的人。
+例如：A 是确诊病例，A 和 B 有接触、B 和 C 有接触、C 和 D 有接触、D 和 E 有接触，那么 B\C\D\E 都是需要进行核酸检测的人。
 
 **输入描述**：
 
@@ -20436,9 +20436,9 @@ int main() {
 
 第二行为确认病例人员编号（确诊病例人员数量 < N），用逗号分割
 
-第三行开始，为一个 N * N 的矩阵，表示每个人员之间是否有接触，0表示没有接触，1表示有接触。
+第三行开始，为一个 N \* N 的矩阵，表示每个人员之间是否有接触，0 表示没有接触，1 表示有接触。
 
-人员编号从0开始
+人员编号从 0 开始
 
 0 < N < 100
 
@@ -20468,13 +20468,13 @@ int main() {
 
 说明：
 
-编号为1、2号的人员，为确诊病例。
+编号为 1、2 号的人员，为确诊病例。
 
-1号和0号有接触，0号和3号有接触。
+1 号和 0 号有接触，0 号和 3 号有接触。
 
-2号和4号有接触。
+2 号和 4 号有接触。
 
-所以，需要做核酸检测的人是0号、3号、4号，总计3人需要进行核酸检测。
+所以，需要做核酸检测的人是 0 号、3 号、4 号，总计 3 人需要进行核酸检测。
 
 难度：中等
 
@@ -20484,30 +20484,30 @@ int main() {
 #include <bits/stdc++.h>
 using namespace std;
 
-// 并查集类  
+// 并查集类
 class UnionFind {
   private:
-    vector<int> parent_; // 父节点数组  
-    vector<int> size_;   // 每个连通分量的大小  
+    vector<int> parent_; // 父节点数组
+    vector<int> size_;   // 每个连通分量的大小
 
   public:
     explicit UnionFind(int n) {
       parent_.resize(n);
       size_.resize(n, 1);
       for (int i = 0; i < n; ++i) {
-        parent_[i] = i; // 初始化每个节点的父节点为自己  
+        parent_[i] = i; // 初始化每个节点的父节点为自己
       }
     }
 
-    // 查找根节点  
+    // 查找根节点
     int find(int x) {
       if (parent_[x] != x) {
-        parent_[x] = find(parent_[x]); // 路径压缩  
+        parent_[x] = find(parent_[x]); // 路径压缩
       }
       return parent_[x];
     }
 
-    // 合并两个节点  
+    // 合并两个节点
     void unite(int x, int y) {
       int root_x = find(x);
       int root_y = find(y);
@@ -20515,12 +20515,12 @@ class UnionFind {
         if (size_[root_x] < size_[root_y]) {
           swap(root_x, root_y);
         }
-        parent_[root_y] = root_x;      // 将小树合并到大树  
-        size_[root_x] += size_[root_y]; // 更新连通分量大小  
+        parent_[root_y] = root_x;      // 将小树合并到大树
+        size_[root_x] += size_[root_y]; // 更新连通分量大小
       }
     }
 
-    // 获取连通分量大小  
+    // 获取连通分量大小
     int GetSize(int x) {
       return size_[find(x)];
     }
@@ -20530,9 +20530,9 @@ int main() {
   int n;
   cin >> n;
 
-  // 读取确诊病例  
+  // 读取确诊病例
   string confirmed;
-  cin.ignore(); // 忽略换行符  
+  cin.ignore(); // 忽略换行符
   getline(cin, confirmed);
   stringstream ss(confirmed);
   vector<int> confirmed_cases;
@@ -20541,57 +20541,56 @@ int main() {
     confirmed_cases.push_back(stoi(temp));
   }
 
-  // 读取接触矩阵  
+  // 读取接触矩阵
   vector<vector<int> > contact_matrix(n, vector<int>(n));
   for (int i = 0; i < n; ++i) {
     string row;
-    getline(cin, row); // 读取一行  
+    getline(cin, row); // 读取一行
     stringstream row_stream(row);
     string cell;
     for (int j = 0; j < n; ++j) {
-      getline(row_stream, cell, ','); // 读取逗号分隔的值  
+      getline(row_stream, cell, ','); // 读取逗号分隔的值
       contact_matrix[i][j] = stoi(cell);
     }
   }
 
-  // 初始化并查集  
+  // 初始化并查集
   UnionFind uf(n);
 
-  // 合并接触关系  
+  // 合并接触关系
   for (int i = 0; i < n; ++i) {
     for (int j = i + 1; j < n; ++j) {
-      // 只遍历对角线一边  
+      // 只遍历对角线一边
       if (contact_matrix[i][j] == 1) {
-        uf.unite(i, j); // 合并 i 和 j  
+        uf.unite(i, j); // 合并 i 和 j
       }
     }
   }
 
-  // 统计需要做核酸检测的人数  
-  unordered_set<int> roots; // 记录确诊病例所在连通分量的根  
+  // 统计需要做核酸检测的人数
+  unordered_set<int> roots; // 记录确诊病例所在连通分量的根
   for (int case_id : confirmed_cases) {
-    roots.insert(uf.find(case_id)); // 找到确诊病例的根  
+    roots.insert(uf.find(case_id)); // 找到确诊病例的根
   }
 
-  // 统计所有与确诊病例在同一连通分量中的人数  
+  // 统计所有与确诊病例在同一连通分量中的人数
   int total = 0;
   for (int i = 0; i < n; ++i) {
     for (int root : roots) {
       if (uf.find(i) == root) {
         total++;
-        break; // 避免重复统计  
+        break; // 避免重复统计
       }
     }
   }
 
-  // 减去确诊病例的数量  
+  // 减去确诊病例的数量
   total -= confirmed_cases.size();
 
   cout << total << endl;
   return 0;
 }
 ```
-
 
 ### 200 分
 
@@ -21062,7 +21061,7 @@ int main() {
 6
 ```
 
-说明：见描述中示例1，最大区域对应网格点数目为6
+说明：见描述中示例 1，最大区域对应网格点数目为 6
 
 **用例 2**：
 
@@ -21080,7 +21079,7 @@ int main() {
 1
 ```
 
-说明：见描述中示例2，最大区域对应网格点数目为1
+说明：见描述中示例 2，最大区域对应网格点数目为 1
 
 难度：中等
 
@@ -21140,21 +21139,21 @@ int main() {
 }
 ```
 
-#### Linux发行版的数量
+#### Linux 发行版的数量
 
 **题目描述**：
 
-Linux操作系统有多个发行版，distrowatch.com提供了各个发行版的资料。这些发行版互相存在关联，例如Ubuntu基于Debian开发，而Mint又基于Ubuntu开发，那么我们认为Mint同Debian也存在关联。
+Linux 操作系统有多个发行版，distrowatch.com 提供了各个发行版的资料。这些发行版互相存在关联，例如 Ubuntu 基于 Debian 开发，而 Mint 又基于 Ubuntu 开发，那么我们认为 Mint 同 Debian 也存在关联。
 
 发行版集是一个或多个相关存在关联的操作系统发行版，集合内不包含没有关联的发行版。
 
-给你一个 n * n 的矩阵 isConnected，其中 isConnected[i][j] = 1 表示第 i 个发行版和第 j 个发行版直接关联，而 isConnected[i][j] = 0 表示二者不直接相连。
+给你一个 n \* n 的矩阵 isConnected，其中 isConnected[i][j] = 1 表示第 i 个发行版和第 j 个发行版直接关联，而 isConnected[i][j] = 0 表示二者不直接相连。
 
 返回最大的发行版集中发行版的数量。
 
 **输入描述**：
 
-第一行输入发行版的总数量N，
+第一行输入发行版的总数量 N，
 
 之后每行表示各发行版间是否直接相关
 
@@ -21184,13 +21183,13 @@ Linux操作系统有多个发行版，distrowatch.com提供了各个发行版的
 
 说明：
 
-Debian(1)和Unbuntu2)相关
+Debian(1)和 Unbuntu2)相关
 
-Mint(3)和Ubuntu(2)相关，
+Mint(3)和 Ubuntu(2)相关，
 
 EeulerOS(4)和另外三个都不相关，
 
-所以存在两个发行版集，发行版集中发行版的数量分别是3和1，所以输出3。
+所以存在两个发行版集，发行版集中发行版的数量分别是 3 和 1，所以输出 3。
 
 难度：中等
 
@@ -21202,54 +21201,264 @@ EeulerOS(4)和另外三个都不相关，
 using namespace std;
 
 void dfs(int node, vector<vector<int> >& is_connected, vector<bool>& visited) {
-  visited[node] = true; // 标记当前节点为已访问  
+  visited[node] = true; // 标记当前节点为已访问
   for (int i = 0; i < is_connected.size(); i++) {
     if (is_connected[node][i] == 1 && !visited[i]) {
-      // 如果有连接且未访问  
-      dfs(i, is_connected, visited); // 递归访问连接的节点  
+      // 如果有连接且未访问
+      dfs(i, is_connected, visited); // 递归访问连接的节点
     }
   }
 }
 
 int main() {
   int n;
-  cin >> n;                                            // 输入发行版数量  
-  vector<vector<int> > is_connected(n, vector<int>(n)); // 创建邻接矩阵  
+  cin >> n;                                            // 输入发行版数量
+  vector<vector<int> > is_connected(n, vector<int>(n)); // 创建邻接矩阵
 
-  // 输入邻接矩阵  
+  // 输入邻接矩阵
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
       cin >> is_connected[i][j];
     }
   }
 
-  vector<bool> visited(n, false); // 访问状态数组  
-  int max_count = 0;              // 记录最大的连通分量  
+  vector<bool> visited(n, false); // 访问状态数组
+  int max_count = 0;              // 记录最大的连通分量
 
-  // 遍历所有节点  
+  // 遍历所有节点
   for (int i = 0; i < n; i++) {
     if (!visited[i]) {
-      // 仅当节点未访问时进行 DFS  
-      int count = 0; // 当前连通分量的大小  
+      // 仅当节点未访问时进行 DFS
+      int count = 0; // 当前连通分量的大小
       dfs(i, is_connected, visited);
       for (int j = 0; j < n; j++) {
         if (visited[j]) {
-          count++; // 统计当前连通分量大小  
+          count++; // 统计当前连通分量大小
         }
       }
-      max_count = max(max_count, count);           // 更新最大连通分量  
-      fill(visited.begin(), visited.end(), false); // 重置访问状态  
+      max_count = max(max_count, count);           // 更新最大连通分量
+      fill(visited.begin(), visited.end(), false); // 重置访问状态
     }
   }
 
-  // 输出结果  
+  // 输出结果
   cout << max_count << endl;
 
   return 0;
 }
 ```
 
+#### 服务失效判断
+
+**题目描述**：
+
+某系统中有众多服务，每个服务用字符串（只包含字母和数字，长度<=10）唯一标识，服务间可能有依赖关系，如 A 依赖 B，则当 B 故障时导致 A 也故障。
+
+依赖具有传递性，如 A 依赖 B，B 依赖 C，当 C 故障时导致 B 故障，也导致 A 故障。
+
+给出所有依赖关系，以及当前已知故障服务，要求输出所有正常服务。
+
+依赖关系：服务 1-服务 2 表示“服务 1”依赖“服务 2”
+
+不必考虑输入异常，用例保证：依赖关系列表、故障列表非空，且依赖关系数，故障服务数都不会超过 3000，服务标识格式正常。
+
+**输入描述**：
+
+半角逗号分隔的依赖关系列表（换行）
+
+半角逗号分隔的故障服务列表
+
+**输出描述**：
+
+依赖关系列表中提及的所有服务中可以正常工作的服务列表，用半角逗号分隔，按依赖关系列表中出现的次序排序。
+
+特别的，没有正常节点输出单独一个半角逗号。
+
+**用例 1**：
+
+输入：
+
+```
+a1-a2,a5-a6,a2-a3
+a5,a2
+```
+
+输出：
+
+```
+a6,a3
+```
+
+说明：
+
+a1 依赖 a2，a2 依赖 a3，所以 a2 故障，导致 a1 不可用，但不影响 a3；a5 故障不影响 a6。
+
+所以可用的是 a3、a6，在依赖关系列表中 a6 先出现，所以输出:a6,a3。
+
+**用例 2**：
+
+输入：
+
+```
+a1-a2
+a2
+```
+
+输出：
+
+```
+,
+```
+
+说明：a1 依赖 a2，a2 故障导致 a1 也故障，没有正常节点，输出一个逗号。
+
+难度：中等
+
+标签：广度优先搜索、图论、哈希表、排序、并查集
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+  // 读取依赖关系列表
+  string dependencies;
+  getline(cin, dependencies);
+
+  // 读取故障服务列表
+  string faults;
+  getline(cin, faults);
+
+  // 解析故障服务列表
+  unordered_set<string> fault_set;
+  stringstream fault_stream(faults);
+  string fault;
+  while (getline(fault_stream, fault, ',')) {
+    fault_set.insert(fault);
+  }
+
+  // 解析依赖关系列表并构建图
+  unordered_map<string, vector<string> > graph;
+  unordered_set<string> services; // 所有服务
+  stringstream dep_stream(dependencies);
+  string dep;
+  while (getline(dep_stream, dep, ',')) {
+    size_t split_pos = dep.find('-');
+    string service1 = dep.substr(0, split_pos);
+    string service2 = dep.substr(split_pos + 1);
+    graph[service2].push_back(service1); // service1 依赖 service2
+    services.insert(service1);
+    services.insert(service2);
+  }
+
+  // BFS 遍历所有不可用服务
+  unordered_set<string> unavailable_set;
+  queue<string> q;
+  for (const string& fault : fault_set) {
+    q.push(fault);
+    unavailable_set.insert(fault);
+  }
+
+  while (!q.empty()) {
+    string current = q.front();
+    q.pop();
+    for (const string& dependent : graph[current]) {
+      if (unavailable_set.find(dependent) == unavailable_set.end()) {
+        unavailable_set.insert(dependent);
+        q.push(dependent);
+      }
+    }
+  }
+
+  // 收集可用服务
+  vector<string> available_services;
+  for (const string& service : services) {
+    if (unavailable_set.find(service) == unavailable_set.end()) {
+      available_services.push_back(service);
+    }
+  }
+
+  // 按依赖关系列表中的顺序排序
+  unordered_map<string, int> service_order;
+  stringstream dep_stream2(dependencies);
+  int order = 0;
+  while (getline(dep_stream2, dep, ',')) {
+    string service1 = dep.substr(0, dep.find('-'));
+    string service2 = dep.substr(dep.find('-') + 1);
+    if (service_order.find(service1) == service_order.end()) {
+      service_order[service1] = order++;
+    }
+    if (service_order.find(service2) == service_order.end()) {
+      service_order[service2] = order++;
+    }
+  }
+  sort(available_services.begin(), available_services.end(),
+       [&service_order](const string& a, const string& b) {
+         return service_order[a] < service_order[b];
+       });
+
+  // 输出结果
+  if (available_services.empty()) {
+    cout << "," << endl;
+  } else {
+    for (size_t i = 0; i < available_services.size(); ++i) {
+      if (i > 0) {
+        cout << ",";
+      }
+      cout << available_services[i];
+    }
+    cout << endl;
+  }
+
+  return 0;
+}
+```
+
 ## 优先队列
+
+### 200 分
+
+#### 任务处理
+
+**题目描述**：
+
+**输入描述**：
+
+**输出描述**：
+
+**用例 1**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+**用例 2**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+## 最短路问题
 
 **题目描述**：
 
