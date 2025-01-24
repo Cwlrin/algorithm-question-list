@@ -22760,7 +22760,7 @@ Pi为充值 i 元获得的短信条数。1 ≤ Pi ≤ 1000 , 1 ≤ n ≤ 100
 
 难度：中等
 
-标签：动态规划、位运算
+标签：动态规划、位运算、贪心
 
 ```cpp
 #include <bits/stdc++.h>
@@ -22845,6 +22845,130 @@ int main() {
 
   // 输出结果
   cout << optimal << endl;
+
+  return 0;
+}
+```
+
+#### MELON的难题
+
+**题目描述**：
+
+MELON有一堆精美的雨花石（数量为n，重量各异），准备送给S和W。MELON希望送给俩人的雨花石重量一致，请你设计一个程序，帮MELON确认是否能将雨花石平均分配。
+
+**输入描述**：
+
+第1行输入为雨花石个数：n， 0 < n < 31。
+
+第2行输入为空格分割的各雨花石重量：m[0] m[1] ….. m[n - 1]， 0 < m[k] < 1001。
+
+不需要考虑异常输入的情况。
+
+**输出描述**：
+
+如果可以均分，从当前雨花石中最少拿出几块，可以使两堆的重量相等；如果不能均分，则输出-1。
+
+**用例 1**：
+
+输入：
+
+```
+4
+1 1 2 2
+```
+
+输出：
+
+```
+2
+```
+
+说明：
+
+输入第一行代表共4颗雨花石，
+
+第二行代表4颗雨花石重量分别为1、1、2、2。
+
+均分时只能分别为1,2，需要拿出重量为1和2的两块雨花石，所以输出2
+
+**用例 2**：
+
+输入：
+
+```
+10
+1 1 1 1 1 9 8 3 7 10
+```
+
+输出：
+
+```
+3
+```
+
+说明：
+
+输入第一行代表共10颗雨花石，
+
+第二行代表4颗雨花石重量分别为1、1、1、1、1、9、8、3、7、10 。
+
+均分时可以1,1,1,1,1,9,7和10,8,3，也可以1,1,1,1,9,8和10,7,3,1，或者其他均分方式，但第一种只需要拿出重量为10,8,3的3块雨花石，第二种需要拿出4块，所以输出3(块数最少)。
+
+难度：中等
+
+标签：动态规划、回溯
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <climits>
+
+using namespace std;
+
+int main() {
+  int n;
+  cin >> n;
+
+  vector<int> m(n);
+  int total_weight = 0;
+  for (int i = 0; i < n; ++i) {
+    cin >> m[i];
+    total_weight += m[i];
+  }
+
+  // 如果总重量是奇数，无法均分
+  if (total_weight % 2 != 0) {
+    cout << -1 << endl;
+    return 0;
+  }
+
+  int target = total_weight / 2;
+
+  // 初始化 dp 数组和 min_count 数组
+  vector<bool> dp(target + 1, false);
+  vector<int> min_count(target + 1, INT_MAX);
+  dp[0] = true;
+  min_count[0] = 0;
+
+  // 动态规划求解
+  for (int i = 0; i < n; ++i) {
+    for (int j = target; j >= m[i]; --j) {
+      if (dp[j - m[i]]) {
+        dp[j] = true;
+        min_count[j] = min(min_count[j], min_count[j - m[i]] + 1);
+      }
+    }
+  }
+
+  // 如果无法达到 target，输出 -1
+  if (!dp[target]) {
+    cout << -1 << endl;
+    return 0;
+  }
+
+  // 输出最小子集大小
+  cout << min_count[target] << endl;
 
   return 0;
 }
