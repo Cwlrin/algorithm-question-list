@@ -4,28 +4,28 @@ using namespace std;
 
 class UnionFind {
   private:
-  vector<int> parent;
+  vector<int> parent_;
 
   public:
   UnionFind(int n) {
-    parent.resize(n + 1);
+    parent_.resize(n + 1);
     for (int i = 1; i <= n; ++i) {
-      parent[i] = i;  // 初始化每个节点的父节点为自己
+      parent_[i] = i;  // 初始化每个节点的父节点为自己
     }
   }
 
   int find(int x) {
-    if (parent[x] != x) {
-      parent[x] = find(parent[x]);  // 路径压缩
+    if (parent_[x] != x) {
+      parent_[x] = find(parent_[x]);  // 路径压缩
     }
-    return parent[x];
+    return parent_[x];
   }
 
   void unite(int x, int y) {
     int root_x = find(x);
     int root_y = find(y);
     if (root_x != root_y) {
-      parent[root_x] = root_y;  // 合并两个集合
+      parent_[root_x] = root_y;  // 合并两个集合
     }
   }
 

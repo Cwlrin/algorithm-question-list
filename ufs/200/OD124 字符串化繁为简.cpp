@@ -5,22 +5,22 @@ using namespace std;
 // 并查集实现
 class UnionFindSet {
 public:
-    vector<int> parent;  // 存储每个字符的父节点
+    vector<int> parent_;  // 存储每个字符的父节点
 
     // 构造函数，初始化并查集
     explicit UnionFindSet(int n) {
-        parent.resize(n);
+        parent_.resize(n);
         for (int i = 0; i < n; i++) {
-            parent[i] = i;  // 每个节点的初始父节点为自己
+            parent_[i] = i;  // 每个节点的初始父节点为自己
         }
     }
 
     // 查找父节点，并进行路径压缩
     int find(int x) {
-        if (x != parent[x]) {
-            parent[x] = find(parent[x]);  // 路径压缩
+        if (x != parent_[x]) {
+            parent_[x] = find(parent_[x]);  // 路径压缩
         }
-        return parent[x];
+        return parent_[x];
     }
 
     // 合并两个节点
@@ -30,9 +30,9 @@ public:
 
         // 保证字典序较小的字符作为根
         if (root_x < root_y) {
-            parent[root_y] = root_x;
+            parent_[root_y] = root_x;
         } else {
-            parent[root_x] = root_y;
+            parent_[root_x] = root_y;
         }
     }
 };

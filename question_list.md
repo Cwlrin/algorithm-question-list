@@ -20424,7 +20424,7 @@ int main() {
 
 给定一个输入字符串，字符串只可能由英文字母（ 'a' ~ 'z'、'A' ~ 'Z' ）和左右小括号（ '('、')' ）组成。
 
-当字符里存在小括号时，小括号是成对的，可以有一个或多个小括号对，小括号对不会嵌套，小括号对内可以包含1个或多个英文字母，也可以不包含英文字母。
+当字符里存在小括号时，小括号是成对的，可以有一个或多个小括号对，小括号对不会嵌套，小括号对内可以包含 1 个或多个英文字母，也可以不包含英文字母。
 
 当小括号对内包含多个英文字母时，这些字母之间是相互等效的关系，而且等效关系可以在不同的小括号对之间传递，即当存在 'a' 和 'b' 等效和存在 'b' 和 'c' 等效时，'a' 和 'c' 也等效，另外，同一个英文字母的大写字母和小写字母也相互等效（即使它们分布在不同的括号对里）
 
@@ -20438,15 +20438,15 @@ int main() {
 
 input_string
 
-输入为1行，代表输入字符串
+输入为 1 行，代表输入字符串
 
-输入字符串的长度在1~100000之间
+输入字符串的长度在 1~100000 之间
 
 **输出描述**：
 
 output_string
 
-输出为1行，代表输出字符串
+输出为 1 行，代表输出字符串
 
 **用例 1**：
 
@@ -20495,7 +20495,6 @@ aemanaaor
 ```
 
 说明：等效字符集为('a', 'b', 'd', 'f')，输入字符串里没有被小括号包含的子字符串集合为'demandfor"，将其中字符替换为字典序最小的等效字符后输出为："aemanaaor"
-
 
 **用例 3**：
 
@@ -20640,46 +20639,183 @@ int main() {
 }
 ```
 
+#### 服务器广播
+
 **题目描述**：
+
+服务器连接方式包括直接相连，间接相连。A 和 B 直接连接，B 和 C 直接连接，则 A 和 C 间接连接。直接连接和间接连接都可以发送广播。
+
+给出一个 N \* N 数组，代表 N 个服务器，
+
+matrix[i][j] == 1，则代表 i 和 j 直接连接；不等于 1 时，代表 i 和 j 不直接连接。
+
+matrix[i][i] == 1, 即自己和自己直接连接。
+
+matrix[i][j] == matrix[j][i]。
+
+计算初始需要给几台服务器广播，才可以使每个服务器都收到广播。
 
 **输入描述**：
 
+输入为 N 行，每行有 N 个数字，为 0 或 1，由空格分隔，构成 N\*N 的数组，N 的范围为 1 <= N <= 40
+
 **输出描述**：
+
+输出一个数字，为需要广播的服务器的数量
 
 **用例 1**：
 
 输入：
 
 ```
-
+1 0 0
+0 1 0
+0 0 1
 ```
 
 输出：
 
 ```
-
+3
 ```
 
-说明：
+说明：3 台服务器互不连接，所以需要分别广播这 3 台服务器
 
 **用例 2**：
 
 输入：
 
 ```
-
+1 1
+1 1
 ```
 
 输出：
 
 ```
-
+1
 ```
 
-说明：
+说明：2 台服务器互相连接，所以只需要广播其中一台服务器
+
+难度：中等
+
+标签：并查集、图、矩阵
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// 并查集类
+class UnionFindSet {
+  private:
+    vector<int> parent_; // 父节点数组
+    vector<int> rank_;   // 秩（用于优化合并操作）
+
+  public:
+    // 构造函数，初始化并查集
+    explicit UnionFindSet(int n) {
+      parent_.resize(n);
+      rank_.resize(n, 0);
+      for (int i = 0; i < n; i++) {
+        parent_[i] = i; // 初始时每个节点的父节点是自己
+      }
+    }
+
+    // 查找根节点，使用路径压缩优化
+    int find(int x) {
+      if (parent_[x] != x) {
+        parent_[x] = find(parent_[x]);
+      }
+      return parent_[x];
+    }
+
+    // 合并两个集合
+    void merge(int x, int y) {
+      int root_x = find(x);
+      int root_y = find(y);
+
+      if (root_x == root_y)
+        return; // 已经在同一个集合
+
+      // 按秩合并，降低树的高度
+      if (rank_[root_x] < rank_[root_y]) {
+        parent_[root_x] = root_y;
+      } else if (rank_[root_x] > rank_[root_y]) {
+        parent_[root_y] = root_x;
+      } else {
+        parent_[root_y] = root_x;
+        rank_[root_x]++;
+      }
+    }
+
+    // 判断两个节点是否属于同一个集合
+    bool is_same_set(int x, int y) {
+      return find(x) == find(y);
+    }
+
+    // 获取集合数量
+    int get_set_count(int n) {
+      unordered_set<int> roots;
+      for (int i = 0; i < n; i++) {
+        roots.insert(find(i));
+      }
+      return roots.size();
+    }
+};
+
+int main() {
+  vector<vector<int> > matrix;
+
+  // 读取输入
+  while (cin) {
+    string line;
+    getline(cin, line);
+
+    // 如果输入为空，则退出
+    if (line.empty())
+      break;
+
+    // 解析输入行
+    vector<int> row;
+    stringstream ss(line);
+    int num;
+    while (ss >> num) {
+      row.push_back(num);
+    }
+
+    // 检查是否为方阵
+    if (!matrix.empty() && row.size() != matrix[0].size()) {
+      break;
+    }
+
+    matrix.push_back(row);
+  }
+
+  int n = matrix.size(); // 服务器数量
+
+  // 创建并查集
+  UnionFindSet ufs(n);
+
+  // 合并直接连接的服务器
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < n; j++) {
+      if (matrix[i][j] == 1) {
+        ufs.merge(i, j);
+      }
+    }
+  }
+
+  // 计算需要广播的服务器数量（集合的数量）
+  int broadcast_count = ufs.get_set_count(n);
+  cout << broadcast_count << endl;
+
+  return 0;
+}
+```
 
 ## 优先队列
-
 
 **题目描述**：
 
