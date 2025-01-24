@@ -20815,6 +20815,150 @@ int main() {
 }
 ```
 
+#### 机器人活动区域
+
+**题目描述**：
+
+现有一个机器人，可放置于 M × N 的网格中任意位置，每个网格包含一个非负整数编号，当相邻网格的数字编号差值的绝对值小于等于 1 时，机器人可以在网格间移动。
+
+**问题：** 求机器人可活动的最大范围对应的网格点数目。
+
+**说明：**
+
+1. 网格左上角坐标为 (0,0) ,右下角坐标为(m−1,n−1)
+2. 机器人只能在相邻网格间上下左右移动
+
+---
+
+示例 1 输入如下网格
+
+![img](https://hydro.ac/d/HWOD2023/p/25/file/-ssEqOdhswJ82UpxgNcu6.png)
+
+输出：6
+
+说明：图中绿色区域，相邻网格差值绝对值都小于等于 1，且为最大区域，对应网格点数目为 6
+
+---
+
+示例 2 输入如下网格
+
+![img](https://hydro.ac/d/HWOD2023/p/25/file/gXy1IIbeH3Dn8-K4U_EuH.png)
+
+输出：1
+
+说明：任意两个相邻网格的差值绝对值都大于 1，机器人不能在网格间移动，只能在单个网格内活动，对应网格点数目为 1
+
+**输入描述**：
+
+第 1 行输入为 M 和 N
+
+- M 表示网格的行数
+- N 表示网格的列数
+
+之后 M 行表示网格数值，每行 N 个数值（数值大小用 k 表示），数值间用单个空格分隔，行首行尾无多余空格。
+
+- M、 N、 k 均为整数
+- 1 ≤ M,N ≤ 150
+- 0 ≤ k ≤ 50
+
+**输出描述**：
+
+输出 1 行，包含 1 个数字，表示最大活动区域的网格点数目，
+
+行首行尾无**多余空格。**
+
+**用例 1**：
+
+输入：
+
+```
+4 4
+1 2 5 2
+2 4 4 5
+3 5 7 1
+4 6 2 4
+```
+
+输出：
+
+```
+6
+```
+
+说明：见描述中示例1，最大区域对应网格点数目为6
+
+**用例 2**：
+
+输入：
+
+```
+2 3
+1 3 5
+4 1 3
+```
+
+输出：
+
+```
+1
+```
+
+说明：见描述中示例2，最大区域对应网格点数目为1
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+// 四个方向：上、下、左、右
+vector<pair<int, int> > directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+// DFS遍历可达区域
+int dfs(int x, int y, vector<vector<int> >& grid,
+        vector<vector<bool> >& visited) {
+  visited[x][y] = true; // 标记当前网格为已访问
+  int area = 1;         // 统计当前网格
+  // 遍历四个方向
+  for (auto dir : directions) {
+    int new_x = x + dir.first;
+    int new_y = y + dir.second;
+    // 检查边界条件和可移动条件
+    if (new_x >= 0 && new_x < grid.size() &&
+        new_y >= 0 && new_y < grid[0].size() &&
+        !visited[new_x][new_y] &&
+        abs(grid[new_x][new_y] - grid[x][y]) <= 1) {
+      area += dfs(new_x, new_y, grid, visited); // 递归查找
+    }
+  }
+  return area; // 返回当前可活动区域大小
+}
+
+int main() {
+  int m, n;
+  cin >> m >> n;
+  vector<vector<int> > grid(m, vector<int>(n));
+  // 输入网格
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
+      cin >> grid[i][j];
+    }
+  }
+  vector<vector<bool> > visited(m, vector<bool>(n, false)); // 记录访问状态
+  int max_area = 0;                                         // 记录最大活动区域
+  // 遍历每个网格
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
+      if (!visited[i][j]) {
+        // 只处理未访问的网格
+        int area = dfs(i, j, grid, visited); // 计算当前网格的区域大小
+        max_area = max(max_area, area);      // 更新最大区域
+      }
+    }
+  }
+  // 输出最大活动区域的网格点数目
+  cout << max_area << endl;
+  return 0;
+}
+```
+
 ## 优先队列
 
 **题目描述**：
