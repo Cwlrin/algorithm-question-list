@@ -22,7 +22,7 @@ int main() {
 
   // 填充动态规划表  
   for (int i = 1; i <= m; ++i) {
-    cur_row[0] = i; // 初始化当前行的第一列  
+    cur_row[0] = i; // 初始化当前行的第一列
     for (int j = 1; j <= n; ++j) {
       if (A[i - 1] == B[j - 1]) {
         cur_row[j] = pre_row[j - 1] + 1; // 斜边  
