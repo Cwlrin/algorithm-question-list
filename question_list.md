@@ -25633,6 +25633,277 @@ N 代表路上经过 N 座城市，0 < N < 100
 
 ## 枚举
 
+### 100分
+
+#### 虚拟理财游戏
+
+**题目描述**：
+
+在一款虚拟游戏中生活，你必须进行投资以增强在虚拟游戏中的资产以免被淘汰出局。
+
+现有一家Bank，它提供有若干理财产品 m 个，风险及投资回报不同，你有 N（元）进行投资，能接收的总风险值为X。
+
+你要在可接受范围内选择最优的投资方式获得最大回报。
+
+备注：
+
+在虚拟游戏中，每项投资风险值相加为总风险值；
+
+在虚拟游戏中，最多只能投资2个理财产品；
+
+在虚拟游戏中，最小单位为整数，不能拆分为小数；
+
+投资额*回报率=投资回报
+
+**输入描述**：
+
+第一行：
+
+产品数（取值范围[1,20]）
+
+总投资额（整数，取值范围[1, 10000]）
+
+可接受的总风险（整数，取值范围[1,200]）
+
+第二行：产品投资回报率序列，输入为整数，取值范围[1,60]
+
+第三行：产品风险值序列，输入为整数，取值范围[1, 100]
+
+第四行：最大投资额度序列，输入为整数，取值范围[1, 10000]
+
+**输出描述**：
+
+每个产品的投资额序列
+
+**用例 1**：
+
+输入：
+
+```
+5 100 10
+10 20 30 40 50
+3 4 5 6 10
+20 30 20 40 30
+```
+
+输出：
+
+```
+0 30 0 40 0
+```
+
+说明：投资第二项30个单位，第四项40个单位，总的投资风险为两项相加为4+6=10
+
+难度：中等
+
+标签：动态规划、贪心、枚举、数组
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+  int m, n, x;
+  cin >> m >> n >> x;
+
+  vector<int> returns(m);
+  for (int i = 0; i < m; i++) {
+    cin >> returns[i];
+  }
+
+  vector<int> risks(m);
+  for (int i = 0; i < m; i++) {
+    cin >> risks[i];
+  }
+
+  vector<int> max_investments(m);
+  for (int i = 0; i < m; i++) {
+    cin >> max_investments[i];
+  }
+
+  int max_return = 0;
+  vector<int> best_investment(m, 0);
+
+  // 枚举所有可能的单个产品和两个产品组合  
+  for (int i = 0; i < m; i++) {
+    // 单个产品  
+    if (risks[i] <= x) {
+      int investment = min(max_investments[i], n);
+      int total_return = returns[i] * investment;
+
+      if (total_return > max_return) {
+        max_return = total_return;
+        fill(best_investment.begin(), best_investment.end(), 0);
+        best_investment[i] = investment;
+      }
+    }
+
+    // 两个产品组合  
+    for (int j = i + 1; j < m; j++) {
+      int total_risk = risks[i] + risks[j];
+      if (total_risk > x)
+        continue;
+
+      // 动态调整投资额  
+      int max_investment1 = min(max_investments[i], n);
+      int max_investment2 = min(max_investments[j], n - max_investment1);
+
+      int total_return = returns[i] * max_investment1 + returns[j] *
+                        max_investment2;
+
+      if (total_return > max_return) {
+        max_return = total_return;
+        fill(best_investment.begin(), best_investment.end(), 0);
+        best_investment[i] = max_investment1;
+        best_investment[j] = max_investment2;
+      }
+
+      // 交换投资优先级，重新计算  
+      max_investment2 = min(max_investments[j], n);
+      max_investment1 = min(max_investments[i], n - max_investment2);
+
+      total_return = returns[i] * max_investment1 + returns[j] * max_investment2;
+
+      if (total_return > max_return) {
+        max_return = total_return;
+        fill(best_investment.begin(), best_investment.end(), 0);
+        best_investment[i] = max_investment1;
+        best_investment[j] = max_investment2;
+      }
+    }
+  }
+
+  // 输出结果  
+  for (int i = 0; i < m; i++) {
+    cout << best_investment[i] << " ";
+  }
+  cout << endl;
+
+  return 0;
+}
+```
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  int m, n, x;
+  cin >> m >> n >> x;
+
+  vector<int> returns(m);
+  for (int i = 0; i < m; i++) {
+    cin >> returns[i];
+  }
+
+  vector<int> risks(m);
+  for (int i = 0; i < m; i++) {
+    cin >> risks[i];
+  }
+
+  vector<int> max_investments(m);
+  for (int i = 0; i < m; i++) {
+    cin >> max_investments[i];
+  }
+
+  int max_return = 0;
+  vector<int> best_investment(m, 0);
+
+  // 先考虑单个产品的情况  
+  for (int i = 0; i < m; i++) {
+    if (risks[i] <= x) {
+      int investment = min(max_investments[i], n); // 单个产品可以投资的金额  
+      int total_return = returns[i] * investment;
+
+      if (total_return > max_return) {
+        max_return = total_return;
+        fill(best_investment.begin(), best_investment.end(), 0);
+        best_investment[i] = investment;
+      }
+    }
+  }
+
+  // 考虑两个产品的组合  
+  for (int i = 0; i < m; i++) {
+    for (int j = i + 1; j < m; j++) {
+      int total_risk = risks[i] + risks[j];
+      if (total_risk > x)
+        continue; // 如果总风险超过可接受范围，跳过  
+
+      // 动态调整投资额  
+      for (int investment1 = 0; investment1 <= max_investments[i] && investment1
+                                <= n; investment1++) {
+        int investment2 = min(max_investments[j], n - investment1);
+        // 保证两者投资不超出总额  
+
+        int total_return = returns[i] * investment1 + returns[j] * investment2;
+        if (total_return > max_return) {
+          max_return = total_return;
+          fill(best_investment.begin(), best_investment.end(), 0);
+          best_investment[i] = investment1;
+          best_investment[j] = investment2;
+        }
+      }
+    }
+  }
+
+  // 输出结果  
+  for (int i = 0; i < m; i++) {
+    cout << best_investment[i] << " ";
+  }
+  cout << endl;
+
+  return 0;
+}
+```
+
+## 扫描线
+
+**题目描述**：
+
+**输入描述**：
+
+**输出描述**：
+
+**用例 1**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+**用例 2**：
+
+输入：
+
+```
+
+```
+
+输出：
+
+```
+
+```
+
+说明：
+
+
+## LFU缓存
+
 **题目描述**：
 
 **输入描述**：
