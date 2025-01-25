@@ -25010,6 +25010,121 @@ int main() {
 }
 ```
 
+#### 任务最优调度
+
+**题目描述**：
+
+给定一个正整数数组表示待系统执行的任务列表，数组的每一个元素代表一个任务，元素的值表示该任务的类型。
+
+请计算执行完所有任务所需的最短时间。
+
+任务执行规则如下:
+
+任务可以按任意顺序执行，且每个任务执行耗时间均为1个时间单位
+
+两个同类型的任务之间必须有长度为N个单位的冷却时间，比如N为2时，在时间K执行了类型3的任务，那么K+1和K+2两个时间不能执行类型3任务
+
+系统在任何一个单位时间内都可以执行一个任务，或者等待状态。
+
+说明：数组最大长度为1000，数组最大值1000。
+
+**输入描述**：
+
+第一行记录一个用半角逗号分隔的数组，数组长度不超过1000，数组元素的值不超过1000，
+
+第二行记录任务冷却时间，N为正整数，N<=100。
+
+**输出描述**：
+
+输出为执行完所有任务所需的最短时间。
+
+**用例 1**：
+
+输入：
+
+```
+2,2,2,3
+2
+```
+
+输出：
+
+```
+7
+```
+
+说明：
+
+时间1：执行类型2任务。
+
+时间2：执行类型3的任务（因为冷却时间为2，所以时间2不能执行类型2的任务）。
+
+时间3：系统等待（仍然在类型2的冷却时间）。
+
+时间4：执行类型2任务。 时间5：系统等待。
+
+时间6：系统等待。
+
+时间7：执行类型2任务。
+
+因此总共耗时7。
+
+难度：中等
+
+标签：贪心、排序、数组
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  // 读取任务列表
+  string input;
+  getline(cin, input);
+  vector<int> tasks;
+  size_t pos = 0;
+  while ((pos = input.find(',')) != string::npos) {
+    tasks.push_back(stoi(input.substr(0, pos)));
+    input.erase(0, pos + 1);
+  }
+  tasks.push_back(stoi(input));
+
+  // 读取冷却时间
+  int n;
+  cin >> n;
+
+  // 统计任务频率
+  unordered_map<int, int> task_counts;
+  for (int task : tasks) {
+    task_counts[task]++;
+  }
+
+  // 找到出现次数最多的任务类型及其出现次数
+  int max_count = 0;
+  for (auto& pair : task_counts) {
+    max_count = max(max_count, pair.second);
+  }
+
+  // 统计有多少个任务类型出现次数等于 maxCount
+  int num_max_tasks = 0;
+  for (auto& pair : task_counts) {
+    if (pair.second == max_count) {
+      num_max_tasks++;
+    }
+  }
+
+  // 计算最短时间
+  int result = (max_count - 1) * (n + 1) + num_max_tasks;
+  result = max(result, (int)tasks.size());
+
+  // 输出结果
+  cout << result << endl;
+
+  return 0;
+}
+```
+
 
 ## 枚举
 
