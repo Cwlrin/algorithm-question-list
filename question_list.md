@@ -19706,6 +19706,99 @@ int main() {
 }
 ```
 
+#### 完全二叉树非叶子部分后序遍历
+
+**题目描述**：
+
+给定一个以顺序储存结构存储整数值的完全二叉树序列（最多1000个整数），请找出此完全二叉树的所有非叶子节点部分，然后采用后序遍历方式将此部分树（不包含叶子）输出。
+
+只有一个节点的树，此节点认定为根节点（非叶子）。
+
+此完全二叉树并非满二叉树，可能存在倒数第二层出现叶子或者无右叶子的情况
+
+其他说明：二叉树的后序遍历是基于根来说的，遍历顺序为：左-右-根
+
+**输入描述**：
+
+一个通过空格分割的整数序列字符串
+
+**输出描述**：
+
+非叶子部分树结构。备注：输出数字以空格分隔
+
+**用例 1**：
+
+输入：
+
+```
+1 2 3 4 5 6 7
+```
+
+输出：
+
+```
+2 3 1
+```
+
+说明：找到非叶子部分树结构，然后采用后序遍历输出。
+
+难度：中等
+
+标签：树、深度优先搜索、递归
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+// 后序遍历函数
+void PostOrderTraversal(const vector<int>& tree, int index,
+                        vector<int>& result) {
+  if (index >= tree.size()) {
+    return;
+  }
+
+  // 左子树
+  PostOrderTraversal(tree, 2 * index + 1, result);
+
+  // 右子树
+  PostOrderTraversal(tree, 2 * index + 2, result);
+
+  // 如果当前节点是非叶子节点，加入结果
+  if (2 * index + 1 < tree.size() || 2 * index + 2 < tree.size() || index ==
+      0) {
+    result.push_back(tree[index]);
+  }
+}
+
+int main() {
+  // 读取输入
+  string input;
+  getline(cin, input);
+  stringstream ss(input);
+
+  vector<int> tree;
+  int value;
+  while (ss >> value) {
+    tree.push_back(value);
+  }
+
+  // 后序遍历非叶子节点
+  vector<int> result;
+  PostOrderTraversal(tree, 0, result);
+
+  // 输出结果
+  for (int i = 0; i < result.size(); ++i) {
+    if (i > 0) {
+      cout << " ";
+    }
+    cout << result[i];
+  }
+  cout << endl;
+
+  return 0;
+}
+```
+
 ### 200 分
 
 #### 二叉树计算
