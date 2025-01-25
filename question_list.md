@@ -24456,6 +24456,156 @@ int main() {
 }
 ```
 
+#### 两个字符串间的最短路径问题
+
+**题目描述**：
+
+给定两个字符串，分别为字符串 A 与字符串 B。
+
+例如 A字符串为 "ABCABBA"，B字符串为 "CBABAC" 可以得到下图 m * n 的二维数组，定义原点为(0,0)，终点为(m,n)，水平与垂直的每一条边距离为1，映射成坐标系如下图。
+
+从原点 (0,0) 到 (0,A) 为水平边，距离为1，从 (0,A) 到 (A,C) 为垂直边，距离为1；
+
+假设两个字符串同一位置的两个字符相同，则可以作一个斜边，如 (A,C) 到 (B,B) 最短距离为斜边，距离同样为1。
+
+作出所有的斜边如下图，(0,0) 到 (B,B) 的距离为：1 个水平边 + 1 个垂直边 + 1 个斜边 = 3。
+
+![image](https://hydro.ac/d/HWOD2023/p/409/file/r9hGiWcT2q7Rb5Mvcp363.png)
+
+根据定义可知，原点到终点的最短距离路径如下图红线标记，最短距离为9：
+
+![image](https://hydro.ac/d/HWOD2023/p/409/file/LdM9qJdAKw4OLecZnewJt.png)
+
+**输入描述**：
+
+空格分割的两个字符串 A 与字符串 B
+
+- 字符串不为"空串"
+- 字符格式满足正则规则：[A-Z]
+- 字符串长度 < 10000
+
+**输出描述**：
+
+原点到终点的最短距离
+
+**用例 1**：
+
+输入：
+
+```
+ABC ABC
+```
+
+输出：
+
+```
+3
+```
+
+
+**用例 2**：
+
+输入：
+
+```
+ABCABBA CBABAC
+```
+
+输出：
+
+```
+9
+```
+
+难度：中等
+
+标签：动态规划、最短路
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  string A, B;
+  cin >> A >> B;
+
+  int m = A.length();
+  int n = B.length();
+
+  // 动态规划表
+  vector<vector<int> > dp(m + 1, vector<int>(n + 1, 0));
+
+  // 初始化
+  for (int i = 0; i <= m; ++i) {
+    dp[i][0] = i;
+  }
+  for (int j = 0; j <= n; ++j) {
+    dp[0][j] = j;
+  }
+
+  // 填充动态规划表
+  for (int i = 1; i <= m; ++i) {
+    for (int j = 1; j <= n; ++j) {
+      if (A[i - 1] == B[j - 1]) {
+        dp[i][j] = dp[i - 1][j - 1] + 1; // 斜边
+      } else {
+        dp[i][j] = min(dp[i - 1][j], dp[i][j - 1]) + 1; // 水平或垂直边
+      }
+    }
+  }
+
+  // 输出结果
+  cout << dp[m][n] << endl;
+
+  return 0;
+}
+```
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+  string A, B;
+  cin >> A >> B;
+
+  int m = A.length();
+  int n = B.length();
+
+  // 使用两个一维数组代替二维数组  
+  vector<int> pre_row(n + 1, 0);
+  vector<int> cur_row(n + 1, 0);
+
+  // 初始化 preRow（第一行）  
+  for (int j = 0; j <= n; ++j) {
+    pre_row[j] = j;
+  }
+
+  // 填充动态规划表  
+  for (int i = 1; i <= m; ++i) {
+    cur_row[0] = i; // 初始化当前行的第一列  
+    for (int j = 1; j <= n; ++j) {
+      if (A[i - 1] == B[j - 1]) {
+        cur_row[j] = pre_row[j - 1] + 1; // 斜边  
+      } else {
+        cur_row[j] = min(pre_row[j], cur_row[j - 1]) + 1; // 水平或垂直边  
+      }
+    }
+    pre_row = cur_row; // 更新 preRow  
+  }
+
+  // 输出结果  
+  cout << pre_row[n] << endl;
+
+  return 0;
+}
+```
+
+
 ## 贪心
 
 **题目描述**：
