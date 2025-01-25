@@ -25005,6 +25005,82 @@ int main() {
 }
 ```
 
+#### 租车骑绿道
+
+**题目描述**：
+
+部门组织绿岛骑行团建活动。租用公共双人自行车，每辆自行车最多坐两人，最大载重M。
+
+给出部门每个人的体重，请问最多需要租用多少双人自行车。
+
+**输入描述**：
+
+第一行两个数字m、n，分别代表自行车限重，部门总人数。
+
+第二行，n个数字，代表每个人的体重，体重都小于等于自行车限重m。
+
+0<m<=200
+
+0<n<=1000000
+
+**输出描述**：
+
+最小需要的双人自行车数量。
+
+**用例 1**：
+
+输入：
+
+```
+3 4
+3 2 2 1
+```
+
+输出：
+
+```
+3
+```
+
+难度：中等
+
+标签：贪心、双指针、排序、数组
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  int m, n;
+  cin >> m >> n;
+
+  vector<int> weights(n);
+  for (int i = 0; i < n; i++) {
+    cin >> weights[i];
+  }
+
+  // 排序
+  sort(weights.begin(), weights.end());
+
+  int left = 0, right = n - 1;
+  int bikes = 0;
+
+  // 双指针法
+  while (left <= right) {
+    if (weights[left] + weights[right] <= m) {
+      left++;
+    }
+    right--;
+    bikes++;
+  }
+
+  cout << bikes << endl;
+
+  return 0;
+}
+```
+
 ### 200分
 
 #### 火锅
