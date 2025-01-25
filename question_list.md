@@ -23068,6 +23068,101 @@ int main() {
 }
 ```
 
+
+#### 会议接待
+
+**题目描述**：
+
+某组织举行会议，来了多个代表团同时到达，接待处只有一辆汽车，可以同时接待多个代表团，为了提高车辆利用率，请帮接待员计算可以坐满车的接待方案，输出方案数量。
+
+约束:
+
+一个团只能上一辆车，并且代表团人数 (代表团数量小于 30，每个代表团人数小于 30)小于汽车容量(汽车容量小于 100)
+
+需要将车辆坐满
+
+**输入描述**：
+
+第一行 代表团人数，英文逗号隔开，代表团数量小于 30，每个代表团人数小于 30
+
+第二行 汽车载客量，汽车容量小于 100
+
+**输出描述**：
+
+坐满汽车的方案数量，如果无解输出 0
+
+**用例 1**：
+
+输入：
+
+```
+5,4,2,3,2,4,9
+10
+```
+
+输出：
+
+```
+4
+```
+
+说明：
+
+解释 以下几种方式都可以坐满车，所以，优先接待输出为 4
+
+[2,3,5]
+
+[2,4,4]
+
+[2,3,5]
+
+[2,4,4]
+
+难度：中等
+
+标签：动态规划、组合数学、递归、回溯
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  // 读取输入
+  string input;
+  getline(cin, input);
+  stringstream ss(input);
+
+  vector<int> groups;
+  int value;
+  while (ss >> value) {
+    groups.push_back(value);
+    if (ss.peek() == ',') {
+      ss.ignore();
+    }
+  }
+
+  int capacity;
+  cin >> capacity;
+
+  // 动态规划表
+  vector<int> dp(capacity + 1, 0);
+  dp[0] = 1; // 容量为 0 时有一种方案
+
+  // 更新动态规划表
+  for (int group : groups) {
+    for (int i = capacity; i >= group; --i) {
+      dp[i] += dp[i - group];
+    }
+  }
+
+  // 输出结果
+  cout << dp[capacity] << endl;
+
+  return 0;
+}
+```
+
 ## 动态规划
 
 ### 100 分
@@ -24139,36 +24234,48 @@ int main() {
   return 0;
 }
 ```
-
-#### 会议接待
+#### 跳格子2
 
 **题目描述**：
 
-某组织举行会议，来了多个代表团同时到达，接待处只有一辆汽车，可以同时接待多个代表团，为了提高车辆利用率，请帮接待员计算可以坐满车的接待方案，输出方案数量。
+小明和朋友玩跳格子游戏，有 n 个连续格子组成的圆圈，每个格子有不同的分数，小朋友可以选择以任意格子起跳，但是不能跳连续的格子，不能回头跳，也不能超过一圈;
 
-约束:
-
-一个团只能上一辆车，并且代表团人数 (代表团数量小于 30，每个代表团人数小于 30)小于汽车容量(汽车容量小于 100)
-
-需要将车辆坐满
+给定一个代表每个格子得分的非负整数数组，计算能够得到的最高分数。
 
 **输入描述**：
 
-第一行 代表团人数，英文逗号隔开，代表团数量小于 30，每个代表团人数小于 30
+给定一个数例，第一个格子和最后一个格子首尾相连，如: 2 3 2
 
-第二行 汽车载客量，汽车容量小于 100
+1 ≤ nums.length ≤ 100
+
+1 ≤ nums[i] ≤ 1000
 
 **输出描述**：
 
-坐满汽车的方案数量，如果无解输出 0
+输出能够得到的最高分，如: 3
 
 **用例 1**：
 
 输入：
 
 ```
-5,4,2,3,2,4,9
-10
+2 3 2
+```
+
+输出：
+
+```
+3
+```
+
+说明：只能跳3这个格子，因为第一个格子和第三个格子首尾相连
+
+**用例 2**：
+
+输入：
+
+```
+1 2 3 1
 ```
 
 输出：
@@ -24177,58 +24284,48 @@ int main() {
 4
 ```
 
-说明：
-
-解释 以下几种方式都可以坐满车，所以，优先接待输出为 4
-
-[2,3,5]
-
-[2,4,4]
-
-[2,3,5]
-
-[2,4,4]
+说明：1 + 3 = 4
 
 难度：中等
 
-标签：动态规划、组合数学、递归、回溯
+标签：动态规划
 
 ```cpp
 #include <bits/stdc++.h>
 
 using namespace std;
 
+// 计算非环形数组的最大得分
+int RobHelper(const vector<int>& nums, int start, int end) {
+  int prev2 = 0, prev1 = 0;
+  for (int i = start; i <= end; ++i) {
+    int curr = max(prev1, prev2 + nums[i]);
+    prev2 = prev1;
+    prev1 = curr;
+  }
+  return prev1;
+}
+
 int main() {
   // 读取输入
-  string input;
-  getline(cin, input);
-  stringstream ss(input);
-
-  vector<int> groups;
+  vector<int> nums;
   int value;
-  while (ss >> value) {
-    groups.push_back(value);
-    if (ss.peek() == ',') {
-      ss.ignore();
-    }
+  while (cin >> value) {
+    nums.push_back(value);
   }
 
-  int capacity;
-  cin >> capacity;
-
-  // 动态规划表
-  vector<int> dp(capacity + 1, 0);
-  dp[0] = 1; // 容量为 0 时有一种方案
-
-  // 更新动态规划表
-  for (int group : groups) {
-    for (int i = capacity; i >= group; --i) {
-      dp[i] += dp[i - group];
-    }
+  // 处理环形数组
+  if (nums.size() == 1) {
+    cout << nums[0] << endl;
+    return 0;
   }
+
+  // 计算不包含第一个格子和不包含最后一个格子的最大得分
+  int score1 = RobHelper(nums, 0, nums.size() - 2); // 不包含最后一个格子
+  int score2 = RobHelper(nums, 1, nums.size() - 1); // 不包含第一个格子
 
   // 输出结果
-  cout << dp[capacity] << endl;
+  cout << max(score1, score2) << endl;
 
   return 0;
 }
