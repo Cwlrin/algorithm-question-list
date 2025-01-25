@@ -24331,6 +24331,131 @@ int main() {
 }
 ```
 
+#### 不含101的数
+
+**题目描述**：
+
+小明在学习二进制时，发现了一类不含 101的数，也就是：
+
+将数字用二进制表示，不能出现 101 。
+
+现在给定一个整数区间 [l,r] ，请问这个区间包含了多少个不含 101 的数？
+
+**输入描述**：
+
+输入的唯一一行包含两个正整数 l， r（ 1 ≤ l ≤ r ≤ 10^9）。
+
+**输出描述**：
+
+输出的唯一一行包含一个整数，表示在 [l,r] 区间内一共有几个不含 101 的数。
+
+**用例 1**：
+
+输入：
+
+```
+1 10
+```
+
+输出：
+
+```
+8
+```
+
+说明：区间 [1,10] 内， 5 的二进制表示为 101 ，10的二进制表示为 1010 ，因此区间 [ 1 , 10 ] 内有 10−2=8 个不含 101的数。
+
+**用例 2**：
+
+输入：
+
+```
+10 20
+```
+
+输出：
+
+```
+7
+```
+
+说明：区间 [10,20] 内，满足条件的数字有 [12,14,15,16,17,18,19] 因此答案为 7。
+
+难度：中等
+
+标签：动态规划、组合数学
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int dp[32][2][2][2]; // 状态表
+vector<int> digits;  // 存储二进制位
+
+int dfs(int pos, int prev1, int prev2, int tight) {
+  // 如果已经处理完所有位，返回 1（表示找到一个有效数）
+  if (pos == digits.size()) {
+    return 1;
+  }
+
+  // 如果状态已经计算过，直接返回结果
+  if (dp[pos][prev1][prev2][tight] != -1) {
+    return dp[pos][prev1][prev2][tight];
+  }
+
+  int limit = tight ? digits[pos] : 1; // 当前位的上限
+  int count = 0;
+
+  for (int i = 0; i <= limit; ++i) {
+    // 检查是否出现 101
+    if (prev2 == 1 && prev1 == 0 && i == 1) {
+      continue; // 跳过无效情况
+    }
+
+    // 递归处理下一位
+    count += dfs(pos + 1, i, prev1, tight && (i == limit));
+  }
+
+  // 记录状态并返回结果
+  return dp[pos][prev1][prev2][tight] = count;
+}
+
+int main() {
+  int l, r;
+  cin >> l >> r;
+
+  // 计算 [1, r] 的满足条件的数的个数
+  digits.clear();
+  int temp = r;
+  while (temp > 0) {
+    digits.push_back(temp % 2);
+    temp /= 2;
+  }
+  reverse(digits.begin(), digits.end());
+
+  memset(dp, -1, sizeof(dp));
+  int total = dfs(0, 0, 0, 1);
+
+  // 计算 [1, l - 1] 的满足条件的数的个数
+  digits.clear();
+  temp = l - 1;
+  while (temp > 0) {
+    digits.push_back(temp % 2);
+    temp /= 2;
+  }
+  reverse(digits.begin(), digits.end());
+
+  memset(dp, -1, sizeof(dp));
+  int exclude = dfs(0, 0, 0, 1);
+
+  // 输出结果
+  cout << total - exclude << endl;
+
+  return 0;
+}
+```
+
 ## 贪心
 
 **题目描述**：
