@@ -25962,6 +25962,121 @@ int main() {
 }
 ```
 
+#### 猜数字
+
+**题目描述**：
+
+一个人设定一组四码的数字作为谜底，另一方猜。
+
+每猜一个数，出数者就要根据这个数字给出提示，提示以XAYB形式呈现，直到猜中位置。
+
+其中X表示位置正确的数的个数（数字正确且位置正确），而Y表示数字正确而位置不对的数的个数。
+
+例如，当谜底为8123，而猜谜者猜1052时，出题者必须提示0A2B。
+
+例如，当谜底为5637，而猜谜者才4931时，出题者必须提示1A0B。
+
+当前已知N组猜谜者猜的数字与提示，如果答案确定，请输出答案，不确定则输出NA。
+
+**输入描述**：
+
+第一行输入一个正整数，0＜N ＜ 100。
+
+接下来N行，每一行包含一个猜测的数字与提示结果。
+
+**输出描述**：
+
+输出最后的答案，答案不确定则输出NA。
+
+**用例 1**：
+
+输入：
+
+```
+6
+4815 1A1B
+5716 0A1B
+7842 0A1B
+4901 0A0B
+8585 3A0B
+8555 2A1B
+```
+
+输出：
+
+```
+3585
+
+```
+
+难度：中等
+
+标签：枚举、模拟、字符串
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  int n;
+  cin >> n;
+
+  vector<pair<string, string> > guesses(n);
+  for (int i = 0; i < n; i++) {
+    cin >> guesses[i].first >> guesses[i].second;
+  }
+
+  vector<string> possible_answers;
+
+  // 枚举所有可能的四位数  
+  for (int num = 0; num <= 9999; num++) {
+    string secret = to_string(num);
+    while (secret.length() < 4) {
+      secret = "0" + secret;
+    }
+
+    bool is_valid = true;
+    for (const auto& guess : guesses) {
+      int A = 0, B = 0;
+      vector<int> secret_count(10, 0), guess_count(10, 0);
+
+      for (int i = 0; i < 4; i++) {
+        if (secret[i] == guess.first[i]) {
+          A++;
+        } else {
+          secret_count[secret[i] - '0']++;
+          guess_count[guess.first[i] - '0']++;
+        }
+      }
+
+      for (int i = 0; i < 10; i++) {
+        B += min(secret_count[i], guess_count[i]);
+      }
+
+      string expected_hint = to_string(A) + "A" + to_string(B) + "B";
+      if (expected_hint != guess.second) {
+        is_valid = false;
+        break;
+      }
+    }
+
+    if (is_valid) {
+      possible_answers.push_back(secret);
+    }
+  }
+
+  if (possible_answers.size() == 1) {
+    cout << possible_answers[0] << endl;
+  } else {
+    cout << "NA" << endl;
+  }
+
+  return 0;
+}
+```
+
+
 ## 扫描线
 
 **题目描述**：
