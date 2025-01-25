@@ -25861,6 +25861,107 @@ int main() {
 }
 ```
 
+#### 简单的自动曝光
+
+**题目描述**：
+
+一个图像有n个像素点，存储在一个长度为n的数组img里，每个像素点的取值范围[0,255]的正整数。
+
+请你给图像每个像素点值加上一个整数k（可以是负数），得到新图newImg，使得新图newImg的所有像素平均值最接近中位值128。
+
+请输出这个整数k。
+
+**输入描述**：
+
+n个整数，中间用空格分开
+
+1 <= n <= 100
+
+如有多个整数k都满足，输出小的那个k；
+
+新图的像素值会自动截取到[0,255]范围。当新像素值<0，其值会更改为0；当新像素值>255，其值会更改为255；
+
+例如newImg=”-1 -2 256″,会自动更改为”0 0 255″
+
+**输出描述**：
+
+一个整数k
+
+**用例 1**：
+
+输入：
+
+```
+0 0 0 0
+```
+
+输出：
+
+```
+128
+```
+
+说明：四个像素值都为0
+
+**用例 2**：
+
+输入：
+
+```
+129 130 129 130
+```
+
+输出：
+
+```
+-2
+```
+
+说明：-1的均值128.5，-2的均值为127.5，输出较小的数-2
+
+难度：简单
+
+标签：枚举、数学、贪心、数组
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+  vector<int> img;
+  int pixel;
+  while (cin >> pixel) {
+    img.push_back(pixel);
+  }
+
+  int n = img.size();
+  int best_k = 0;
+  double min_diff = INT_MAX;
+
+  // 遍历所有可能的k
+  for (int k = -255; k <= 255; k++) {
+    double sum = 0;
+    for (int i = 0; i < n; i++) {
+      int new_pixel = img[i] + k;
+      new_pixel = max(0, min(new_pixel, 255)); // 截取到[0, 255]
+      sum += new_pixel;
+    }
+    double avg = sum / n;
+    double diff = abs(avg - 128);
+
+    if (diff < min_diff || (diff == min_diff && k < best_k)) {
+      min_diff = diff;
+      best_k = k;
+    }
+  }
+
+  cout << best_k << endl;
+
+  return 0;
+}
+```
+
 ## 扫描线
 
 **题目描述**：
